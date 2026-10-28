@@ -1,15 +1,14 @@
+import 'package:fasomo/core/di/injection_container.dart' as di;
+import 'package:fasomo/core/themes/app_theme.dart';
+import 'package:fasomo/core/utils/app_localizations.dart';
+import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
+import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/home/presentation/pages/home_page.dart';
+import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:timezone/data/latest.dart' as tz;
-
-import 'core/di/injection_container.dart' as di;
-import 'core/themes/app_theme.dart';
-import 'core/utils/app_localizations.dart';
-import 'features/home/presentation/bloc/home_bloc.dart';
-import 'features/home/presentation/pages/home_page.dart';
-import 'features/calendar/presentation/bloc/calendar_bloc.dart';
-import 'features/reminders/presentation/bloc/reminder_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +23,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +31,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => di.sl<HomeBloc>()..add(LoadHomeData())),
         BlocProvider(create: (_) => di.sl<CalendarBloc>()..add(LoadCalendar())),
-        BlocProvider(create: (_) => di.sl<ReminderBloc>()..add(LoadReminders())),
+        BlocProvider(
+          create: (_) => di.sl<ReminderBloc>()..add(LoadReminders()),
+        ),
       ],
       child: BlocBuilder<HomeBloc, HomeState>(
         buildWhen: (previous, current) => previous.locale != current.locale,

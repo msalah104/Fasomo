@@ -1,19 +1,17 @@
+import 'package:fasomo/core/utils/app_localizations.dart';
+import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
+import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/utils/app_localizations.dart';
-import '../../../reminders/presentation/bloc/reminder_bloc.dart';
-import '../../domain/entities/fasting_day.dart';
-
 class FastingDayCard extends StatelessWidget {
-  final FastingDay fastingDay;
-  final Locale locale;
-
-  const FastingDayCard({
-    super.key,
+  const new({
     required this.fastingDay,
     required this.locale,
+    super.key,
   });
+  final FastingDay fastingDay;
+  final Locale locale;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +30,8 @@ class FastingDayCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: _getColorForType(fastingDay.type).withOpacity(0.1),
+                    color: _getColorForType(fastingDay.type)
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -73,23 +72,22 @@ class FastingDayCard extends StatelessWidget {
               builder: (context, state) {
                 final hasReminder = state.reminders.any(
                   (r) =>
-                      r.fastingDay == fastingDay.type.toString() &&
-                      r.isEnabled,
+                      r.fastingDay == fastingDay.type.toString() && r.isEnabled,
                 );
 
                 return OutlinedButton.icon(
                   onPressed: () {
                     if (hasReminder) {
                       context.read<ReminderBloc>().add(
-                            ToggleReminder(fastingDay.type.toString()),
-                          );
+                        ToggleReminder(fastingDay.type.toString()),
+                      );
                     } else {
                       context.read<ReminderBloc>().add(
-                            AddFastingDayReminder(
-                              fastingDay.type.toString(),
-                              fastingDay.title,
-                            ),
-                          );
+                        AddFastingDayReminder(
+                          fastingDay.type.toString(),
+                          fastingDay.title,
+                        ),
+                      );
                     }
                   },
                   icon: Icon(
@@ -143,7 +141,8 @@ class FastingDayCard extends StatelessWidget {
         return Colors.green;
       case FastingType.mondayThursday:
         return Colors.orange;
-      default:
+      case FastingType.shawwal:
+      case FastingType.other:
         return Colors.teal;
     }
   }
@@ -161,7 +160,8 @@ class FastingDayCard extends StatelessWidget {
         return Icons.brightness_3;
       case FastingType.mondayThursday:
         return Icons.calendar_view_week;
-      default:
+      case FastingType.shawwal:
+      case FastingType.other:
         return Icons.star;
     }
   }

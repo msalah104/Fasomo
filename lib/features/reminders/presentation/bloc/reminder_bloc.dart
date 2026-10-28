@@ -1,24 +1,18 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fasomo/core/usecases/usecase.dart';
+import 'package:fasomo/core/utils/notification_helper.dart';
+import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
+import 'package:fasomo/features/reminders/domain/usecases/delete_reminder.dart';
+import 'package:fasomo/features/reminders/domain/usecases/get_reminders.dart';
+import 'package:fasomo/features/reminders/domain/usecases/save_reminder.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-import '../../../../core/usecases/usecase.dart';
-import '../../../../core/utils/notification_helper.dart';
-import '../../domain/entities/reminder.dart';
-import '../../domain/usecases/get_reminders.dart';
-import '../../domain/usecases/save_reminder.dart';
-import '../../domain/usecases/delete_reminder.dart';
 
 part 'reminder_event.dart';
 part 'reminder_state.dart';
 
 class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
-  final GetReminders getReminders;
-  final SaveReminder saveReminder;
-  final DeleteReminder deleteReminder;
-  final FlutterLocalNotificationsPlugin notificationPlugin;
-
-  ReminderBloc({
+  new({
     required this.getReminders,
     required this.saveReminder,
     required this.deleteReminder,
@@ -29,10 +23,11 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
     on<ToggleReminder>(_onToggleReminder);
     on<UpdateReminderSettings>(_onUpdateReminderSettings);
     on<DeleteReminderEvent>(_onDeleteReminder);
-
-    // Initialize notifications
-    NotificationHelper.initialize(notificationPlugin);
   }
+  final GetReminders getReminders;
+  final SaveReminder saveReminder;
+  final DeleteReminder deleteReminder;
+  final FlutterLocalNotificationsPlugin notificationPlugin;
 
   Future<void> _onLoadReminders(
     LoadReminders event,
@@ -43,15 +38,19 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
     try {
       final reminders = getReminders(NoParams());
 
-      emit(state.copyWith(
-        status: ReminderStatus.success,
-        reminders: reminders,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: ReminderStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: ReminderStatus.success,
+          reminders: reminders,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          status: ReminderStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -65,7 +64,6 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
         fastingDay: event.fastingDay,
         title: event.title,
         isEnabled: true,
-        reminderTime: ReminderTime.dayBefore,
       );
 
       await saveReminder(reminder);
@@ -74,15 +72,19 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
       await _scheduleNotification(reminder);
 
       final updatedReminders = getReminders(NoParams());
-      emit(state.copyWith(
-        status: ReminderStatus.success,
-        reminders: updatedReminders,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: ReminderStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: ReminderStatus.success,
+          reminders: updatedReminders,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          status: ReminderStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -112,15 +114,19 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
       }
 
       final updatedReminders = getReminders(NoParams());
-      emit(state.copyWith(
-        status: ReminderStatus.success,
-        reminders: updatedReminders,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: ReminderStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: ReminderStatus.success,
+          reminders: updatedReminders,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          status: ReminderStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -142,15 +148,19 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
       }
 
       final updatedReminders = getReminders(NoParams());
-      emit(state.copyWith(
-        status: ReminderStatus.success,
-        reminders: updatedReminders,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: ReminderStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: ReminderStatus.success,
+          reminders: updatedReminders,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          status: ReminderStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -167,15 +177,19 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
       );
 
       final updatedReminders = getReminders(NoParams());
-      emit(state.copyWith(
-        status: ReminderStatus.success,
-        reminders: updatedReminders,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: ReminderStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: ReminderStatus.success,
+          reminders: updatedReminders,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          status: ReminderStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -184,8 +198,8 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
     // In a real app, you'd calculate the actual fasting day date
     final scheduledDate = DateTime.now().add(const Duration(hours: 1));
 
-    final message = reminder.customMessage ??
-        'Reminder: ${reminder.title} is coming up!';
+    final message =
+        reminder.customMessage ?? 'Reminder: ${reminder.title} is coming up!';
 
     await NotificationHelper.scheduleNotification(
       flutterLocalNotificationsPlugin: notificationPlugin,

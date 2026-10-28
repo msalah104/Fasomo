@@ -1,12 +1,11 @@
-import '../../domain/entities/fasting_day.dart';
-import '../../domain/entities/hijri_date_info.dart';
-import '../../domain/repositories/fasting_repository.dart';
-import '../datasources/fasting_local_data_source.dart';
+import 'package:fasomo/features/home/data/datasources/fasting_local_data_source.dart';
+import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
+import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
+import 'package:fasomo/features/home/domain/repositories/fasting_repository.dart';
 
 class FastingRepositoryImpl implements FastingRepository {
+  new({required this.localDataSource});
   final FastingLocalDataSource localDataSource;
-
-  FastingRepositoryImpl({required this.localDataSource});
 
   @override
   HijriDateInfo getCurrentHijriDate(String languageCode) {

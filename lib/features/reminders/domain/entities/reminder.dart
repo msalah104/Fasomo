@@ -7,15 +7,7 @@ enum ReminderTime {
 }
 
 class Reminder extends Equatable {
-  final String id;
-  final String fastingDay;
-  final String title;
-  final bool isEnabled;
-  final ReminderTime reminderTime;
-  final DateTime? customTime;
-  final String? customMessage;
-
-  const Reminder({
+  const new({
     required this.id,
     required this.fastingDay,
     required this.title,
@@ -24,6 +16,30 @@ class Reminder extends Equatable {
     this.customTime,
     this.customMessage,
   });
+
+  factory fromJson(Map<String, dynamic> json) {
+    return Reminder(
+      id: json['id'] as String,
+      fastingDay: json['fastingDay'] as String,
+      title: json['title'] as String,
+      isEnabled: json['isEnabled'] as bool,
+      reminderTime: ReminderTime.values.firstWhere(
+        (e) => e.toString() == json['reminderTime'],
+        orElse: () => ReminderTime.dayBefore,
+      ),
+      customTime: json['customTime'] != null
+          ? DateTime.parse(json['customTime'] as String)
+          : null,
+      customMessage: json['customMessage'] as String?,
+    );
+  }
+  final String id;
+  final String fastingDay;
+  final String title;
+  final bool isEnabled;
+  final ReminderTime reminderTime;
+  final DateTime? customTime;
+  final String? customMessage;
 
   Reminder copyWith({
     String? id,
@@ -57,31 +73,14 @@ class Reminder extends Equatable {
     };
   }
 
-  factory Reminder.fromJson(Map<String, dynamic> json) {
-    return Reminder(
-      id: json['id'] as String,
-      fastingDay: json['fastingDay'] as String,
-      title: json['title'] as String,
-      isEnabled: json['isEnabled'] as bool,
-      reminderTime: ReminderTime.values.firstWhere(
-        (e) => e.toString() == json['reminderTime'],
-        orElse: () => ReminderTime.dayBefore,
-      ),
-      customTime: json['customTime'] != null
-          ? DateTime.parse(json['customTime'] as String)
-          : null,
-      customMessage: json['customMessage'] as String?,
-    );
-  }
-
   @override
   List<Object?> get props => [
-        id,
-        fastingDay,
-        title,
-        isEnabled,
-        reminderTime,
-        customTime,
-        customMessage,
-      ];
+    id,
+    fastingDay,
+    title,
+    isEnabled,
+    reminderTime,
+    customTime,
+    customMessage,
+  ];
 }

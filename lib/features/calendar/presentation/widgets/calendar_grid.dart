@@ -1,17 +1,15 @@
+import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/calendar/presentation/widgets/calendar_day_cell.dart';
 import 'package:flutter/material.dart';
 
-import '../../domain/entities/calendar_day.dart';
-import 'calendar_day_cell.dart';
-
 class CalendarGrid extends StatelessWidget {
-  final List<CalendarDay> days;
-  final Function(CalendarDay) onDayTap;
-
-  const CalendarGrid({
-    super.key,
+  const new({
     required this.days,
     required this.onDayTap,
+    super.key,
   });
+  final List<CalendarDay> days;
+  final ValueChanged<CalendarDay> onDayTap;
 
   @override
   Widget build(BuildContext context) {

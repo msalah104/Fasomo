@@ -3,19 +3,18 @@ part of 'home_bloc.dart';
 enum HomeStatus { initial, loading, success, error }
 
 class HomeState extends Equatable {
-  final HomeStatus status;
-  final HijriDateInfo? currentDate;
-  final List<FastingDay> upcomingFastingDays;
-  final Locale locale;
-  final String? errorMessage;
-
-  const HomeState({
+  const new({
     this.status = HomeStatus.initial,
     this.currentDate,
     this.upcomingFastingDays = const [],
     this.locale = const Locale('en', 'US'),
     this.errorMessage,
   });
+  final HomeStatus status;
+  final HijriDateInfo? currentDate;
+  final List<FastingDay> upcomingFastingDays;
+  final Locale locale;
+  final String? errorMessage;
 
   HomeState copyWith({
     HomeStatus? status,
@@ -35,10 +34,10 @@ class HomeState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        currentDate,
-        upcomingFastingDays,
-        locale,
-        errorMessage,
-      ];
+    status,
+    currentDate,
+    upcomingFastingDays,
+    locale,
+    errorMessage,
+  ];
 }

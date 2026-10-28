@@ -1,19 +1,17 @@
+import 'package:fasomo/core/utils/app_localizations.dart';
+import 'package:fasomo/core/utils/hijri_utils.dart';
+import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
+import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/utils/app_localizations.dart';
-import '../../../../core/utils/hijri_utils.dart';
-import '../../../home/domain/entities/fasting_day.dart';
-import '../../../home/presentation/bloc/home_bloc.dart';
-import '../../domain/entities/calendar_day.dart';
-
 class DayDetailSheet extends StatelessWidget {
-  final CalendarDay day;
-
-  const DayDetailSheet({
-    super.key,
+  const new({
     required this.day,
+    super.key,
   });
+  final CalendarDay day;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +33,9 @@ class DayDetailSheet extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             HijriUtils.formatGregorianDate(
-                day.gregorianDate, locale.languageCode),
+              day.gregorianDate,
+              locale.languageCode,
+            ),
             style: theme.textTheme.bodyLarge?.copyWith(
               color: theme.colorScheme.secondary,
             ),
@@ -52,11 +52,13 @@ class DayDetailSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            ...day.fastingTypes.map((type) => _buildFastingTypeCard(
-                  context,
-                  type,
-                  localization,
-                )),
+            ...day.fastingTypes.map(
+              (type) => _buildFastingTypeCard(
+                context,
+                type,
+                localization,
+              ),
+            ),
           ] else ...[
             Card(
               child: Padding(
@@ -101,46 +103,39 @@ class DayDetailSheet extends StatelessWidget {
   ) {
     final theme = Theme.of(context);
 
-    String title = '';
-    String description = '';
+    var title = '';
+    var description = '';
 
     switch (type) {
       case FastingType.whiteDays:
         title = localization.whiteDays;
         description = localization.whiteDaysDesc;
-        break;
       case FastingType.mondayThursday:
         title = localization.mondayThursday;
         description = localization.mondayThursdayDesc;
-        break;
       case FastingType.arafah:
         title = localization.dayOfArafah;
         description = localization.arafahDesc;
-        break;
       case FastingType.ashura:
         title = localization.dayOfAshura;
         description = localization.ashuraDesc;
-        break;
       case FastingType.tasua:
         title = localization.dayOfTasua;
         description = localization.tasuaDesc;
-        break;
       case FastingType.ramadan:
         title = localization.ramadan;
         description = localization.ramadanDesc;
-        break;
       case FastingType.shawwal:
         title = localization.shawwalSixDays;
         description = localization.shawwalDesc;
-        break;
-      default:
+      case FastingType.other:
         title = 'Fasting Day';
         description = 'Recommended fasting day';
     }
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      color: _getColorForType(type).withOpacity(0.1),
+      color: _getColorForType(type).withValues(alpha: 0.1),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -187,7 +182,8 @@ class DayDetailSheet extends StatelessWidget {
         return Colors.green;
       case FastingType.mondayThursday:
         return Colors.orange;
-      default:
+      case FastingType.shawwal:
+      case FastingType.other:
         return Colors.teal;
     }
   }
@@ -205,7 +201,8 @@ class DayDetailSheet extends StatelessWidget {
         return Icons.brightness_3;
       case FastingType.mondayThursday:
         return Icons.calendar_view_week;
-      default:
+      case FastingType.shawwal:
+      case FastingType.other:
         return Icons.star;
     }
   }

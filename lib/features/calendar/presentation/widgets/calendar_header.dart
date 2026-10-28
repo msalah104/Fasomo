@@ -1,22 +1,20 @@
+import 'package:fasomo/core/constants/app_constants.dart';
+import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../home/presentation/bloc/home_bloc.dart';
-
 class CalendarHeader extends StatelessWidget {
-  final int month;
-  final int year;
-  final VoidCallback onPreviousMonth;
-  final VoidCallback onNextMonth;
-
-  const CalendarHeader({
-    super.key,
+  const new({
     required this.month,
     required this.year,
     required this.onPreviousMonth,
     required this.onNextMonth,
+    super.key,
   });
+  final int month;
+  final int year;
+  final VoidCallback onPreviousMonth;
+  final VoidCallback onNextMonth;
 
   @override
   Widget build(BuildContext context) {
@@ -46,15 +44,15 @@ class CalendarHeader extends StatelessWidget {
                 Text(
                   monthNames[month - 1],
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   '$year ${locale.languageCode == 'ar' ? 'هـ' : 'AH'}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 ),
               ],
             ),

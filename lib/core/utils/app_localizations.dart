@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppLocalizations {
+  new(this.locale);
   final Locale locale;
-
-  AppLocalizations(this.locale);
 
   static AppLocalizations of(BuildContext context) {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
@@ -30,19 +29,16 @@ class AppLocalizations {
       'day_of_tasua': 'Day of Tasua',
       'ramadan': 'Ramadan',
       'shawwal_six_days': 'Six Days of Shawwal',
-      'white_days_desc':
-          'The 13th, 14th, and 15th of every Hijri month. Fasting these days is highly recommended.',
+      'white_days_desc': 'The 13th, 14th, and 15th of every Hijri month. Fasting these days is highly recommended.',
       'monday_thursday_desc':
           'The Prophet (PBUH) used to fast on Mondays and Thursdays.',
-      'arafah_desc':
-          'The 9th of Dhul Hijjah. Fasting this day expiates sins of two years.',
+      'arafah_desc': 'The 9th of Dhul Hijjah. Fasting this day expiates sins of two years.',
       'ashura_desc':
           'The 10th of Muharram. Fasting this day expiates sins of one year.',
       'tasua_desc':
           'The 9th of Muharram. It is recommended to fast along with Ashura.',
       'ramadan_desc': 'The month of Ramadan - obligatory fasting.',
-      'shawwal_desc':
-          'Six days of fasting in Shawwal after Eid al-Fitr equals fasting the whole year.',
+      'shawwal_desc': 'Six days of fasting in Shawwal after Eid al-Fitr equals fasting the whole year.',
       'reminder_settings': 'Reminder Settings',
       'enable_reminders': 'Enable Reminders',
       'reminder_time': 'Reminder Time',
@@ -53,17 +49,13 @@ class AppLocalizations {
       'save': 'Save',
       'cancel': 'Cancel',
       'about_app': 'About Fasomo',
-      'about_desc':
-          'Fasomo is an Islamic fasting tracker app that helps Muslims keep track of recommended fasting days according to the Sunnah of Prophet Muhammad (PBUH).',
+      'about_desc': 'Fasomo is an Islamic fasting tracker app that helps Muslims keep track of recommended fasting days according to the Sunnah of Prophet Muhammad (PBUH).',
       'islamic_references': 'Islamic References',
-      'hadith_white_days':
-          '"Whoever fasts three days of each month, it is like fasting the entire year." (Bukhari & Muslim)',
+      'hadith_white_days': '"Whoever fasts three days of each month, it is like fasting the entire year." (Bukhari & Muslim)',
       'hadith_monday_thursday':
           '"The Prophet used to fast on Mondays and Thursdays." (Tirmidhi)',
-      'hadith_arafah':
-          '"Fasting the day of Arafah expiates the sins of the past year and the coming year." (Muslim)',
-      'hadith_ashura':
-          '"Fasting the day of Ashura expiates the sins of the previous year." (Muslim)',
+      'hadith_arafah': '"Fasting the day of Arafah expiates the sins of the past year and the coming year." (Muslim)',
+      'hadith_ashura': '"Fasting the day of Ashura expiates the sins of the previous year." (Muslim)',
       'contact_support': 'Contact & Support',
       'version': 'Version',
       'no_upcoming_fasting': 'No upcoming fasting days this month',
@@ -95,14 +87,13 @@ class AppLocalizations {
       'shawwal_six_days': 'الست من شوال',
       'white_days_desc':
           'الأيام 13 و14 و15 من كل شهر هجري. صيام هذه الأيام مستحب بشدة.',
-      'monday_thursday_desc': 'كان النبي صلى الله عليه وسلم يصوم الاثنين والخميس.',
-      'arafah_desc':
-          'التاسع من ذي الحجة. صيام هذا اليوم يكفر ذنوب سنتين.',
+      'monday_thursday_desc':
+          'كان النبي صلى الله عليه وسلم يصوم الاثنين والخميس.',
+      'arafah_desc': 'التاسع من ذي الحجة. صيام هذا اليوم يكفر ذنوب سنتين.',
       'ashura_desc': 'العاشر من محرم. صيام هذا اليوم يكفر ذنوب سنة.',
       'tasua_desc': 'التاسع من محرم. يستحب صيامه مع عاشوراء.',
       'ramadan_desc': 'شهر رمضان - الصيام واجب.',
-      'shawwal_desc':
-          'ستة أيام من شوال بعد عيد الفطر تعدل صيام الدهر.',
+      'shawwal_desc': 'ستة أيام من شوال بعد عيد الفطر تعدل صيام الدهر.',
       'reminder_settings': 'إعدادات التذكير',
       'enable_reminders': 'تفعيل التذكيرات',
       'reminder_time': 'وقت التذكير',
@@ -113,17 +104,13 @@ class AppLocalizations {
       'save': 'حفظ',
       'cancel': 'إلغاء',
       'about_app': 'عن فاصومو',
-      'about_desc':
-          'فاصومو هو تطبيق لتتبع الصيام الإسلامي يساعد المسلمين على متابعة أيام الصيام المستحبة وفقاً لسنة النبي محمد صلى الله عليه وسلم.',
+      'about_desc': 'فاصومو هو تطبيق لتتبع الصيام الإسلامي يساعد المسلمين على متابعة أيام الصيام المستحبة وفقاً لسنة النبي محمد صلى الله عليه وسلم.',
       'islamic_references': 'المراجع الإسلامية',
       'hadith_white_days':
           '"من صام ثلاثة أيام من كل شهر فكأنما صام الدهر كله" (البخاري ومسلم)',
-      'hadith_monday_thursday':
-          '"كان النبي يصوم الاثنين والخميس" (الترمذي)',
-      'hadith_arafah':
-          '"صيام يوم عرفة يكفر السنة الماضية والباقية" (مسلم)',
-      'hadith_ashura':
-          '"صيام يوم عاشوراء يكفر السنة الماضية" (مسلم)',
+      'hadith_monday_thursday': '"كان النبي يصوم الاثنين والخميس" (الترمذي)',
+      'hadith_arafah': '"صيام يوم عرفة يكفر السنة الماضية والباقية" (مسلم)',
+      'hadith_ashura': '"صيام يوم عاشوراء يكفر السنة الماضية" (مسلم)',
       'contact_support': 'التواصل والدعم',
       'version': 'الإصدار',
       'no_upcoming_fasting': 'لا توجد أيام صيام قادمة هذا الشهر',
@@ -196,7 +183,7 @@ class AppLocalizations {
 
 class _AppLocalizationsDelegate
     extends LocalizationsDelegate<AppLocalizations> {
-  const _AppLocalizationsDelegate();
+  const new();
 
   @override
   bool isSupported(Locale locale) {

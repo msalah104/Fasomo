@@ -3,15 +3,14 @@ part of 'reminder_bloc.dart';
 enum ReminderStatus { initial, loading, success, error }
 
 class ReminderState extends Equatable {
-  final ReminderStatus status;
-  final List<Reminder> reminders;
-  final String? errorMessage;
-
-  const ReminderState({
+  const new({
     this.status = ReminderStatus.initial,
     this.reminders = const [],
     this.errorMessage,
   });
+  final ReminderStatus status;
+  final List<Reminder> reminders;
+  final String? errorMessage;
 
   ReminderState copyWith({
     ReminderStatus? status,

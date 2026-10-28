@@ -3,21 +3,20 @@ part of 'calendar_bloc.dart';
 enum CalendarStatus { initial, loading, success, error }
 
 class CalendarState extends Equatable {
+  const new({
+    required this.currentMonth,
+    required this.currentYear,
+    this.status = CalendarStatus.initial,
+    this.days = const [],
+    this.selectedDay,
+    this.errorMessage,
+  });
   final CalendarStatus status;
   final List<CalendarDay> days;
   final int currentMonth;
   final int currentYear;
   final CalendarDay? selectedDay;
   final String? errorMessage;
-
-  const CalendarState({
-    this.status = CalendarStatus.initial,
-    this.days = const [],
-    required this.currentMonth,
-    required this.currentYear,
-    this.selectedDay,
-    this.errorMessage,
-  });
 
   CalendarState copyWith({
     CalendarStatus? status,
@@ -39,11 +38,11 @@ class CalendarState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        days,
-        currentMonth,
-        currentYear,
-        selectedDay,
-        errorMessage,
-      ];
+    status,
+    days,
+    currentMonth,
+    currentYear,
+    selectedDay,
+    errorMessage,
+  ];
 }

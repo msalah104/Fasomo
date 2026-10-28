@@ -1,11 +1,10 @@
-import '../../../../core/usecases/usecase.dart';
-import '../entities/reminder.dart';
-import '../repositories/reminder_repository.dart';
+import 'package:fasomo/core/usecases/usecase.dart';
+import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
+import 'package:fasomo/features/reminders/domain/repositories/reminder_repository.dart';
 
 class SaveReminder implements UseCase<Future<void>, Reminder> {
+  new(this.repository);
   final ReminderRepository repository;
-
-  SaveReminder(this.repository);
 
   @override
   Future<void> call(Reminder params) {

@@ -1,16 +1,15 @@
+import 'package:fasomo/core/utils/app_localizations.dart';
+import 'package:fasomo/features/about/presentation/pages/about_page.dart';
+import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/home/presentation/widgets/current_date_card.dart';
+import 'package:fasomo/features/home/presentation/widgets/fasting_day_card.dart';
+import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/utils/app_localizations.dart';
-import '../../../calendar/presentation/pages/calendar_page.dart';
-import '../../../reminders/presentation/pages/reminder_settings_page.dart';
-import '../../../about/presentation/pages/about_page.dart';
-import '../bloc/home_bloc.dart';
-import '../widgets/current_date_card.dart';
-import '../widgets/fasting_day_card.dart';
-
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const new({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();

@@ -1,11 +1,10 @@
-import '../../domain/entities/reminder.dart';
-import '../../domain/repositories/reminder_repository.dart';
-import '../datasources/reminder_local_data_source.dart';
+import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
+import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
+import 'package:fasomo/features/reminders/domain/repositories/reminder_repository.dart';
 
 class ReminderRepositoryImpl implements ReminderRepository {
+  new({required this.localDataSource});
   final ReminderLocalDataSource localDataSource;
-
-  ReminderRepositoryImpl({required this.localDataSource});
 
   @override
   List<Reminder> getReminders() {

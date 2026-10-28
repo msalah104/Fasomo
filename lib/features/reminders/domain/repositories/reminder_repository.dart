@@ -1,4 +1,4 @@
-import '../entities/reminder.dart';
+import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 
 abstract class ReminderRepository {
   List<Reminder> getReminders();

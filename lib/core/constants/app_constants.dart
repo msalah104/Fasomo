@@ -33,15 +33,15 @@ class AppConstants {
   static const List<String> englishMonthNames = [
     'Muharram',
     'Safar',
-    'Rabi\' al-Awwal',
-    'Rabi\' al-Thani',
+    "Rabi' al-Awwal",
+    "Rabi' al-Thani",
     'Jumada al-Ula',
     'Jumada al-Akhirah',
     'Rajab',
-    'Sha\'ban',
+    "Sha'ban",
     'Ramadan',
     'Shawwal',
-    'Dhul Qa\'dah',
+    "Dhul Qa'dah",
     'Dhul Hijjah',
   ];
 

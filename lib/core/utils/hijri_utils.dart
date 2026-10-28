@@ -1,7 +1,6 @@
-import 'package:hijri/hijri.dart';
+import 'package:fasomo/core/constants/app_constants.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:intl/intl.dart';
-
-import '../constants/app_constants.dart';
 
 class HijriUtils {
   static HijriCalendar getCurrentHijriDate() {
@@ -57,22 +56,26 @@ class HijriUtils {
   static int daysUntil(HijriCalendar targetHijri) {
     final today = HijriCalendar.now();
     final todayGregorian = DateTime(today.hYear, today.hMonth, today.hDay);
-    final targetGregorian =
-        DateTime(targetHijri.hYear, targetHijri.hMonth, targetHijri.hDay);
+    final targetGregorian = DateTime(
+      targetHijri.hYear,
+      targetHijri.hMonth,
+      targetHijri.hDay,
+    );
 
     return targetGregorian.difference(todayGregorian).inDays;
   }
 
   static List<HijriCalendar> getMonthDates(int month, int year) {
     final dates = <HijriCalendar>[];
-    final daysInMonth = HijriCalendar()
-        .getDaysInMonth(year, month);
+    final daysInMonth = HijriCalendar().getDaysInMonth(year, month);
 
-    for (int day = 1; day <= daysInMonth; day++) {
-      dates.add(HijriCalendar()
-        ..hYear = year
-        ..hMonth = month
-        ..hDay = day);
+    for (var day = 1; day <= daysInMonth; day++) {
+      dates.add(
+        HijriCalendar()
+          ..hYear = year
+          ..hMonth = month
+          ..hDay = day,
+      );
     }
 
     return dates;

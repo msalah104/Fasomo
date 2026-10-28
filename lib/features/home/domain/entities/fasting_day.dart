@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:hijri/hijri.dart';
+import 'package:hijri/hijri_calendar.dart';
 
 enum FastingType {
   whiteDays,
@@ -13,15 +13,7 @@ enum FastingType {
 }
 
 class FastingDay extends Equatable {
-  final HijriCalendar hijriDate;
-  final DateTime gregorianDate;
-  final FastingType type;
-  final String title;
-  final String description;
-  final bool isMandatory;
-  final int daysUntil;
-
-  const FastingDay({
+  const new({
     required this.hijriDate,
     required this.gregorianDate,
     required this.type,
@@ -30,15 +22,22 @@ class FastingDay extends Equatable {
     required this.isMandatory,
     required this.daysUntil,
   });
+  final HijriCalendar hijriDate;
+  final DateTime gregorianDate;
+  final FastingType type;
+  final String title;
+  final String description;
+  final bool isMandatory;
+  final int daysUntil;
 
   @override
   List<Object?> get props => [
-        hijriDate,
-        gregorianDate,
-        type,
-        title,
-        description,
-        isMandatory,
-        daysUntil,
-      ];
+    hijriDate,
+    gregorianDate,
+    type,
+    title,
+    description,
+    isMandatory,
+    daysUntil,
+  ];
 }

@@ -1,17 +1,15 @@
+import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
 import 'package:flutter/material.dart';
 
-import '../../../home/domain/entities/fasting_day.dart';
-import '../../domain/entities/calendar_day.dart';
-
 class CalendarDayCell extends StatelessWidget {
-  final CalendarDay day;
-  final VoidCallback onTap;
-
-  const CalendarDayCell({
-    super.key,
+  const new({
     required this.day,
     required this.onTap,
+    super.key,
   });
+  final CalendarDay day;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +51,10 @@ class CalendarDayCell extends StatelessWidget {
 
   Color _getBackgroundColor(ThemeData theme) {
     if (day.isToday) {
-      return theme.colorScheme.primary.withOpacity(0.1);
+      return theme.colorScheme.primary.withValues(alpha: 0.1);
     }
     if (day.isFastingDay) {
-      return _getPrimaryFastingColor().withOpacity(0.15);
+      return _getPrimaryFastingColor().withValues(alpha: 0.15);
     }
     return Colors.transparent;
   }
@@ -113,7 +111,8 @@ class CalendarDayCell extends StatelessWidget {
         return Colors.green;
       case FastingType.mondayThursday:
         return Colors.orange;
-      default:
+      case FastingType.shawwal:
+      case FastingType.other:
         return Colors.teal;
     }
   }

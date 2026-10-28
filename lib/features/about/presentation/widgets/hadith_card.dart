@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 
 class HadithCard extends StatelessWidget {
-  final String title;
-  final String hadith;
-  final IconData icon;
-  final Color color;
-
-  const HadithCard({
-    super.key,
+  const new({
     required this.title,
     required this.hadith,
     required this.icon,
     required this.color,
+    super.key,
   });
+  final String title;
+  final String hadith;
+  final IconData icon;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +29,7 @@ class HadithCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
+                    color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -55,7 +54,9 @@ class HadithCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceVariant.withOpacity(0.3),
+                color: theme.colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.3,
+                ),
                 borderRadius: BorderRadius.circular(8),
                 border: Border(
                   left: BorderSide(

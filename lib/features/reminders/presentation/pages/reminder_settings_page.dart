@@ -1,12 +1,11 @@
+import 'package:fasomo/core/utils/app_localizations.dart';
+import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
+import 'package:fasomo/features/reminders/presentation/widgets/reminder_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/utils/app_localizations.dart';
-import '../bloc/reminder_bloc.dart';
-import '../widgets/reminder_card.dart';
-
 class ReminderSettingsPage extends StatelessWidget {
-  const ReminderSettingsPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +13,7 @@ class ReminderSettingsPage extends StatelessWidget {
 
     return BlocBuilder<ReminderBloc, ReminderState>(
       builder: (context, state) {
-        if (state.status == ReminderStatus.loading &&
-            state.reminders.isEmpty) {
+        if (state.status == ReminderStatus.loading && state.reminders.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 

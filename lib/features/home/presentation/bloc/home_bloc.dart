@@ -1,20 +1,16 @@
+import 'package:equatable/equatable.dart';
+import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
+import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
+import 'package:fasomo/features/home/domain/usecases/get_current_hijri_date.dart';
+import 'package:fasomo/features/home/domain/usecases/get_upcoming_fasting_days.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:equatable/equatable.dart';
-
-import '../../domain/entities/fasting_day.dart';
-import '../../domain/entities/hijri_date_info.dart';
-import '../../domain/usecases/get_current_hijri_date.dart';
-import '../../domain/usecases/get_upcoming_fasting_days.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final GetCurrentHijriDate getCurrentHijriDate;
-  final GetUpcomingFastingDays getUpcomingFastingDays;
-
-  HomeBloc({
+  new({
     required this.getCurrentHijriDate,
     required this.getUpcomingFastingDays,
   }) : super(const HomeState()) {
@@ -22,6 +18,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ToggleLanguage>(_onToggleLanguage);
     on<RefreshHomeData>(_onRefreshHomeData);
   }
+  final GetCurrentHijriDate getCurrentHijriDate;
+  final GetUpcomingFastingDays getUpcomingFastingDays;
 
   Future<void> _onLoadHomeData(
     LoadHomeData event,
@@ -34,16 +32,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final currentDate = getCurrentHijriDate(languageCode);
       final fastingDays = getUpcomingFastingDays(languageCode);
 
-      emit(state.copyWith(
-        status: HomeStatus.success,
-        currentDate: currentDate,
-        upcomingFastingDays: fastingDays,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: HomeStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: HomeStatus.success,
+          currentDate: currentDate,
+          upcomingFastingDays: fastingDays,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          status: HomeStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -70,16 +72,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final currentDate = getCurrentHijriDate(languageCode);
       final fastingDays = getUpcomingFastingDays(languageCode);
 
-      emit(state.copyWith(
-        status: HomeStatus.success,
-        currentDate: currentDate,
-        upcomingFastingDays: fastingDays,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: HomeStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: HomeStatus.success,
+          currentDate: currentDate,
+          upcomingFastingDays: fastingDays,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          status: HomeStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 }

@@ -1,15 +1,13 @@
+import 'package:fasomo/core/utils/app_localizations.dart';
+import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/utils/app_localizations.dart';
-import '../../domain/entities/hijri_date_info.dart';
-
 class CurrentDateCard extends StatelessWidget {
-  final HijriDateInfo dateInfo;
-
-  const CurrentDateCard({
-    super.key,
+  const new({
     required this.dateInfo,
+    super.key,
   });
+  final HijriDateInfo dateInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +24,7 @@ class CurrentDateCard extends StatelessWidget {
           gradient: LinearGradient(
             colors: [
               theme.colorScheme.primary,
-              theme.colorScheme.primary.withOpacity(0.8),
+              theme.colorScheme.primary.withValues(alpha: 0.8),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -52,7 +50,7 @@ class CurrentDateCard extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.calendar_today,
                   size: 16,
                   color: Colors.white70,

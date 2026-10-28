@@ -1,17 +1,15 @@
+import 'package:fasomo/core/utils/app_localizations.dart';
+import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
+import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/utils/app_localizations.dart';
-import '../../domain/entities/reminder.dart';
-import '../bloc/reminder_bloc.dart';
-
 class ReminderEditDialog extends StatefulWidget {
-  final Reminder reminder;
-
-  const ReminderEditDialog({
-    super.key,
+  const new({
     required this.reminder,
+    super.key,
   });
+  final Reminder reminder;
 
   @override
   State<ReminderEditDialog> createState() => _ReminderEditDialogState();
@@ -25,8 +23,9 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
   void initState() {
     super.initState();
     _selectedTime = widget.reminder.reminderTime;
-    _messageController =
-        TextEditingController(text: widget.reminder.customMessage ?? '');
+    _messageController = TextEditingController(
+      text: widget.reminder.customMessage ?? '',
+    );
   }
 
   @override
@@ -57,38 +56,31 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
               style: theme.textTheme.titleSmall,
             ),
             const SizedBox(height: 12),
-            RadioListTile<ReminderTime>(
-              title: Text(localization.dayBefore),
-              subtitle: const Text('One day before the fasting day'),
-              value: ReminderTime.dayBefore,
+            RadioGroup<ReminderTime>(
               groupValue: _selectedTime,
               onChanged: (value) {
-                setState(() {
-                  _selectedTime = value!;
-                });
+                if (value == null) return;
+                setState(() => _selectedTime = value);
               },
-            ),
-            RadioListTile<ReminderTime>(
-              title: Text(localization.morningOfDay),
-              subtitle: const Text('Morning of the fasting day'),
-              value: ReminderTime.morningOfDay,
-              groupValue: _selectedTime,
-              onChanged: (value) {
-                setState(() {
-                  _selectedTime = value!;
-                });
-              },
-            ),
-            RadioListTile<ReminderTime>(
-              title: Text(localization.customTime),
-              subtitle: const Text('Set a custom time'),
-              value: ReminderTime.custom,
-              groupValue: _selectedTime,
-              onChanged: (value) {
-                setState(() {
-                  _selectedTime = value!;
-                });
-              },
+              child: Column(
+                children: [
+                  RadioListTile<ReminderTime>(
+                    title: Text(localization.dayBefore),
+                    subtitle: const Text('One day before the fasting day'),
+                    value: ReminderTime.dayBefore,
+                  ),
+                  RadioListTile<ReminderTime>(
+                    title: Text(localization.morningOfDay),
+                    subtitle: const Text('Morning of the fasting day'),
+                    value: ReminderTime.morningOfDay,
+                  ),
+                  RadioListTile<ReminderTime>(
+                    title: Text(localization.customTime),
+                    subtitle: const Text('Set a custom time'),
+                    value: ReminderTime.custom,
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
             Text(
@@ -98,9 +90,9 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
             const SizedBox(height: 12),
             TextField(
               controller: _messageController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Enter custom notification message',
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(),
               ),
               maxLines: 3,
             ),
@@ -121,9 +113,9 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
                   : _messageController.text,
             );
 
-            context
-                .read<ReminderBloc>()
-                .add(UpdateReminderSettings(updatedReminder));
+            context.read<ReminderBloc>().add(
+              UpdateReminderSettings(updatedReminder),
+            );
 
             Navigator.pop(context);
           },

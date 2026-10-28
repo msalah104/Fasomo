@@ -1,9 +1,8 @@
 import 'dart:convert';
 
+import 'package:fasomo/core/constants/app_constants.dart';
+import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../../core/constants/app_constants.dart';
-import '../../domain/entities/reminder.dart';
 
 abstract class ReminderLocalDataSource {
   List<Reminder> getReminders();
@@ -13,9 +12,8 @@ abstract class ReminderLocalDataSource {
 }
 
 class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
+  new({required this.sharedPreferences});
   final SharedPreferences sharedPreferences;
-
-  ReminderLocalDataSourceImpl({required this.sharedPreferences});
 
   @override
   List<Reminder> getReminders() {
@@ -23,32 +21,34 @@ class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
         sharedPreferences.getStringList(AppConstants.remindersKey) ?? [];
 
     return remindersJson
-        .map((json) => Reminder.fromJson(jsonDecode(json)))
+        .map(
+          (json) => Reminder.fromJson(jsonDecode(json) as Map<String, dynamic>),
+        )
         .toList();
   }
 
   @override
   Future<void> saveReminder(Reminder reminder) async {
-    final reminders = getReminders();
-    reminders.add(reminder);
+    final reminders = getReminders()..add(reminder);
 
-    final remindersJson =
-        reminders.map((r) => jsonEncode(r.toJson())).toList();
+    final remindersJson = reminders.map((r) => jsonEncode(r.toJson())).toList();
 
     await sharedPreferences.setStringList(
-        AppConstants.remindersKey, remindersJson);
+      AppConstants.remindersKey,
+      remindersJson,
+    );
   }
 
   @override
   Future<void> deleteReminder(String id) async {
-    final reminders = getReminders();
-    reminders.removeWhere((r) => r.id == id);
+    final reminders = getReminders()..removeWhere((r) => r.id == id);
 
-    final remindersJson =
-        reminders.map((r) => jsonEncode(r.toJson())).toList();
+    final remindersJson = reminders.map((r) => jsonEncode(r.toJson())).toList();
 
     await sharedPreferences.setStringList(
-        AppConstants.remindersKey, remindersJson);
+      AppConstants.remindersKey,
+      remindersJson,
+    );
   }
 
   @override
@@ -59,11 +59,14 @@ class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
     if (index != -1) {
       reminders[index] = reminder;
 
-      final remindersJson =
-          reminders.map((r) => jsonEncode(r.toJson())).toList();
+      final remindersJson = reminders
+          .map((r) => jsonEncode(r.toJson()))
+          .toList();
 
       await sharedPreferences.setStringList(
-          AppConstants.remindersKey, remindersJson);
+        AppConstants.remindersKey,
+        remindersJson,
+      );
     }
   }
 }

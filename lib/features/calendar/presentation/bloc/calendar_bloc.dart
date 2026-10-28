@@ -1,27 +1,27 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-
-import '../../../../core/utils/hijri_utils.dart';
-import '../../domain/entities/calendar_day.dart';
-import '../../domain/usecases/get_hijri_month.dart';
+import 'package:fasomo/core/utils/hijri_utils.dart';
+import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/calendar/domain/usecases/get_hijri_month.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'calendar_event.dart';
 part 'calendar_state.dart';
 
 class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
-  final GetHijriMonth getHijriMonth;
-
-  CalendarBloc({required this.getHijriMonth})
-      : super(CalendarState(
+  new({required this.getHijriMonth})
+    : super(
+        CalendarState(
           currentMonth: HijriUtils.getCurrentHijriDate().hMonth,
           currentYear: HijriUtils.getCurrentHijriDate().hYear,
-        )) {
+        ),
+      ) {
     on<LoadCalendar>(_onLoadCalendar);
     on<ChangeMonth>(_onChangeMonth);
     on<NextMonth>(_onNextMonth);
     on<PreviousMonth>(_onPreviousMonth);
     on<SelectDay>(_onSelectDay);
   }
+  final GetHijriMonth getHijriMonth;
 
   Future<void> _onLoadCalendar(
     LoadCalendar event,
@@ -30,20 +30,26 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     emit(state.copyWith(status: CalendarStatus.loading));
 
     try {
-      final days = getHijriMonth(HijriMonthParams(
-        month: state.currentMonth,
-        year: state.currentYear,
-      ));
+      final days = getHijriMonth(
+        HijriMonthParams(
+          month: state.currentMonth,
+          year: state.currentYear,
+        ),
+      );
 
-      emit(state.copyWith(
-        status: CalendarStatus.success,
-        days: days,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: CalendarStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: CalendarStatus.success,
+          days: days,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          status: CalendarStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -54,22 +60,28 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     emit(state.copyWith(status: CalendarStatus.loading));
 
     try {
-      final days = getHijriMonth(HijriMonthParams(
-        month: event.month,
-        year: event.year,
-      ));
+      final days = getHijriMonth(
+        HijriMonthParams(
+          month: event.month,
+          year: event.year,
+        ),
+      );
 
-      emit(state.copyWith(
-        status: CalendarStatus.success,
-        days: days,
-        currentMonth: event.month,
-        currentYear: event.year,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        status: CalendarStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: CalendarStatus.success,
+          days: days,
+          currentMonth: event.month,
+          currentYear: event.year,
+        ),
+      );
+    } on Exception catch (e) {
+      emit(
+        state.copyWith(
+          status: CalendarStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -77,8 +89,8 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     NextMonth event,
     Emitter<CalendarState> emit,
   ) async {
-    int newMonth = state.currentMonth + 1;
-    int newYear = state.currentYear;
+    var newMonth = state.currentMonth + 1;
+    var newYear = state.currentYear;
 
     if (newMonth > 12) {
       newMonth = 1;
@@ -92,8 +104,8 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     PreviousMonth event,
     Emitter<CalendarState> emit,
   ) async {
-    int newMonth = state.currentMonth - 1;
-    int newYear = state.currentYear;
+    var newMonth = state.currentMonth - 1;
+    var newYear = state.currentYear;
 
     if (newMonth < 1) {
       newMonth = 12;

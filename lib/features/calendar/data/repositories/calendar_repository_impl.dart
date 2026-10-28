@@ -1,11 +1,10 @@
-import '../../domain/entities/calendar_day.dart';
-import '../../domain/repositories/calendar_repository.dart';
-import '../datasources/calendar_local_data_source.dart';
+import 'package:fasomo/features/calendar/data/datasources/calendar_local_data_source.dart';
+import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
 
 class CalendarRepositoryImpl implements CalendarRepository {
+  new({required this.localDataSource});
   final CalendarLocalDataSource localDataSource;
-
-  CalendarRepositoryImpl({required this.localDataSource});
 
   @override
   List<CalendarDay> getHijriMonth(int month, int year) {

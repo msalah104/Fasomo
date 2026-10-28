@@ -1,11 +1,10 @@
-import '../../../../core/usecases/usecase.dart';
-import '../entities/calendar_day.dart';
-import '../repositories/calendar_repository.dart';
+import 'package:fasomo/core/usecases/usecase.dart';
+import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
 
 class GetHijriMonth implements UseCase<List<CalendarDay>, HijriMonthParams> {
+  new(this.repository);
   final CalendarRepository repository;
-
-  GetHijriMonth(this.repository);
 
   @override
   List<CalendarDay> call(HijriMonthParams params) {
@@ -14,8 +13,7 @@ class GetHijriMonth implements UseCase<List<CalendarDay>, HijriMonthParams> {
 }
 
 class HijriMonthParams {
+  new({required this.month, required this.year});
   final int month;
   final int year;
-
-  HijriMonthParams({required this.month, required this.year});
 }

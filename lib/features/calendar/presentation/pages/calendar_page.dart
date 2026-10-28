@@ -1,23 +1,22 @@
+import 'dart:async';
+
+import 'package:fasomo/core/utils/app_localizations.dart';
+import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
+import 'package:fasomo/features/calendar/presentation/widgets/calendar_grid.dart';
+import 'package:fasomo/features/calendar/presentation/widgets/calendar_header.dart';
+import 'package:fasomo/features/calendar/presentation/widgets/day_detail_sheet.dart';
+import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/utils/app_localizations.dart';
-import '../../../home/presentation/bloc/home_bloc.dart';
-import '../bloc/calendar_bloc.dart';
-import '../widgets/calendar_grid.dart';
-import '../widgets/calendar_header.dart';
-import '../widgets/day_detail_sheet.dart';
-
 class CalendarPage extends StatelessWidget {
-  const CalendarPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CalendarBloc, CalendarState>(
       builder: (context, state) {
-        if (state.status == CalendarStatus.loading &&
-            state.days.isEmpty) {
+        if (state.status == CalendarStatus.loading && state.days.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -47,13 +46,17 @@ class CalendarPage extends StatelessWidget {
               current.selectedDay != null,
           listener: (context, state) {
             if (state.selectedDay != null) {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              unawaited(
+                showModalBottomSheet<void>(
+                  context: context,
+                  isScrollControlled: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  builder: (context) => DayDetailSheet(day: state.selectedDay!),
                 ),
-                builder: (context) => DayDetailSheet(day: state.selectedDay!),
               );
             }
           },
@@ -101,17 +104,19 @@ class CalendarPage extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: weekdays
-          .map((day) => Expanded(
-                child: Center(
-                  child: Text(
-                    day,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+          .map(
+            (day) => Expanded(
+              child: Center(
+                child: Text(
+                  day,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
-              ))
+              ),
+            ),
+          )
           .toList(),
     );
   }
@@ -173,7 +178,7 @@ class CalendarPage extends StatelessWidget {
           width: 16,
           height: 16,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
             shape: BoxShape.circle,
             border: Border.all(color: color, width: 2),
           ),

@@ -1,9 +1,8 @@
-import 'package:hijri/hijri.dart';
-
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/utils/hijri_utils.dart';
-import '../../../home/domain/entities/fasting_day.dart';
-import '../../domain/entities/calendar_day.dart';
+import 'package:fasomo/core/constants/app_constants.dart';
+import 'package:fasomo/core/utils/hijri_utils.dart';
+import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
+import 'package:hijri/hijri_calendar.dart';
 
 abstract class CalendarLocalDataSource {
   List<CalendarDay> getHijriMonth(int month, int year);
@@ -12,13 +11,12 @@ abstract class CalendarLocalDataSource {
 class CalendarLocalDataSourceImpl implements CalendarLocalDataSource {
   @override
   List<CalendarDay> getHijriMonth(int month, int year) {
-    final today = DateTime.now();
     final todayHijri = HijriUtils.getCurrentHijriDate();
     final calendarDays = <CalendarDay>[];
 
     final daysInMonth = HijriCalendar().getDaysInMonth(year, month);
 
-    for (int day = 1; day <= daysInMonth; day++) {
+    for (var day = 1; day <= daysInMonth; day++) {
       final hijriDate = HijriCalendar()
         ..hYear = year
         ..hMonth = month
@@ -26,26 +24,32 @@ class CalendarLocalDataSourceImpl implements CalendarLocalDataSource {
 
       final gregorianDate = hijriDate.hijriToGregorian(year, month, day);
 
-      final isToday = todayHijri.hYear == year &&
+      final isToday =
+          todayHijri.hYear == year &&
           todayHijri.hMonth == month &&
           todayHijri.hDay == day;
 
       final fastingTypes = _getFastingTypes(hijriDate, gregorianDate, month);
 
-      calendarDays.add(CalendarDay(
-        hijriDate: hijriDate,
-        gregorianDate: gregorianDate,
-        isToday: isToday,
-        isFastingDay: fastingTypes.isNotEmpty,
-        fastingTypes: fastingTypes,
-      ));
+      calendarDays.add(
+        CalendarDay(
+          hijriDate: hijriDate,
+          gregorianDate: gregorianDate,
+          isToday: isToday,
+          isFastingDay: fastingTypes.isNotEmpty,
+          fastingTypes: fastingTypes,
+        ),
+      );
     }
 
     return calendarDays;
   }
 
   List<FastingType> _getFastingTypes(
-      HijriCalendar hijri, DateTime gregorian, int month) {
+    HijriCalendar hijri,
+    DateTime gregorian,
+    int month,
+  ) {
     final types = <FastingType>[];
 
     // Check for White Days

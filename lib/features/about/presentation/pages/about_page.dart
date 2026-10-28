@@ -1,14 +1,13 @@
+import 'package:fasomo/core/constants/app_constants.dart';
+import 'package:fasomo/core/utils/app_localizations.dart';
+import 'package:fasomo/features/about/presentation/widgets/hadith_card.dart';
+import 'package:fasomo/features/about/presentation/widgets/info_section.dart';
+import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/utils/app_localizations.dart';
-import '../../../home/presentation/bloc/home_bloc.dart';
-import '../widgets/hadith_card.dart';
-import '../widgets/info_section.dart';
-
 class AboutPage extends StatelessWidget {
-  const AboutPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +29,7 @@ class AboutPage extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primary.withOpacity(0.1),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
