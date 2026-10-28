@@ -144,13 +144,114 @@ lib/
 
 ## Roadmap
 
-- [ ] **Fasting tracker and streaks**: mark the days you fasted and see your streaks and monthly totals.
-- [ ] **Ramadan mode with prayer times**: suhoor and iftar times for your location, with reminders tied to Fajr and Maghrib.
-- [ ] **Qada tracker**: count the Ramadan days you owe and log them as you make them up.
-- [ ] **Home-screen widget**: today's Hijri date and the next fasting day.
-- [ ] **Dark mode**: a complete dark theme with a light/dark/system switch.
-- [ ] **Hijri date adjustment**: shift the calendar by ±1–2 days to match local moon sighting.
-- [ ] **Notification tones**: choose the sound for reminders.
+The ideas below are planned, not built. Each one follows the existing conventions: a feature folder with `domain/`, `data/` and `presentation/`, a Bloc registered in GetIt, `Result`/`Failure` from repositories, "now" from the injected clock, strings in the ARB files, and tests for the pure logic and the bloc.
+
+Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is offline-first unless it's under [Needs a backend](#needs-a-backend).
+
+### Summary
+
+| Priority | Feature | New packages | Backend |
+|---|---|---|---|
+| P1 | [Home sky header](#home-sky-header-p1) | `dart_suncalc`, `geolocator` (optional) | No |
+| P1 | [Fasting tracker and streaks](#fasting-tracker-and-streaks-p1) | `drift` (or keep `shared_preferences`) | No |
+| P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | `adhan`, `geolocator` | No |
+| P1 | [Qada (make-up) tracker](#qada-make-up-tracker-p1) | — (shares the tracker store) | No |
+| P2 | [Hijri date adjustment](#hijri-date-adjustment-p2) | — | No |
+| P2 | [Dark mode](#dark-mode-p2) | — | No |
+| P2 | [Notification tones](#notification-tones-p2) | — (bundled sounds) | No |
+| P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
+| P2 | [Onboarding](#onboarding-p2) | — | No |
+| P3 | [Calendar extras](#calendar-extras-p3) | — | No |
+| P3 | [Duas and intentions for fasting](#duas-and-intentions-for-fasting-p3) | — | No |
+| P3 | [Share a fasting day](#share-a-fasting-day-p3) | `share_plus` | No |
+| P3 | [Backup and restore](#backup-and-restore-p3) | `share_plus`, `file_picker` | No |
+| — | [Needs a backend](#needs-a-backend) | Firebase or Supabase | Yes |
+
+### Home sky header (P1)
+
+A live sky at the top of Home: the sun by day and the moon by night, placed where they really are for the user's time and location, with the moon drawn in its real phase. It shows sunrise and sunset times and a countdown to the next one.
+
+- **Why:** it makes the app feel alive every time it opens, and it links the Hijri date to the moon it comes from.
+- **How:** a `CustomPainter` fed by a pure `SkyPosition` calculation (sun/moon altitude, azimuth and lit fraction from `dart_suncalc`, read through the injected clock). A `SkyBloc` loads the location (saved city, or device location if granted) and refreshes every minute while Home is visible. Respects reduced motion.
+- **Plan:** the full design is in [`docs/plans/home-sky-header.md`](docs/plans/home-sky-header.md).
+
+### Fasting tracker and streaks (P1)
+
+Mark a day as fasted, from a fasting-day card or from the calendar, and see it everywhere.
+
+- **What it shows:** fasted days ticked on the calendar; current and longest streak (counted over *recommended* days, so missing a non-fasting day doesn't break a streak); this month's and this year's totals per fasting type (e.g. "White Days: 9 of 12 this year").
+- **Why:** reminders tell you when to fast; tracking is what makes people come back every day.
+- **How:** new `tracker` feature. A `FastLog` entity (Hijri date, Gregorian date, type, fasted/missed). Storage moves to **Drift** (SQLite) because this is a growing history with date-range queries; `shared_preferences` is fine only if we keep a year or so. Streaks and totals are **derived** from the log on read, never stored. Tests: streak rules across month boundaries, Ramadan, and forbidden days.
+
+### Ramadan mode with prayer times (P1)
+
+During Ramadan (and optionally on any fasting day), Home switches to a Ramadan view.
+
+- **What it shows:** a countdown to Ramadan before it starts; during it, today's **suhoor (Fajr)** and **iftar (Maghrib)** times, a countdown to the next one, the day number ("Day 12 of 30"), and a simple daily checklist (fasted, Taraweeh, Quran pages).
+- **Reminders:** new reminder timings relative to prayer times, e.g. "30 minutes before Fajr" for suhoor and "at Maghrib" for iftar, instead of fixed clock times.
+- **How:** the `adhan` package computes prayer times offline from coordinates and a calculation method (Umm al-Qura, Egyptian, MWL, ISNA, …, chosen in settings, with a sensible default per country). Location comes from `geolocator` or a manually picked city, so the app still works with location permission denied. Prayer-time math stays pure and clock-injected; the reminder scheduler gains a "relative to prayer" timing.
+
+### Qada (make-up) tracker (P1)
+
+For Ramadan days that were missed and must be made up.
+
+- **What it does:** enter how many days you owe per year (or tick them on the calendar during Ramadan); log each make-up fast; see the remaining balance and an optional gentle reminder (e.g. every Monday and Thursday until it reaches zero). Reminds before the next Ramadan if days are still owed.
+- **How:** part of the tracker data, so a make-up fast on a Monday can count toward both the Qada balance and the Monday/Thursday streak. The balance is derived from the log, never stored separately.
+
+### Hijri date adjustment (P2)
+
+A setting to shift the Hijri calendar by −2 to +2 days.
+
+- **Why:** the app uses the Umm al-Qura table, but many countries start months by local moon sighting, so the date can be a day off. This is the most common correctness complaint in Hijri apps.
+- **How:** one offset stored in settings and applied inside the Hijri converter, so the calendar, fasting rules and reminders all move together. Reminders re-sync when it changes. Later, the default could come from a remote config per country (see backend).
+
+### Dark mode (P2)
+
+- A complete dark theme and a **System / Light / Dark** choice in settings, saved and restored before the first frame (today `themeMode` is fixed to light).
+- Fasting-type colours are checked for contrast in both themes, and states keep an icon or label so colour is never the only signal.
+
+### Notification tones (P2)
+
+- Pick a reminder sound from a few bundled tones (e.g. a soft chime or a short adhan clip) or the system default, plus vibrate-only.
+- **How:** sounds are bundled assets (`res/raw` on Android, the app bundle on iOS). On Android the sound belongs to the notification channel, so each tone gets its own channel; changing the tone re-syncs pending reminders.
+
+### Home-screen widget (P2)
+
+- Shows today's Hijri date and the next fasting day ("White Days in 3 days"); tapping it opens the app on that day.
+- **How:** `home_widget` with a native widget (Android `AppWidgetProvider`, iOS WidgetKit). The app writes a small snapshot whenever data or the date changes, and the widget only reads it.
+
+### Onboarding (P2)
+
+A short first-run flow: choose language, choose which fasting types interest you, set a default reminder time, and only then ask for notification permission (and location, if Ramadan mode or the sky header needs it), with a sentence explaining why.
+
+### Calendar extras (P3)
+
+- A **Today** button to jump back to the current month.
+- A **year view** showing all twelve Hijri months with fasting days marked.
+- A **Gregorian toggle** to show the Gregorian day number in each cell.
+- Swipe between months.
+
+### Duas and intentions for fasting (P3)
+
+A small offline collection: the intention for fasting, the dua at iftar, and the relevant hadith for each fasting type, in Arabic with English translation and source references. It can be opened from a fasting day's details.
+
+### Share a fasting day (P3)
+
+Share an image card ("Tomorrow is the Day of Arafah") with the date and its hadith, using the system share sheet behind an injected share service.
+
+### Backup and restore (P3)
+
+Once the tracker exists, export reminders, settings and the fasting log to a versioned JSON file and restore it on a new phone. This avoids accounts while still letting users keep their history.
+
+### Needs a backend
+
+These need a server or an account, so they come only after the offline features above:
+
+- **Sync across devices** with an account (Firebase Auth + Firestore, or Supabase).
+- **Family or group challenges**: fast together and see each other's progress.
+- **Remote content and moon-sighting updates**: update hadith text, or the per-country Hijri offset, without an app release (e.g. Firebase Remote Config).
+- **Announcement push notifications**, e.g. "Ramadan confirmed to start tomorrow" (Firebase Cloud Messaging).
+- **Crash reporting and analytics** (Crashlytics), opt-in and declared in the store privacy forms.
 
 ## Contributing
 
