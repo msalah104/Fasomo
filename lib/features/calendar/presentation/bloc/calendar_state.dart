@@ -4,45 +4,33 @@ enum CalendarStatus { initial, loading, success, error }
 
 class CalendarState extends Equatable {
   const new({
-    required this.currentMonth,
-    required this.currentYear,
     this.status = CalendarStatus.initial,
     this.days = const [],
-    this.selectedDay,
-    this.errorMessage,
+    this.month,
+    this.failure,
   });
+
   final CalendarStatus status;
   final List<CalendarDay> days;
-  final int currentMonth;
-  final int currentYear;
-  final CalendarDay? selectedDay;
-  final String? errorMessage;
+
+  /// The month shown; `null` until the first load resolves today.
+  final HijriMonth? month;
+  final CalendarFailure? failure;
 
   CalendarState copyWith({
     CalendarStatus? status,
     List<CalendarDay>? days,
-    int? currentMonth,
-    int? currentYear,
-    CalendarDay? selectedDay,
-    String? errorMessage,
+    HijriMonth? month,
+    CalendarFailure? failure,
   }) {
     return CalendarState(
       status: status ?? this.status,
       days: days ?? this.days,
-      currentMonth: currentMonth ?? this.currentMonth,
-      currentYear: currentYear ?? this.currentYear,
-      selectedDay: selectedDay ?? this.selectedDay,
-      errorMessage: errorMessage ?? this.errorMessage,
+      month: month ?? this.month,
+      failure: status == CalendarStatus.error ? failure ?? this.failure : null,
     );
   }
 
   @override
-  List<Object?> get props => [
-    status,
-    days,
-    currentMonth,
-    currentYear,
-    selectedDay,
-    errorMessage,
-  ];
+  List<Object?> get props => [status, days, month, failure];
 }

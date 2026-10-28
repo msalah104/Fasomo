@@ -1,4 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:fasomo/core/error/failures.dart';
+import 'package:fasomo/core/error/result.dart';
+import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
 import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
 import 'package:fasomo/features/home/domain/usecases/get_current_hijri_date.dart';
@@ -18,74 +21,40 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<ToggleLanguage>(_onToggleLanguage);
     on<RefreshHomeData>(_onRefreshHomeData);
   }
+
   final GetCurrentHijriDate getCurrentHijriDate;
   final GetUpcomingFastingDays getUpcomingFastingDays;
 
-  Future<void> _onLoadHomeData(
-    LoadHomeData event,
-    Emitter<HomeState> emit,
-  ) async {
+  void _onLoadHomeData(LoadHomeData event, Emitter<HomeState> emit) {
     emit(state.copyWith(status: HomeStatus.loading));
-
-    try {
-      final languageCode = state.locale.languageCode;
-      final currentDate = getCurrentHijriDate(languageCode);
-      final fastingDays = getUpcomingFastingDays(languageCode);
-
-      emit(
-        state.copyWith(
-          status: HomeStatus.success,
-          currentDate: currentDate,
-          upcomingFastingDays: fastingDays,
-        ),
-      );
-    } on Exception catch (e) {
-      emit(
-        state.copyWith(
-          status: HomeStatus.error,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
+    _load(emit);
   }
 
-  Future<void> _onToggleLanguage(
-    ToggleLanguage event,
-    Emitter<HomeState> emit,
-  ) async {
+  void _onRefreshHomeData(RefreshHomeData event, Emitter<HomeState> emit) =>
+      _load(emit);
+
+  void _onToggleLanguage(ToggleLanguage event, Emitter<HomeState> emit) {
     final newLocale = state.locale.languageCode == 'en'
         ? const Locale('ar', 'SA')
         : const Locale('en', 'US');
-
     emit(state.copyWith(locale: newLocale));
-
-    // Reload data with new language
-    add(RefreshHomeData());
   }
 
-  Future<void> _onRefreshHomeData(
-    RefreshHomeData event,
-    Emitter<HomeState> emit,
-  ) async {
-    try {
-      final languageCode = state.locale.languageCode;
-      final currentDate = getCurrentHijriDate(languageCode);
-      final fastingDays = getUpcomingFastingDays(languageCode);
+  void _load(Emitter<HomeState> emit) {
+    final today = getCurrentHijriDate(const NoParams());
+    final upcoming = getUpcomingFastingDays(const NoParams());
 
-      emit(
-        state.copyWith(
-          status: HomeStatus.success,
-          currentDate: currentDate,
-          upcomingFastingDays: fastingDays,
-        ),
-      );
-    } on Exception catch (e) {
-      emit(
-        state.copyWith(
-          status: HomeStatus.error,
-          errorMessage: e.toString(),
-        ),
-      );
+    switch ((today, upcoming)) {
+      case (Ok(value: final date), Ok(value: final days)):
+        emit(
+          state.copyWith(
+            status: HomeStatus.success,
+            currentDate: date,
+            upcomingFastingDays: days,
+          ),
+        );
+      case (Err(:final failure), _) || (_, Err(:final failure)):
+        emit(state.copyWith(status: HomeStatus.error, failure: failure));
     }
   }
 }

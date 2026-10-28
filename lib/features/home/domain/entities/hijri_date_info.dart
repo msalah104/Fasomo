@@ -1,23 +1,13 @@
 import 'package:equatable/equatable.dart';
-import 'package:hijri/hijri_calendar.dart';
+import 'package:fasomo/core/calendar/hijri_date.dart';
 
+/// Today's date in both calendars.
 class HijriDateInfo extends Equatable {
-  const new({
-    required this.hijriDate,
-    required this.gregorianDate,
-    required this.formattedHijri,
-    required this.formattedGregorian,
-  });
-  final HijriCalendar hijriDate;
+  const new({required this.hijriDate, required this.gregorianDate});
+
+  final HijriDate hijriDate;
   final DateTime gregorianDate;
-  final String formattedHijri;
-  final String formattedGregorian;
 
   @override
-  List<Object?> get props => [
-    hijriDate,
-    gregorianDate,
-    formattedHijri,
-    formattedGregorian,
-  ];
+  List<Object> get props => [hijriDate, gregorianDate];
 }

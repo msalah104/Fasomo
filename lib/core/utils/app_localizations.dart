@@ -14,6 +14,13 @@ class AppLocalizations {
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
       'app_name': 'Fasomo',
+      'retry': 'Retry',
+      'close': 'Close',
+      'no_specific_fasting_day': 'No specific fasting day',
+      'month_unavailable': 'This month is outside the supported calendar range',
+      'special_days': 'Special Days',
+      'toggle_language': 'Toggle language',
+      'days_left_plural': '{count} days left',
       'home': 'Home',
       'calendar': 'Calendar',
       'reminders': 'Reminders',
@@ -70,6 +77,13 @@ class AppLocalizations {
     },
     'ar': {
       'app_name': 'فاصومو',
+      'retry': 'إعادة المحاولة',
+      'close': 'إغلاق',
+      'no_specific_fasting_day': 'لا توجد أيام صيام محددة',
+      'month_unavailable': 'هذا الشهر خارج نطاق التقويم المدعوم',
+      'special_days': 'أيام مميزة',
+      'toggle_language': 'تغيير اللغة',
+      'days_left_plural': 'بعد {count} أيام',
       'home': 'الرئيسية',
       'calendar': 'التقويم',
       'reminders': 'التذكيرات',
@@ -123,6 +137,19 @@ class AppLocalizations {
       'optional_fasting': 'صيام مستحب',
       'mandatory_fasting': 'صيام واجب',
     },
+  };
+
+  String get retry => translate('retry');
+  String get close => translate('close');
+  String get noSpecificFastingDay => translate('no_specific_fasting_day');
+  String get monthUnavailable => translate('month_unavailable');
+  String get specialDays => translate('special_days');
+  String get toggleLanguage => translate('toggle_language');
+
+  String daysUntil(int days) => switch (days) {
+    0 => today,
+    1 => tomorrow,
+    _ => translate('days_left_plural').replaceAll('{count}', '$days'),
   };
 
   String translate(String key) {

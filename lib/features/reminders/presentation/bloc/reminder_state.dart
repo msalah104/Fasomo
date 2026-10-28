@@ -6,24 +6,28 @@ class ReminderState extends Equatable {
   const new({
     this.status = ReminderStatus.initial,
     this.reminders = const [],
-    this.errorMessage,
+    this.failure,
   });
+
   final ReminderStatus status;
   final List<Reminder> reminders;
-  final String? errorMessage;
+  final StorageFailure? failure;
+
+  bool isEnabledFor(FastingType type) =>
+      reminders.any((r) => r.fastingType == type && r.isEnabled);
 
   ReminderState copyWith({
     ReminderStatus? status,
     List<Reminder>? reminders,
-    String? errorMessage,
+    StorageFailure? failure,
   }) {
     return ReminderState(
       status: status ?? this.status,
       reminders: reminders ?? this.reminders,
-      errorMessage: errorMessage ?? this.errorMessage,
+      failure: status == ReminderStatus.error ? failure ?? this.failure : null,
     );
   }
 
   @override
-  List<Object?> get props => [status, reminders, errorMessage];
+  List<Object?> get props => [status, reminders, failure];
 }

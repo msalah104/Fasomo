@@ -1,43 +1,48 @@
 part of 'reminder_bloc.dart';
 
-abstract class ReminderEvent extends Equatable {
+sealed class ReminderEvent extends Equatable {
   const new();
 
   @override
   List<Object> get props => [];
 }
 
-class LoadReminders extends ReminderEvent;
-
-class AddFastingDayReminder extends ReminderEvent {
-  const new(this.fastingDay, this.title);
-  final String fastingDay;
-  final String title;
-
-  @override
-  List<Object> get props => [fastingDay, title];
+final class LoadReminders extends ReminderEvent {
+  const new();
 }
 
-class ToggleReminder extends ReminderEvent {
-  const new(this.fastingDay);
-  final String fastingDay;
+final class AddFastingDayReminder extends ReminderEvent {
+  const new(this.fastingType);
+
+  final FastingType fastingType;
 
   @override
-  List<Object> get props => [fastingDay];
+  List<Object> get props => [fastingType];
 }
 
-class UpdateReminderSettings extends ReminderEvent {
+final class ToggleReminder extends ReminderEvent {
+  const new(this.fastingType);
+
+  final FastingType fastingType;
+
+  @override
+  List<Object> get props => [fastingType];
+}
+
+final class UpdateReminderSettings extends ReminderEvent {
   const new(this.reminder);
+
   final Reminder reminder;
 
   @override
   List<Object> get props => [reminder];
 }
 
-class DeleteReminderEvent extends ReminderEvent {
-  const new(this.id);
-  final String id;
+final class DeleteReminderEvent extends ReminderEvent {
+  const new(this.fastingType);
+
+  final FastingType fastingType;
 
   @override
-  List<Object> get props => [id];
+  List<Object> get props => [fastingType];
 }

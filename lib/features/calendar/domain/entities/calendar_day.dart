@@ -1,27 +1,27 @@
 import 'package:equatable/equatable.dart';
-import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
-import 'package:hijri/hijri_calendar.dart';
+import 'package:fasomo/core/calendar/fasting_type.dart';
+import 'package:fasomo/core/calendar/hijri_date.dart';
 
+/// One cell of the Hijri month grid.
 class CalendarDay extends Equatable {
   const new({
     required this.hijriDate,
     required this.gregorianDate,
     required this.isToday,
-    required this.isFastingDay,
     required this.fastingTypes,
   });
-  final HijriCalendar hijriDate;
+
+  final HijriDate hijriDate;
+
+  /// Local midnight of the Gregorian day.
   final DateTime gregorianDate;
   final bool isToday;
-  final bool isFastingDay;
+
+  /// Sorted by priority; empty on an ordinary day.
   final List<FastingType> fastingTypes;
 
+  bool get isFastingDay => fastingTypes.isNotEmpty;
+
   @override
-  List<Object?> get props => [
-    hijriDate,
-    gregorianDate,
-    isToday,
-    isFastingDay,
-    fastingTypes,
-  ];
+  List<Object> get props => [hijriDate, gregorianDate, isToday, fastingTypes];
 }

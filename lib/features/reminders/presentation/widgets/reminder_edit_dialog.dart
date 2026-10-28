@@ -1,3 +1,4 @@
+import 'package:fasomo/core/presentation/fasting_type_text.dart';
 import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
@@ -47,7 +48,7 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.reminder.title,
+              localization.fastingTypeTitle(widget.reminder.fastingType),
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 24),
@@ -106,12 +107,10 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
         ),
         ElevatedButton(
           onPressed: () {
-            final updatedReminder = widget.reminder.copyWith(
-              reminderTime: _selectedTime,
-              customMessage: _messageController.text.isEmpty
-                  ? null
-                  : _messageController.text,
-            );
+            final message = _messageController.text.trim();
+            final updatedReminder = widget.reminder
+                .copyWith(reminderTime: _selectedTime)
+                .withCustomMessage(message.isEmpty ? null : message);
 
             context.read<ReminderBloc>().add(
               UpdateReminderSettings(updatedReminder),

@@ -44,19 +44,4 @@ class AppConstants {
     "Dhul Qa'dah",
     'Dhul Hijjah',
   ];
-
-  // Fasting Days
-  static const List<int> whiteDays = [13, 14, 15];
-  static const List<int> mondayThursdayWeekdays = [1, 4]; // Monday and Thursday
-  static const int dayOfArafah = 9; // 9th of Dhul Hijjah
-  static const int dayOfAshura = 10; // 10th of Muharram
-  static const int dayOfTasua = 9; // 9th of Muharram
-
-  // Special Months
-  static const int muharram = 1;
-  static const int rajab = 7;
-  static const int shaban = 8;
-  static const int ramadan = 9;
-  static const int shawwal = 10;
-  static const int dhulHijjah = 12;
 }

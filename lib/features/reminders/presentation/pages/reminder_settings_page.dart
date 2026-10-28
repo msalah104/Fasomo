@@ -24,11 +24,11 @@ class ReminderSettingsPage extends StatelessWidget {
               children: [
                 const Icon(Icons.error_outline, size: 48, color: Colors.red),
                 const SizedBox(height: 16),
-                Text(state.errorMessage ?? localization.errorOccurred),
+                Text(localization.errorOccurred),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<ReminderBloc>().add(LoadReminders());
+                    context.read<ReminderBloc>().add(const LoadReminders());
                   },
                   child: const Text('Retry'),
                 ),

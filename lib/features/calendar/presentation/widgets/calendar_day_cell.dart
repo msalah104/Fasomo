@@ -1,39 +1,37 @@
+import 'package:fasomo/core/presentation/fasting_type_style.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
-import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
 import 'package:flutter/material.dart';
 
 class CalendarDayCell extends StatelessWidget {
-  const new({
-    required this.day,
-    required this.onTap,
-    super.key,
-  });
+  const new({required this.day, required this.onTap, super.key});
+
   final CalendarDay day;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final primaryType = day.fastingTypes.firstOrNull;
+    final background = day.isToday
+        ? theme.colorScheme.primary.withValues(alpha: 0.1)
+        : primaryType?.color.withValues(alpha: 0.15) ?? Colors.transparent;
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
-      child: Container(
+      child: Ink(
         decoration: BoxDecoration(
-          color: _getBackgroundColor(theme),
+          color: background,
           borderRadius: BorderRadius.circular(8),
           border: day.isToday
-              ? Border.all(
-                  color: theme.colorScheme.primary,
-                  width: 2,
-                )
+              ? Border.all(color: theme.colorScheme.primary, width: 2)
               : null,
         ),
         child: Stack(
           children: [
             Center(
               child: Text(
-                '${day.hijriDate.hDay}',
+                '${day.hijriDate.day}',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: day.isToday ? FontWeight.bold : FontWeight.normal,
                   color: day.isToday
@@ -42,78 +40,41 @@ class CalendarDayCell extends StatelessWidget {
                 ),
               ),
             ),
-            if (day.isFastingDay) _buildFastingIndicators(theme),
+            if (day.isFastingDay)
+              PositionedDirectional(
+                bottom: 2,
+                start: 0,
+                end: 0,
+                child: _FastingDots(day: day),
+              ),
           ],
         ),
       ),
     );
   }
+}
 
-  Color _getBackgroundColor(ThemeData theme) {
-    if (day.isToday) {
-      return theme.colorScheme.primary.withValues(alpha: 0.1);
-    }
-    if (day.isFastingDay) {
-      return _getPrimaryFastingColor().withValues(alpha: 0.15);
-    }
-    return Colors.transparent;
-  }
+class _FastingDots extends StatelessWidget {
+  const new({required this.day});
 
-  Color _getPrimaryFastingColor() {
-    if (day.fastingTypes.contains(FastingType.ramadan)) {
-      return Colors.purple;
-    }
-    if (day.fastingTypes.contains(FastingType.arafah) ||
-        day.fastingTypes.contains(FastingType.ashura) ||
-        day.fastingTypes.contains(FastingType.tasua)) {
-      return Colors.blue;
-    }
-    if (day.fastingTypes.contains(FastingType.whiteDays)) {
-      return Colors.green;
-    }
-    if (day.fastingTypes.contains(FastingType.mondayThursday)) {
-      return Colors.orange;
-    }
-    return Colors.teal;
-  }
+  final CalendarDay day;
 
-  Widget _buildFastingIndicators(ThemeData theme) {
-    return Positioned(
-      bottom: 2,
-      left: 0,
-      right: 0,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: day.fastingTypes.take(3).map((type) {
-          return Container(
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (final type in day.fastingTypes.take(3))
+          Container(
             width: 6,
             height: 6,
             margin: const EdgeInsets.symmetric(horizontal: 1),
             decoration: BoxDecoration(
-              color: _getColorForType(type),
+              color: type.color,
               shape: BoxShape.circle,
             ),
-          );
-        }).toList(),
-      ),
+          ),
+      ],
     );
-  }
-
-  Color _getColorForType(FastingType type) {
-    switch (type) {
-      case FastingType.ramadan:
-        return Colors.purple;
-      case FastingType.arafah:
-      case FastingType.ashura:
-      case FastingType.tasua:
-        return Colors.blue;
-      case FastingType.whiteDays:
-        return Colors.green;
-      case FastingType.mondayThursday:
-        return Colors.orange;
-      case FastingType.shawwal:
-      case FastingType.other:
-        return Colors.teal;
-    }
   }
 }

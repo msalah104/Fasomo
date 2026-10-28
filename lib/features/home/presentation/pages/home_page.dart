@@ -1,170 +1,125 @@
+import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/utils/app_localizations.dart';
-import 'package:fasomo/features/about/presentation/pages/about_page.dart';
-import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/widgets/current_date_card.dart';
 import 'package:fasomo/features/home/presentation/widgets/fasting_day_card.dart';
-import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomePage extends StatefulWidget {
-  const new({super.key});
+/// Today's date and the upcoming fasting days.
+///
+/// Reminder state comes from outside so this feature does not depend on the
+/// reminders feature; the app shell wires the two together.
+class HomePage extends StatelessWidget {
+  const new({
+    required this.isReminderOn,
+    required this.onToggleReminder,
+    super.key,
+  });
+
+  final bool Function(FastingType type) isReminderOn;
+  final ValueChanged<FastingType> onToggleReminder;
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        return switch (state.status) {
+          HomeStatus.initial || HomeStatus.loading => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          HomeStatus.error => const _HomeError(),
+          HomeStatus.success => _HomeContent(
+            state: state,
+            isReminderOn: isReminderOn,
+            onToggleReminder: onToggleReminder,
+          ),
+        };
+      },
+    );
+  }
 }
 
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
+class _HomeContent extends StatelessWidget {
+  const new({
+    required this.state,
+    required this.isReminderOn,
+    required this.onToggleReminder,
+  });
+
+  final HomeState state;
+  final bool Function(FastingType type) isReminderOn;
+  final ValueChanged<FastingType> onToggleReminder;
 
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final currentDate = state.currentDate;
 
-    final pages = [
-      _buildHomePage(context, localization),
-      const CalendarPage(),
-      const ReminderSettingsPage(),
-      const AboutPage(),
-    ];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_getTitle(localization)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.language),
-            onPressed: () {
-              context.read<HomeBloc>().add(ToggleLanguage());
-            },
-            tooltip: 'Toggle Language',
+    return RefreshIndicator(
+      onRefresh: () async =>
+          context.read<HomeBloc>().add(const RefreshHomeData()),
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (currentDate != null) CurrentDateCard(dateInfo: currentDate),
+          const SizedBox(height: 24),
+          Text(
+            localization.upcomingFastingDays,
+            style: theme.textTheme.headlineMedium,
           ),
-        ],
-      ),
-      body: pages[_selectedIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
-            label: localization.home,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.calendar_today_outlined),
-            selectedIcon: const Icon(Icons.calendar_today),
-            label: localization.calendar,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.notifications_outlined),
-            selectedIcon: const Icon(Icons.notifications),
-            label: localization.reminders,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.info_outlined),
-            selectedIcon: const Icon(Icons.info),
-            label: localization.about,
-          ),
+          const SizedBox(height: 16),
+          if (state.upcomingFastingDays.isEmpty)
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Center(
+                  child: Text(
+                    localization.noUpcomingFasting,
+                    style: theme.textTheme.bodyLarge,
+                  ),
+                ),
+              ),
+            )
+          else
+            for (final day in state.upcomingFastingDays)
+              FastingDayCard(
+                fastingDay: day,
+                isReminderOn: isReminderOn(day.primaryType),
+                onToggleReminder: () => onToggleReminder(day.primaryType),
+              ),
         ],
       ),
     );
   }
+}
 
-  String _getTitle(AppLocalizations localization) {
-    switch (_selectedIndex) {
-      case 0:
-        return localization.home;
-      case 1:
-        return localization.calendar;
-      case 2:
-        return localization.reminders;
-      case 3:
-        return localization.about;
-      default:
-        return localization.appName;
-    }
-  }
+class _HomeError extends StatelessWidget {
+  const new();
 
-  Widget _buildHomePage(BuildContext context, AppLocalizations localization) {
-    return BlocBuilder<HomeBloc, HomeState>(
-      builder: (context, state) {
-        if (state.status == HomeStatus.loading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state.status == HomeStatus.error) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                const SizedBox(height: 16),
-                Text(localization.errorOccurred),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<HomeBloc>().add(LoadHomeData());
-                  },
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return RefreshIndicator(
-          onRefresh: () async {
-            context.read<HomeBloc>().add(RefreshHomeData());
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Current Hijri Date Card
-                if (state.currentDate != null)
-                  CurrentDateCard(dateInfo: state.currentDate!),
-
-                const SizedBox(height: 24),
-
-                // Upcoming Fasting Days Section
-                Text(
-                  localization.upcomingFastingDays,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 16),
-
-                if (state.upcomingFastingDays.isEmpty)
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Center(
-                        child: Text(
-                          localization.noUpcomingFasting,
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ),
-                    ),
-                  )
-                else
-                  ...state.upcomingFastingDays.map(
-                    (fastingDay) => FastingDayCard(
-                      fastingDay: fastingDay,
-                      locale: state.locale,
-                    ),
-                  ),
-              ],
-            ),
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: Theme.of(context).colorScheme.error,
           ),
-        );
-      },
+          const SizedBox(height: 16),
+          Text(localization.errorOccurred),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => context.read<HomeBloc>().add(const LoadHomeData()),
+            child: Text(localization.retry),
+          ),
+        ],
+      ),
     );
   }
 }

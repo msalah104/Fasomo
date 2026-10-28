@@ -1,43 +1,31 @@
 import 'package:equatable/equatable.dart';
-import 'package:hijri/hijri_calendar.dart';
+import 'package:fasomo/core/calendar/fasting_type.dart';
+import 'package:fasomo/core/calendar/hijri_date.dart';
 
-enum FastingType {
-  whiteDays,
-  mondayThursday,
-  arafah,
-  ashura,
-  tasua,
-  ramadan,
-  shawwal,
-  other,
-}
-
+/// An upcoming day on which at least one kind of fasting applies.
 class FastingDay extends Equatable {
   const new({
     required this.hijriDate,
     required this.gregorianDate,
-    required this.type,
-    required this.title,
-    required this.description,
-    required this.isMandatory,
+    required this.types,
     required this.daysUntil,
-  });
-  final HijriCalendar hijriDate;
+  }) : assert(types.length > 0, 'a fasting day has at least one type');
+
+  final HijriDate hijriDate;
+
+  /// Local midnight of the Gregorian day.
   final DateTime gregorianDate;
-  final FastingType type;
-  final String title;
-  final String description;
-  final bool isMandatory;
+
+  /// Sorted by priority; never empty.
+  final List<FastingType> types;
+
+  /// Calendar days from today: 0 for today, 1 for tomorrow.
   final int daysUntil;
 
+  FastingType get primaryType => types.first;
+
+  bool get isObligatory => types.any((type) => type.isObligatory);
+
   @override
-  List<Object?> get props => [
-    hijriDate,
-    gregorianDate,
-    type,
-    title,
-    description,
-    isMandatory,
-    daysUntil,
-  ];
+  List<Object> get props => [hijriDate, gregorianDate, types, daysUntil];
 }

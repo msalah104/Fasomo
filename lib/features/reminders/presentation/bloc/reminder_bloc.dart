@@ -1,4 +1,8 @@
+import 'package:clock/clock.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fasomo/core/calendar/fasting_type.dart';
+import 'package:fasomo/core/error/failures.dart';
+import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/core/utils/notification_helper.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
@@ -17,6 +21,7 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
     required this.saveReminder,
     required this.deleteReminder,
     required this.notificationPlugin,
+    required this.clock,
   }) : super(const ReminderState()) {
     on<LoadReminders>(_onLoadReminders);
     on<AddFastingDayReminder>(_onAddFastingDayReminder);
@@ -24,188 +29,91 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
     on<UpdateReminderSettings>(_onUpdateReminderSettings);
     on<DeleteReminderEvent>(_onDeleteReminder);
   }
+
   final GetReminders getReminders;
   final SaveReminder saveReminder;
   final DeleteReminder deleteReminder;
   final FlutterLocalNotificationsPlugin notificationPlugin;
+  final Clock clock;
 
-  Future<void> _onLoadReminders(
-    LoadReminders event,
-    Emitter<ReminderState> emit,
-  ) async {
+  void _onLoadReminders(LoadReminders event, Emitter<ReminderState> emit) {
     emit(state.copyWith(status: ReminderStatus.loading));
-
-    try {
-      final reminders = getReminders(NoParams());
-
-      emit(
-        state.copyWith(
-          status: ReminderStatus.success,
-          reminders: reminders,
-        ),
-      );
-    } on Exception catch (e) {
-      emit(
-        state.copyWith(
-          status: ReminderStatus.error,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
+    _emitStored(emit);
   }
 
   Future<void> _onAddFastingDayReminder(
     AddFastingDayReminder event,
     Emitter<ReminderState> emit,
-  ) async {
-    try {
-      final reminder = Reminder(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        fastingDay: event.fastingDay,
-        title: event.title,
-        isEnabled: true,
-      );
-
-      await saveReminder(reminder);
-
-      // Schedule notification
-      await _scheduleNotification(reminder);
-
-      final updatedReminders = getReminders(NoParams());
-      emit(
-        state.copyWith(
-          status: ReminderStatus.success,
-          reminders: updatedReminders,
-        ),
-      );
-    } on Exception catch (e) {
-      emit(
-        state.copyWith(
-          status: ReminderStatus.error,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
+  ) => _save(Reminder(fastingType: event.fastingType, isEnabled: true), emit);
 
   Future<void> _onToggleReminder(
     ToggleReminder event,
     Emitter<ReminderState> emit,
   ) async {
-    try {
-      final reminder = state.reminders.firstWhere(
-        (r) => r.fastingDay == event.fastingDay,
-      );
-
-      final updatedReminder = reminder.copyWith(isEnabled: !reminder.isEnabled);
-
-      // Update in repository
-      await deleteReminder(reminder.id);
-      await saveReminder(updatedReminder);
-
-      // Update notification
-      if (updatedReminder.isEnabled) {
-        await _scheduleNotification(updatedReminder);
-      } else {
-        await NotificationHelper.cancelNotification(
-          notificationPlugin,
-          int.parse(updatedReminder.id),
-        );
-      }
-
-      final updatedReminders = getReminders(NoParams());
-      emit(
-        state.copyWith(
-          status: ReminderStatus.success,
-          reminders: updatedReminders,
-        ),
-      );
-    } on Exception catch (e) {
-      emit(
-        state.copyWith(
-          status: ReminderStatus.error,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
+    final existing = state.reminders
+        .where((r) => r.fastingType == event.fastingType)
+        .firstOrNull;
+    final updated = existing == null
+        ? Reminder(fastingType: event.fastingType, isEnabled: true)
+        : existing.copyWith(isEnabled: !existing.isEnabled);
+    await _save(updated, emit);
   }
 
   Future<void> _onUpdateReminderSettings(
     UpdateReminderSettings event,
     Emitter<ReminderState> emit,
-  ) async {
-    try {
-      await deleteReminder(event.reminder.id);
-      await saveReminder(event.reminder);
-
-      // Reschedule notification
-      if (event.reminder.isEnabled) {
-        await NotificationHelper.cancelNotification(
-          notificationPlugin,
-          int.parse(event.reminder.id),
-        );
-        await _scheduleNotification(event.reminder);
-      }
-
-      final updatedReminders = getReminders(NoParams());
-      emit(
-        state.copyWith(
-          status: ReminderStatus.success,
-          reminders: updatedReminders,
-        ),
-      );
-    } on Exception catch (e) {
-      emit(
-        state.copyWith(
-          status: ReminderStatus.error,
-          errorMessage: e.toString(),
-        ),
-      );
-    }
-  }
+  ) => _save(event.reminder, emit);
 
   Future<void> _onDeleteReminder(
     DeleteReminderEvent event,
     Emitter<ReminderState> emit,
   ) async {
-    try {
-      await deleteReminder(event.id);
+    switch (await deleteReminder(event.fastingType.name)) {
+      case Ok():
+        await NotificationHelper.cancelNotification(
+          notificationPlugin,
+          event.fastingType.index,
+        );
+        _emitStored(emit);
+      case Err(:final failure):
+        emit(state.copyWith(status: ReminderStatus.error, failure: failure));
+    }
+  }
 
-      await NotificationHelper.cancelNotification(
-        notificationPlugin,
-        int.parse(event.id),
-      );
+  Future<void> _save(Reminder reminder, Emitter<ReminderState> emit) async {
+    switch (await saveReminder(reminder)) {
+      case Ok():
+        await NotificationHelper.cancelNotification(
+          notificationPlugin,
+          reminder.fastingType.index,
+        );
+        if (reminder.isEnabled) await _scheduleNotification(reminder);
+        _emitStored(emit);
+      case Err(:final failure):
+        emit(state.copyWith(status: ReminderStatus.error, failure: failure));
+    }
+  }
 
-      final updatedReminders = getReminders(NoParams());
-      emit(
-        state.copyWith(
-          status: ReminderStatus.success,
-          reminders: updatedReminders,
-        ),
-      );
-    } on Exception catch (e) {
-      emit(
-        state.copyWith(
-          status: ReminderStatus.error,
-          errorMessage: e.toString(),
-        ),
-      );
+  void _emitStored(Emitter<ReminderState> emit) {
+    switch (getReminders(const NoParams())) {
+      case Ok(value: final reminders):
+        emit(
+          state.copyWith(status: ReminderStatus.success, reminders: reminders),
+        );
+      case Err(:final failure):
+        emit(state.copyWith(status: ReminderStatus.error, failure: failure));
     }
   }
 
   Future<void> _scheduleNotification(Reminder reminder) async {
-    // For demo purposes, schedule a notification
-    // In a real app, you'd calculate the actual fasting day date
-    final scheduledDate = DateTime.now().add(const Duration(hours: 1));
-
-    final message =
-        reminder.customMessage ?? 'Reminder: ${reminder.title} is coming up!';
+    // Placeholder fire time; real fasting-day fire times replace this.
+    final scheduledDate = clock.now().add(const Duration(hours: 1));
 
     await NotificationHelper.scheduleNotification(
       flutterLocalNotificationsPlugin: notificationPlugin,
-      id: int.parse(reminder.id),
+      id: reminder.fastingType.index,
       title: 'Fasting Reminder',
-      body: message,
+      body: reminder.customMessage ?? 'Fasting day coming up',
       scheduledDate: scheduledDate,
     );
   }

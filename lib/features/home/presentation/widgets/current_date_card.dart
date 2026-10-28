@@ -1,18 +1,19 @@
+import 'package:fasomo/core/presentation/date_formatter.dart';
 import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
 import 'package:flutter/material.dart';
 
 class CurrentDateCard extends StatelessWidget {
-  const new({
-    required this.dateInfo,
-    super.key,
-  });
+  const new({required this.dateInfo, super.key});
+
   final HijriDateInfo dateInfo;
 
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
+    final languageCode = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
+    final onPrimary = theme.colorScheme.onPrimary;
 
     return Card(
       elevation: 4,
@@ -26,8 +27,8 @@ class CurrentDateCard extends StatelessWidget {
               theme.colorScheme.primary,
               theme.colorScheme.primary.withValues(alpha: 0.8),
             ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: AlignmentDirectional.topStart,
+            end: AlignmentDirectional.bottomEnd,
           ),
         ),
         child: Column(
@@ -36,30 +37,30 @@ class CurrentDateCard extends StatelessWidget {
             Text(
               localization.currentHijriDate,
               style: theme.textTheme.titleMedium?.copyWith(
-                color: Colors.white70,
+                color: onPrimary.withValues(alpha: 0.85),
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              dateInfo.formattedHijri,
+              DateFormatter.hijri(dateInfo.hijriDate, languageCode),
               style: theme.textTheme.displaySmall?.copyWith(
-                color: Colors.white,
+                color: onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.calendar_today,
                   size: 16,
-                  color: Colors.white70,
+                  color: onPrimary.withValues(alpha: 0.85),
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  dateInfo.formattedGregorian,
+                  DateFormatter.gregorian(dateInfo.gregorianDate, languageCode),
                   style: theme.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white70,
+                    color: onPrimary.withValues(alpha: 0.85),
                   ),
                 ),
               ],

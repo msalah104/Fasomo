@@ -1,10 +1,12 @@
+import 'package:clock/clock.dart';
+import 'package:fasomo/core/calendar/fasting_calendar.dart';
+import 'package:fasomo/core/calendar/hijri_converter.dart';
 import 'package:fasomo/core/utils/notification_helper.dart';
-import 'package:fasomo/features/calendar/data/datasources/calendar_local_data_source.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
 import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
+import 'package:fasomo/features/calendar/domain/usecases/get_current_hijri_month.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_hijri_month.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
-import 'package:fasomo/features/home/data/datasources/fasting_local_data_source.dart';
 import 'package:fasomo/features/home/data/repositories/fasting_repository_impl.dart';
 import 'package:fasomo/features/home/domain/repositories/fasting_repository.dart';
 import 'package:fasomo/features/home/domain/usecases/get_current_hijri_date.dart';
@@ -23,76 +25,55 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt sl = GetIt.instance;
 
+/// The composition root: the only place concrete implementations are chosen.
 Future<void> init() async {
   // ============ Features ============
 
-  // --- Home Feature ---
-  // Bloc
-  sl.registerFactory(
-    () => HomeBloc(
-      getUpcomingFastingDays: sl(),
-      getCurrentHijriDate: sl(),
-    ),
-  );
+  // --- Home ---
+  sl
+    ..registerFactory(
+      () => HomeBloc(getCurrentHijriDate: sl(), getUpcomingFastingDays: sl()),
+    )
+    ..registerLazySingleton(() => GetUpcomingFastingDays(sl()))
+    ..registerLazySingleton(() => GetCurrentHijriDate(sl()))
+    ..registerLazySingleton<FastingRepository>(
+      () => FastingRepositoryImpl(calendar: sl(), clock: sl()),
+    )
+    // --- Calendar ---
+    ..registerFactory(
+      () => CalendarBloc(getCurrentHijriMonth: sl(), getHijriMonth: sl()),
+    )
+    ..registerLazySingleton(() => GetCurrentHijriMonth(sl()))
+    ..registerLazySingleton(() => GetHijriMonth(sl()))
+    ..registerLazySingleton<CalendarRepository>(
+      () => CalendarRepositoryImpl(calendar: sl(), clock: sl()),
+    )
+    // --- Reminders ---
+    ..registerFactory(
+      () => ReminderBloc(
+        getReminders: sl(),
+        saveReminder: sl(),
+        deleteReminder: sl(),
+        notificationPlugin: sl(),
+        clock: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => GetReminders(sl()))
+    ..registerLazySingleton(() => SaveReminder(sl()))
+    ..registerLazySingleton(() => DeleteReminder(sl()))
+    ..registerLazySingleton<ReminderRepository>(
+      () => ReminderRepositoryImpl(localDataSource: sl()),
+    )
+    ..registerLazySingleton<ReminderLocalDataSource>(
+      () => ReminderLocalDataSourceImpl(sharedPreferences: sl()),
+    )
+    // ============ Core ============
+    ..registerLazySingleton<Clock>(() => const Clock())
+    ..registerLazySingleton<HijriConverter>(
+      () => const UmmAlQuraHijriConverter(),
+    )
+    ..registerLazySingleton(() => FastingCalendar(sl()));
 
-  // Use cases
-  sl.registerLazySingleton(() => GetUpcomingFastingDays(sl()));
-  sl.registerLazySingleton(() => GetCurrentHijriDate(sl()));
-
-  // Repository
-  sl.registerLazySingleton<FastingRepository>(
-    () => FastingRepositoryImpl(localDataSource: sl()),
-  );
-
-  // Data source
-  sl.registerLazySingleton<FastingLocalDataSource>(
-    () => FastingLocalDataSourceImpl(sharedPreferences: sl()),
-  );
-
-  // --- Calendar Feature ---
-  // Bloc
-  sl.registerFactory(() => CalendarBloc(getHijriMonth: sl()));
-
-  // Use cases
-  sl.registerLazySingleton(() => GetHijriMonth(sl()));
-
-  // Repository
-  sl.registerLazySingleton<CalendarRepository>(
-    () => CalendarRepositoryImpl(localDataSource: sl()),
-  );
-
-  // Data source
-  sl.registerLazySingleton<CalendarLocalDataSource>(
-    CalendarLocalDataSourceImpl.new,
-  );
-
-  // --- Reminders Feature ---
-  // Bloc
-  sl.registerFactory(
-    () => ReminderBloc(
-      getReminders: sl(),
-      saveReminder: sl(),
-      deleteReminder: sl(),
-      notificationPlugin: sl(),
-    ),
-  );
-
-  // Use cases
-  sl.registerLazySingleton(() => GetReminders(sl()));
-  sl.registerLazySingleton(() => SaveReminder(sl()));
-  sl.registerLazySingleton(() => DeleteReminder(sl()));
-
-  // Repository
-  sl.registerLazySingleton<ReminderRepository>(
-    () => ReminderRepositoryImpl(localDataSource: sl()),
-  );
-
-  // Data source
-  sl.registerLazySingleton<ReminderLocalDataSource>(
-    () => ReminderLocalDataSourceImpl(sharedPreferences: sl()),
-  );
-
-  // ============ Core ============
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
 

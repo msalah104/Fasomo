@@ -8,27 +8,28 @@ class HomeState extends Equatable {
     this.currentDate,
     this.upcomingFastingDays = const [],
     this.locale = const Locale('en', 'US'),
-    this.errorMessage,
+    this.failure,
   });
+
   final HomeStatus status;
   final HijriDateInfo? currentDate;
   final List<FastingDay> upcomingFastingDays;
   final Locale locale;
-  final String? errorMessage;
+  final CalendarFailure? failure;
 
   HomeState copyWith({
     HomeStatus? status,
     HijriDateInfo? currentDate,
     List<FastingDay>? upcomingFastingDays,
     Locale? locale,
-    String? errorMessage,
+    CalendarFailure? failure,
   }) {
     return HomeState(
       status: status ?? this.status,
       currentDate: currentDate ?? this.currentDate,
       upcomingFastingDays: upcomingFastingDays ?? this.upcomingFastingDays,
       locale: locale ?? this.locale,
-      errorMessage: errorMessage ?? this.errorMessage,
+      failure: status == HomeStatus.error ? failure ?? this.failure : null,
     );
   }
 
@@ -38,6 +39,6 @@ class HomeState extends Equatable {
     currentDate,
     upcomingFastingDays,
     locale,
-    errorMessage,
+    failure,
   ];
 }

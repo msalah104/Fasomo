@@ -1,69 +1,58 @@
+import 'package:fasomo/core/calendar/hijri_date.dart';
 import 'package:fasomo/core/constants/app_constants.dart';
-import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CalendarHeader extends StatelessWidget {
   const new({
     required this.month,
-    required this.year,
     required this.onPreviousMonth,
     required this.onNextMonth,
     super.key,
   });
-  final int month;
-  final int year;
+
+  final HijriMonth month;
   final VoidCallback onPreviousMonth;
   final VoidCallback onNextMonth;
 
   @override
   Widget build(BuildContext context) {
-    final locale = context.watch<HomeBloc>().state.locale;
-    final monthNames = locale.languageCode == 'ar'
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final monthNames = languageCode == 'ar'
         ? AppConstants.arabicMonthNames
         : AppConstants.englishMonthNames;
+    final theme = Theme.of(context);
 
     return Card(
-      elevation: 2,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // chevron_left/right mirror automatically in RTL.
             IconButton(
-              icon: Icon(
-                locale.languageCode == 'ar'
-                    ? Icons.chevron_right
-                    : Icons.chevron_left,
-              ),
+              icon: const Icon(Icons.chevron_left),
               onPressed: onPreviousMonth,
-              tooltip: 'Previous Month',
             ),
             Column(
               children: [
                 Text(
-                  monthNames[month - 1],
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  monthNames[month.month - 1],
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '$year ${locale.languageCode == 'ar' ? 'هـ' : 'AH'}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.secondary,
+                  '${month.year} ${languageCode == 'ar' ? 'هـ' : 'AH'}',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.secondary,
                   ),
                 ),
               ],
             ),
             IconButton(
-              icon: Icon(
-                locale.languageCode == 'ar'
-                    ? Icons.chevron_left
-                    : Icons.chevron_right,
-              ),
+              icon: const Icon(Icons.chevron_right),
               onPressed: onNextMonth,
-              tooltip: 'Next Month',
             ),
           ],
         ),

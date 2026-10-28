@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fasomo/core/presentation/fasting_type_text.dart';
 import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
@@ -42,7 +43,7 @@ class ReminderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        reminder.title,
+                        localization.fastingTypeTitle(reminder.fastingType),
                         style: theme.textTheme.titleMedium,
                       ),
                       const SizedBox(height: 4),
@@ -62,7 +63,7 @@ class ReminderCard extends StatelessWidget {
                   value: reminder.isEnabled,
                   onChanged: (value) {
                     context.read<ReminderBloc>().add(
-                      ToggleReminder(reminder.fastingDay),
+                      ToggleReminder(reminder.fastingType),
                     );
                   },
                 ),
@@ -164,7 +165,7 @@ class ReminderCard extends StatelessWidget {
             TextButton(
               onPressed: () {
                 context.read<ReminderBloc>().add(
-                  DeleteReminderEvent(reminder.id),
+                  DeleteReminderEvent(reminder.fastingType),
                 );
                 Navigator.pop(dialogContext);
               },
