@@ -8,9 +8,12 @@ import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class DayDetailSheet extends StatelessWidget {
-  const new({required this.day, super.key});
+  const new({required this.day, this.action, super.key});
 
   final CalendarDay day;
+
+  /// Shown above the close button, e.g. to mark the day as fasted.
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +51,10 @@ class DayDetailSheet extends StatelessWidget {
               for (final type in day.fastingTypes) _FastingTypeCard(type: type),
             ] else
               _NoFastingCard(message: localization.noSpecificFastingDay),
+            if (action case final action?) ...[
+              const SizedBox(height: 8),
+              SizedBox(width: double.infinity, child: action),
+            ],
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,

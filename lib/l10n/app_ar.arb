@@ -99,5 +99,21 @@
   "copyright": "© فاصومو. جميع الحقوق محفوظة.",
   "monthProgress": "اليوم {day} من {total}",
   "weekStripTitle": "هذا الأسبوع",
-  "fastingDaysFrom": "أيام الصيام من {date}"
+  "fastingDaysFrom": "أيام الصيام من {date}",
+  "yourFasting": "صيامك",
+  "fastingProgress": "تقدّم الصيام",
+  "currentStreak": "السلسلة الحالية",
+  "longestStreak": "أطول سلسلة",
+  "markFastedToday": "صمتُ اليوم",
+  "markAsFasted": "تسجيل كيوم صيام",
+  "fasted": "تم الصيام",
+  "thisMonth": "هذا الشهر",
+  "thisYear": "هذا العام",
+  "fastedOfDue": "{fasted} من {due}",
+  "monthFastedSummary": "هذا الشهر: {fasted} من {due} من أيام الصيام",
+  "trackerEmpty": "سجّل الأيام التي تصومها لتبدأ سلسلتك.",
+  "noFastingDaysYet": "لا توجد أيام صيام حتى الآن.",
+  "streakExplanation": "تُحسب السلسلة على أيام الصيام فقط: الأيام البيض والاثنين والخميس ورمضان والأيام الخاصة. تفويت أحدها قبل اليوم يعيد السلسلة الحالية إلى الصفر، ولا تقطعها الأيام الأخرى أبدًا، ويُحتسب اليوم عند تسجيله.",
+  "fastLogSaveFailed": "تعذّر حفظ سجل الصيام",
+  "fastLogLoadFailed": "تعذّر تحميل سجل الصيام"
 }

@@ -13,8 +13,20 @@ import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// The Hijri month grid.
+///
+/// Whether a day was fasted and the action in the day sheet come from outside
+/// so this feature does not depend on the tracker; the app shell wires them.
 class CalendarPage extends StatelessWidget {
-  const new({super.key});
+  const new({this.isFasted, this.dayActionBuilder, super.key});
+
+  /// Whether the day at the given local midnight was marked as fasted.
+  final bool Function(DateTime date)? isFasted;
+
+  /// Builds an extra action for the day sheet, or `null` for none. It is
+  /// built inside the sheet, so it should listen to its own state to stay
+  /// current while the sheet is open.
+  final Widget? Function(CalendarDay day)? dayActionBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +61,7 @@ class CalendarPage extends StatelessWidget {
               Expanded(
                 child: CalendarGrid(
                   days: state.days,
+                  isFasted: isFasted,
                   onDayTap: (day) => _showDay(context, day),
                 ),
               ),
@@ -66,7 +79,8 @@ class CalendarPage extends StatelessWidget {
       showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
-        builder: (context) => DayDetailSheet(day: day),
+        builder: (context) =>
+            DayDetailSheet(day: day, action: dayActionBuilder?.call(day)),
       ),
     );
   }

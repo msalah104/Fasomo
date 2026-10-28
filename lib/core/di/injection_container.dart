@@ -27,6 +27,12 @@ import 'package:fasomo/features/settings/domain/repositories/settings_repository
 import 'package:fasomo/features/settings/domain/usecases/get_language.dart';
 import 'package:fasomo/features/settings/domain/usecases/save_language.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
+import 'package:fasomo/features/tracker/data/datasources/fast_log_local_data_source.dart';
+import 'package:fasomo/features/tracker/data/repositories/fast_log_repository_impl.dart';
+import 'package:fasomo/features/tracker/domain/repositories/fast_log_repository.dart';
+import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
+import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -81,6 +87,22 @@ Future<void> init() async {
     )
     ..registerLazySingleton<ReminderLocalDataSource>(
       () => ReminderLocalDataSourceImpl(sharedPreferences: sl()),
+    )
+    // --- Tracker ---
+    ..registerFactory(
+      () => TrackerBloc(getSummary: sl(), setDayFasted: sl()),
+    )
+    ..registerLazySingleton(() => GetFastLogSummary(sl()))
+    ..registerLazySingleton(() => SetDayFasted(sl()))
+    ..registerLazySingleton<FastLogRepository>(
+      () => FastLogRepositoryImpl(
+        localDataSource: sl(),
+        calendar: sl(),
+        clock: sl(),
+      ),
+    )
+    ..registerLazySingleton<FastLogLocalDataSource>(
+      () => FastLogLocalDataSourceImpl(sharedPreferences: sl()),
     )
     // --- Settings ---
     ..registerFactory(() => LanguageBloc(getLanguage: sl(), saveLanguage: sl()))

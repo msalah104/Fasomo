@@ -48,6 +48,27 @@ final class StorageWriteFailed extends StorageFailure {
   String get code => 'storage.write_failed';
 }
 
+/// A day that the fasting log does not accept.
+sealed class TrackerFailure extends Failure {
+  const new();
+}
+
+/// The day has not happened yet.
+final class FutureDayNotLoggable extends TrackerFailure {
+  const new();
+
+  @override
+  String get code => 'tracker.future_day';
+}
+
+/// Fasting is forbidden on the day (an Eid or a day of Tashreeq).
+final class ForbiddenDayNotLoggable extends TrackerFailure {
+  const new();
+
+  @override
+  String get code => 'tracker.forbidden_day';
+}
+
 /// Failures from the OS notification scheduler.
 sealed class NotificationFailure extends Failure {
   const new();

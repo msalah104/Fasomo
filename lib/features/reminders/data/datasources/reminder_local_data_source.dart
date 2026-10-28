@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:fasomo/core/constants/app_constants.dart';
+import 'package:fasomo/core/error/storage_write_exception.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,15 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 abstract interface class ReminderLocalDataSource {
   List<Reminder> getReminders();
   Future<void> saveReminders(List<Reminder> reminders);
-}
-
-class StorageWriteException implements Exception {
-  const new(this.key);
-
-  final String key;
-
-  @override
-  String toString() => 'StorageWriteException($key)';
 }
 
 class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {

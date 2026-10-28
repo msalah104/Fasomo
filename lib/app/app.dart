@@ -6,6 +6,7 @@ import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:fasomo/features/splash/presentation/pages/splash_page.dart';
+import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +25,9 @@ class FasomoApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => sl<ReminderBloc>()..add(const LoadReminders()),
+        ),
+        BlocProvider(
+          create: (_) => sl<TrackerBloc>()..add(const LoadTracker()),
         ),
       ],
       child: BlocSelector<LanguageBloc, LanguageState, Locale?>(

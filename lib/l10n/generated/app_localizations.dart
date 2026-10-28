@@ -697,6 +697,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Fasting days from {date}'**
   String fastingDaysFrom(String date);
+
+  /// No description provided for @yourFasting.
+  ///
+  /// In en, this message translates to:
+  /// **'Your fasting'**
+  String get yourFasting;
+
+  /// No description provided for @fastingProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting progress'**
+  String get fastingProgress;
+
+  /// No description provided for @currentStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Current streak'**
+  String get currentStreak;
+
+  /// No description provided for @longestStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest streak'**
+  String get longestStreak;
+
+  /// No description provided for @markFastedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'I fasted today'**
+  String get markFastedToday;
+
+  /// No description provided for @markAsFasted.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as fasted'**
+  String get markAsFasted;
+
+  /// No description provided for @fasted.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasted'**
+  String get fasted;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This month'**
+  String get thisMonth;
+
+  /// No description provided for @thisYear.
+  ///
+  /// In en, this message translates to:
+  /// **'This year'**
+  String get thisYear;
+
+  /// Fasting days kept out of those due so far, e.g. "9 of 12".
+  ///
+  /// In en, this message translates to:
+  /// **'{fasted} of {due}'**
+  String fastedOfDue(int fasted, int due);
+
+  /// One-line summary on the Home progress card.
+  ///
+  /// In en, this message translates to:
+  /// **'This month: {fasted} of {due} fasting days'**
+  String monthFastedSummary(int fasted, int due);
+
+  /// No description provided for @trackerEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark the days you fast to start a streak.'**
+  String get trackerEmpty;
+
+  /// No description provided for @noFastingDaysYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No fasting days so far.'**
+  String get noFastingDaysYet;
+
+  /// No description provided for @streakExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Streaks count fasting days only: White Days, Monday & Thursday, Ramadan and the special days. Missing one before today resets the current streak. Other days never break it, and today counts once you mark it.'**
+  String get streakExplanation;
+
+  /// No description provided for @fastLogSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save your fasting log'**
+  String get fastLogSaveFailed;
+
+  /// No description provided for @fastLogLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your fasting log'**
+  String get fastLogLoadFailed;
 }
 
 class _AppLocalizationsDelegate

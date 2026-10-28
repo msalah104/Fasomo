@@ -6,10 +6,12 @@ class CalendarGrid extends StatelessWidget {
   const new({
     required this.days,
     required this.onDayTap,
+    this.isFasted,
     super.key,
   });
   final List<CalendarDay> days;
   final ValueChanged<CalendarDay> onDayTap;
+  final bool Function(DateTime date)? isFasted;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class CalendarGrid extends StatelessWidget {
 
         return CalendarDayCell(
           day: day,
+          isFasted: isFasted?.call(day.gregorianDate) ?? false,
           onTap: () => onDayTap(day),
         );
       },

@@ -1,3 +1,4 @@
+import 'package:clock/clock.dart';
 import 'package:fasomo/features/about/presentation/pages/about_page.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
@@ -5,6 +6,10 @@ import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/localized_reminder_copy.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/language_menu_button.dart';
+import 'package:fasomo/features/tracker/domain/fast_log_rules.dart';
+import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/fasted_toggle.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/tracker_summary_card.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,7 +34,11 @@ class _AppShellState extends State<AppShell> {
   void initState() {
     super.initState();
     _lifecycle = AppLifecycleListener(
-      onResume: () => context.read<ReminderBloc>().add(const SyncRequested()),
+      onResume: () {
+        context.read<ReminderBloc>().add(const SyncRequested());
+        // "Today" may have moved on, which changes streaks and totals.
+        context.read<TrackerBloc>().add(const RefreshTracker());
+      },
     );
   }
 
@@ -58,55 +67,68 @@ class _AppShellState extends State<AppShell> {
       localization.about,
     ];
 
-    return Scaffold(
-      // Home draws its own sky header in place of the app bar.
-      appBar: _selectedIndex == 0
-          ? null
-          : AppBar(
-              title: Text(titles[_selectedIndex]),
-              actions: const [LanguageMenuButton()],
-            ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: const [
-          _HomeTab(),
-          CalendarPage(),
-          ReminderSettingsPage(),
-          AboutPage(),
-        ],
+    return BlocListener<TrackerBloc, TrackerState>(
+      listenWhen: (previous, current) =>
+          current.failure != null && current != previous,
+      listener: (context, state) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            state.status == TrackerStatus.error
+                ? localization.fastLogLoadFailed
+                : localization.fastLogSaveFailed,
+          ),
+        ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) =>
-            setState(() => _selectedIndex = index),
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
-            label: titles[0],
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.calendar_today_outlined),
-            selectedIcon: const Icon(Icons.calendar_today),
-            label: titles[1],
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.notifications_outlined),
-            selectedIcon: const Icon(Icons.notifications),
-            label: titles[2],
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.info_outlined),
-            selectedIcon: const Icon(Icons.info),
-            label: titles[3],
-          ),
-        ],
+      child: Scaffold(
+        // Home draws its own sky header in place of the app bar.
+        appBar: _selectedIndex == 0
+            ? null
+            : AppBar(
+                title: Text(titles[_selectedIndex]),
+                actions: const [LanguageMenuButton()],
+              ),
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: const [
+            _HomeTab(),
+            _CalendarTab(),
+            ReminderSettingsPage(),
+            AboutPage(),
+          ],
+        ),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: (index) =>
+              setState(() => _selectedIndex = index),
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(Icons.home_outlined),
+              selectedIcon: const Icon(Icons.home),
+              label: titles[0],
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.calendar_today_outlined),
+              selectedIcon: const Icon(Icons.calendar_today),
+              label: titles[1],
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.notifications_outlined),
+              selectedIcon: const Icon(Icons.notifications),
+              label: titles[2],
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.info_outlined),
+              selectedIcon: const Icon(Icons.info),
+              label: titles[3],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-/// Home wired to the reminders feature.
+/// Home wired to the reminders and tracker features.
 class _HomeTab extends StatelessWidget {
   const new();
 
@@ -118,6 +140,30 @@ class _HomeTab extends StatelessWidget {
       onToggleReminder: (type) =>
           context.read<ReminderBloc>().add(ToggleReminder(type)),
       headerActionBuilder: (color) => LanguageMenuButton(color: color),
+      progressSection: const TrackerSummaryCard(),
+      todayActionBuilder: (date, hijri) =>
+          FastedToggle(date: date, hijri: hijri),
+    );
+  }
+}
+
+/// Calendar wired to the tracker feature.
+class _CalendarTab extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    final tracker = context.watch<TrackerBloc>().state;
+    return CalendarPage(
+      isFasted: tracker.isFasted,
+      dayActionBuilder: (day) =>
+          FastLogRules.canLog(
+            date: day.gregorianDate,
+            hijri: day.hijriDate,
+            today: clock.now(),
+          )
+          ? FastedToggle(date: day.gregorianDate, hijri: day.hijriDate)
+          : null,
     );
   }
 }

@@ -51,9 +51,10 @@ void main() {
     WidgetTester tester, {
     required Brightness brightness,
     Locale locale = const Locale('en'),
+    HomeState? homeState,
   }) async {
     bloc = MockHomeBloc();
-    when(() => bloc.state).thenReturn(state);
+    when(() => bloc.state).thenReturn(homeState ?? state);
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(brightness),
@@ -68,6 +69,9 @@ void main() {
               onToggleReminder: (_) {},
               headerActionBuilder: (color) =>
                   Icon(Icons.language, color: color),
+              progressSection: const Text('PROGRESS'),
+              todayActionBuilder: (date, hijri) =>
+                  Text('TODAY ${date.day} ${hijri.day}'),
             ),
           ),
         ),
@@ -131,5 +135,33 @@ void main() {
     expect(tester.getBottomLeft(date).dy, lessThan(0));
     expect(find.bySemanticsLabel('This week'), findsOneWidget);
     expect(tester.getTopLeft(find.text('Thu')).dy, lessThan(120));
+  });
+
+  testWidgets('shows the progress section and acts only on today', (
+    tester,
+  ) async {
+    final withToday = state.copyWith(
+      upcomingFastingDays: [
+        FastingDay(
+          hijriDate: const HijriDate(1448, 5, 17),
+          gregorianDate: DateTime(2026, 10, 28),
+          types: const [FastingType.mondayThursday],
+          daysUntil: 0,
+        ),
+        ...state.upcomingFastingDays,
+      ],
+    );
+    await withClock(Clock.fixed(DateTime(2026, 10, 28, 10)), () async {
+      await pumpHome(
+        tester,
+        brightness: Brightness.light,
+        homeState: withToday,
+      );
+    });
+
+    expect(find.text('PROGRESS'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('TODAY 28 17'), 200);
+    expect(find.text('TODAY 28 17'), findsOneWidget);
+    expect(find.textContaining('TODAY', skipOffstage: false), findsOneWidget);
   });
 }

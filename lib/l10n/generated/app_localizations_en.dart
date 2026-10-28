@@ -356,4 +356,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String fastingDaysFrom(String date) {
     return 'Fasting days from $date';
   }
+
+  @override
+  String get yourFasting => 'Your fasting';
+
+  @override
+  String get fastingProgress => 'Fasting progress';
+
+  @override
+  String get currentStreak => 'Current streak';
+
+  @override
+  String get longestStreak => 'Longest streak';
+
+  @override
+  String get markFastedToday => 'I fasted today';
+
+  @override
+  String get markAsFasted => 'Mark as fasted';
+
+  @override
+  String get fasted => 'Fasted';
+
+  @override
+  String get thisMonth => 'This month';
+
+  @override
+  String get thisYear => 'This year';
+
+  @override
+  String fastedOfDue(int fasted, int due) {
+    return '$fasted of $due';
+  }
+
+  @override
+  String monthFastedSummary(int fasted, int due) {
+    return 'This month: $fasted of $due fasting days';
+  }
+
+  @override
+  String get trackerEmpty => 'Mark the days you fast to start a streak.';
+
+  @override
+  String get noFastingDaysYet => 'No fasting days so far.';
+
+  @override
+  String get streakExplanation =>
+      'Streaks count fasting days only: White Days, Monday & Thursday, Ramadan and the special days. Missing one before today resets the current streak. Other days never break it, and today counts once you mark it.';
+
+  @override
+  String get fastLogSaveFailed => 'Could not save your fasting log';
+
+  @override
+  String get fastLogLoadFailed => 'Could not load your fasting log';
 }

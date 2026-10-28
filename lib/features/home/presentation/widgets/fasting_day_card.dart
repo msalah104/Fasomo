@@ -10,6 +10,7 @@ class FastingDayCard extends StatelessWidget {
     required this.fastingDay,
     required this.isReminderOn,
     required this.onToggleReminder,
+    this.extraAction,
     super.key,
   });
 
@@ -18,6 +19,9 @@ class FastingDayCard extends StatelessWidget {
   /// Whether a reminder is active for the day's primary type.
   final bool isReminderOn;
   final VoidCallback onToggleReminder;
+
+  /// Shown after the reminder button, e.g. to mark today as fasted.
+  final Widget? extraAction;
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +77,18 @@ class FastingDayCard extends StatelessWidget {
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 12),
-            _ReminderButton(isOn: isReminderOn, onPressed: onToggleReminder),
+            // Wraps so the buttons stack instead of overflowing at large text.
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _ReminderButton(
+                  isOn: isReminderOn,
+                  onPressed: onToggleReminder,
+                ),
+                ?extraAction,
+              ],
+            ),
           ],
         ),
       ),

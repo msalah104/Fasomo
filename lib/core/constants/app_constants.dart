@@ -6,6 +6,7 @@ class AppConstants {
   // Storage Keys
   static const String languageKey = 'language';
   static const String remindersKey = 'reminders';
+  static const String fastLogKey = 'fast_log';
 
   // Notification
   static const String notificationChannelId = 'fasomo_fasting_reminders';

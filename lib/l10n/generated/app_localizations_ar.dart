@@ -352,4 +352,57 @@ class AppLocalizationsAr extends AppLocalizations {
   String fastingDaysFrom(String date) {
     return 'أيام الصيام من $date';
   }
+
+  @override
+  String get yourFasting => 'صيامك';
+
+  @override
+  String get fastingProgress => 'تقدّم الصيام';
+
+  @override
+  String get currentStreak => 'السلسلة الحالية';
+
+  @override
+  String get longestStreak => 'أطول سلسلة';
+
+  @override
+  String get markFastedToday => 'صمتُ اليوم';
+
+  @override
+  String get markAsFasted => 'تسجيل كيوم صيام';
+
+  @override
+  String get fasted => 'تم الصيام';
+
+  @override
+  String get thisMonth => 'هذا الشهر';
+
+  @override
+  String get thisYear => 'هذا العام';
+
+  @override
+  String fastedOfDue(int fasted, int due) {
+    return '$fasted من $due';
+  }
+
+  @override
+  String monthFastedSummary(int fasted, int due) {
+    return 'هذا الشهر: $fasted من $due من أيام الصيام';
+  }
+
+  @override
+  String get trackerEmpty => 'سجّل الأيام التي تصومها لتبدأ سلسلتك.';
+
+  @override
+  String get noFastingDaysYet => 'لا توجد أيام صيام حتى الآن.';
+
+  @override
+  String get streakExplanation =>
+      'تُحسب السلسلة على أيام الصيام فقط: الأيام البيض والاثنين والخميس ورمضان والأيام الخاصة. تفويت أحدها قبل اليوم يعيد السلسلة الحالية إلى الصفر، ولا تقطعها الأيام الأخرى أبدًا، ويُحتسب اليوم عند تسجيله.';
+
+  @override
+  String get fastLogSaveFailed => 'تعذّر حفظ سجل الصيام';
+
+  @override
+  String get fastLogLoadFailed => 'تعذّر تحميل سجل الصيام';
 }

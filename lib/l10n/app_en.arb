@@ -187,5 +187,43 @@
         "type": "String"
       }
     }
-  }
+  },
+  "yourFasting": "Your fasting",
+  "fastingProgress": "Fasting progress",
+  "currentStreak": "Current streak",
+  "longestStreak": "Longest streak",
+  "markFastedToday": "I fasted today",
+  "markAsFasted": "Mark as fasted",
+  "fasted": "Fasted",
+  "thisMonth": "This month",
+  "thisYear": "This year",
+  "fastedOfDue": "{fasted} of {due}",
+  "@fastedOfDue": {
+    "description": "Fasting days kept out of those due so far, e.g. \"9 of 12\".",
+    "placeholders": {
+      "fasted": {
+        "type": "int"
+      },
+      "due": {
+        "type": "int"
+      }
+    }
+  },
+  "monthFastedSummary": "This month: {fasted} of {due} fasting days",
+  "@monthFastedSummary": {
+    "description": "One-line summary on the Home progress card.",
+    "placeholders": {
+      "fasted": {
+        "type": "int"
+      },
+      "due": {
+        "type": "int"
+      }
+    }
+  },
+  "trackerEmpty": "Mark the days you fast to start a streak.",
+  "noFastingDaysYet": "No fasting days so far.",
+  "streakExplanation": "Streaks count fasting days only: White Days, Monday & Thursday, Ramadan and the special days. Missing one before today resets the current streak. Other days never break it, and today counts once you mark it.",
+  "fastLogSaveFailed": "Could not save your fasting log",
+  "fastLogLoadFailed": "Could not load your fasting log"
 }

@@ -13,6 +13,14 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - **Month bar**: where today falls in the Hijri month, with the White Days marked.
 - **Upcoming fasting days**: the next five fasting days in the coming 30 days, including next month's White Days. A day that is several kinds at once (say, a White Day on a Monday) is listed once with all of them.
 - **One-tap reminders**: turn on a reminder for a fasting type straight from its card.
+- **I fasted today**: today's fasting-day card has a button to mark it as fasted.
+- **Your fasting**: a card with the current and longest streak and this month's count ("3 of 5 fasting days"). Tap it for the progress page.
+
+### ✅ Fasting tracker
+- **Mark any day up to today** as fasted, from Home or from a day in the calendar. Future days and the forbidden days (the Eids and Tashreeq) can't be marked.
+- **Streaks** count fasting days only: a fasted fasting day extends the streak, a missed one before today resets it, and ordinary days never break it. Today counts once you mark it and never breaks the streak before then. A day with several types counts once.
+- **Progress page**: current and longest streak, plus this Hijri month's and this Hijri year's totals per fasting type so far (e.g. "White Days · 9 of 12").
+- Streaks and totals are worked out from the log every time, never stored. The log is kept on the device.
 
 ### 📅 Calendar
 - **Full Hijri month view** for any month from 1356 to 1500 AH, with month navigation.
@@ -23,7 +31,8 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
   - Teal: Six Days of Shawwal
   - Clay red: special days (Arafah, Ashura, Tasua)
   - Each type also has its own outlined icon: crescent (Ramadan), peak (special days), sparkle (Shawwal), full moon (White Days) and calendar (Monday & Thursday).
-- **Day details**: tap a day to see both dates and what each fasting type means.
+- **Day details**: tap a day to see both dates and what each fasting type means, and mark it as fasted.
+- **Fasted days** carry a check badge.
 
 ### 🔔 Reminders
 - **Real fire times**, worked out from each actual fasting date:
@@ -119,7 +128,7 @@ lib/
 │   ├── presentation/       # Shared labels, fasting-type colours and icons, date text
 │   └── theme/              # Hilal tokens: primitives, AppColors, AppShapes, buildAppTheme
 ├── features/
-│   ├── home/  calendar/  reminders/  settings/  about/
+│   ├── home/  calendar/  reminders/  tracker/  settings/  about/
 │   │   ├── domain/         # Entities, repository interfaces, use cases (pure Dart)
 │   │   ├── data/           # Repository implementations
 │   │   └── presentation/   # Blocs, pages, widgets
@@ -164,7 +173,6 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 | Priority | Feature | New packages | Backend |
 |---|---|---|---|
 | P1 | [Home sky header](#home-sky-header-p1) | `dart_suncalc`, `geolocator` (optional) | No |
-| P1 | [Fasting tracker and streaks](#fasting-tracker-and-streaks-p1) | `drift` (or keep `shared_preferences`) | No |
 | P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | `adhan`, `geolocator` | No |
 | P1 | [Qada (make-up) tracker](#qada-make-up-tracker-p1) | — (shares the tracker store) | No |
 | P2 | [Hijri date adjustment](#hijri-date-adjustment-p2) | — | No |
@@ -189,14 +197,6 @@ A live sky at the top of Home: the sun by day and the moon by night, placed wher
 - **How:** a `CustomPainter` fed by a pure `SkyPosition` calculation (sun/moon altitude, azimuth and lit fraction from `dart_suncalc`, read through the injected clock). A `SkyBloc` loads the location (saved city, or device location if granted) and refreshes every minute while Home is visible. Respects reduced motion.
 - **Plan:** the full design is in [`docs/plans/home-sky-header.md`](docs/plans/home-sky-header.md).
 
-### Fasting tracker and streaks (P1)
-
-Mark a day as fasted, from a fasting-day card or from the calendar, and see it everywhere.
-
-- **What it shows:** fasted days ticked on the calendar; current and longest streak (counted over *recommended* days, so missing a non-fasting day doesn't break a streak); this month's and this year's totals per fasting type (e.g. "White Days: 9 of 12 this year").
-- **Why:** reminders tell you when to fast; tracking is what makes people come back every day.
-- **How:** new `tracker` feature. A `FastLog` entity (Hijri date, Gregorian date, type, fasted/missed). Storage moves to **Drift** (SQLite) because this is a growing history with date-range queries; `shared_preferences` is fine only if we keep a year or so. Streaks and totals are **derived** from the log on read, never stored. Tests: streak rules across month boundaries, Ramadan, and forbidden days.
-
 ### Ramadan mode with prayer times (P1)
 
 During Ramadan (and optionally on any fasting day), Home switches to a Ramadan view.
@@ -210,7 +210,7 @@ During Ramadan (and optionally on any fasting day), Home switches to a Ramadan v
 For Ramadan days that were missed and must be made up.
 
 - **What it does:** enter how many days you owe per year (or tick them on the calendar during Ramadan); log each make-up fast; see the remaining balance and an optional gentle reminder (e.g. every Monday and Thursday until it reaches zero). Reminds before the next Ramadan if days are still owed.
-- **How:** part of the tracker data, so a make-up fast on a Monday can count toward both the Qada balance and the Monday/Thursday streak. The balance is derived from the log, never stored separately.
+- **How:** part of the fasting log, so a make-up fast on a Monday can count toward both the Qada balance and the Monday/Thursday streak. The balance is derived from the log, never stored separately.
 
 ### Hijri date adjustment (P2)
 
@@ -258,7 +258,7 @@ Share an image card ("Tomorrow is the Day of Arafah") with the date and its hadi
 
 ### Backup and restore (P3)
 
-Once the tracker exists, export reminders, settings and the fasting log to a versioned JSON file and restore it on a new phone. This avoids accounts while still letting users keep their history.
+Export reminders, settings and the fasting log to a versioned JSON file and restore it on a new phone. This avoids accounts while still letting users keep their history.
 
 ### Needs a backend
 
