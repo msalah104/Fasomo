@@ -11,16 +11,30 @@ architecture (BLoC + GetIt, injected `Clock`, typed `Result`/`Failure`).
 
 ## 1. What the user sees
 
+Chosen design: the Hilal "sky hero" (canvas board "Hilal · Home (chosen
+direction)"). The sky replaces the app bar and `CurrentDateCard`, and the week
+strip overlaps its bottom edge.
+
 ```
 ┌──────────────────────────────────────────────┐
-│ ·  ˙    ·        ☾          ·    ˙      ·    │  ← sky gradient + stars (night)
-│      ·      .  ·  ·  ·  .        ·           │  ← faint dotted path of the body
+│ ف                                  📍 Cairo  │  ← logo mark only, location chip
+│ ·  ˙    ·                   ·    ˙      ·    │  ← sky gradient + stars (night)
+│      ·    ☾ ·  ·  ·  .        ·              │  ← moon (or sun) on its dotted arc
 │   .  ·                         ·  .          │
-│ ▁▂▃▂▁▁▂▃▄▃▂▁▁▁▂▂▃▂▁▁▁▂▃▄▅▄▃▂▁▁▂▂▃▂▁▁▂▃▂▁▁ │  ← horizon silhouette
-│ 🌅 05:58          📍 Cairo ▾         🌇 17:12 │  ← overlay widgets, not painted
-│              Sunset in 2h 14m               │
-└──────────────────────────────────────────────┘
+│ ▁▂▃▂▁▁▂▃▄▃▂▁▁▁▂▂▃▂▁▁▁▂▃▄▅▄▃▂▁▁▂▂▃▂▁▁▂▃▂▁▁ │  ← dome + minaret skyline (ground band)
+│ 17 Jumada al-Ula 1448            Wed 28 Oct │  ← one row on the ground band
+│ Moonrise 19:32                Sunrise 06:04 │  ← rise / set times
+│ ╭──────────────────────────────────────────╮ │
+└─│ Wed Thu Fri Sat Sun Mon Tue  (week strip) │─┘  ← overlaps the sky by ~30 dp
+  ╰──────────────────────────────────────────╯
+  Month bar: day 17 of 30, White Days marked
+  Next fasts: tomorrow (with reminder state), next White Days
 ```
+
+The date and times sit on the dark ground band, never in the open sky, so the
+sun and moon never collide with text and contrast does not depend on the sky
+colour. There is no separate "Sunset in …" label; the times row and the week
+strip carry that information.
 
 - **Day:** the sun moves along an arc from sunrise (start edge) to sunset
   (end edge), at the top centre at solar noon.
@@ -30,8 +44,13 @@ architecture (BLoC + GetIt, injected `Clock`, typed `Result`/`Failure`).
 - **Dawn and dusk:** the sky gradient is driven by the sun's altitude, so dawn
   colours begin around Fajr (sun ≈ −18°) and the dusk glow peaks at Maghrib
   (sunset).
-- **Placement:** a full-width rounded card above `CurrentDateCard`, about 200 dp
-  tall (`AspectRatio` 16:9, clamped to 160–240 dp). It scrolls with the list.
+- **Placement:** full-bleed at the top of the Home tab, about 290 dp tall,
+  replacing the Home app bar and `CurrentDateCard`. It scrolls with the list.
+  Below it: `WeekStrip` (overlapping the sky's bottom edge), `MonthProgressBar`,
+  then the next fasts list.
+- **Colours:** every sky, ground and overlay colour is a token in
+  `lib/core/theme/` (a `SkyPalette` built from Hilal primitives). The painter
+  receives a snapshot of it and never calls `Theme.of` inside `paint()`.
 
 ### Mapping time to position on screen
 
@@ -131,7 +150,7 @@ lib/
 ```
 
 Dependency direction stays inward. `domain/` never imports `dart_suncalc`,
-`geolocator` or Flutter. `HomePage` adds `SkyHeader` above `CurrentDateCard`,
+`geolocator` or Flutter. `HomePage` replaces `CurrentDateCard` with `SkyHeader`,
 and `SkyBloc` is provided next to `HomeBloc` in `app_shell.dart`.
 
 ---
@@ -265,7 +284,9 @@ decision D2.
 4. **Data adapter.** `SuncalcSkyCalculator`, plus golden-vector tests: about 6
    known (time, place) → (altitude, azimuth) pairs within ±0.5°.
 5. **Presentation.** `MinuteTicker`, `SkyBloc` (`bloc_test`), `SkyPainter`,
-   `SkyPalette`, `moon_path`, and `SkyHeader` inserted into `HomePage`.
+   `SkyPalette`, `moon_path`, and `SkyHeader` replacing `CurrentDateCard`
+   (and the Home app bar) in `HomePage`, plus `WeekStrip` and
+   `MonthProgressBar`, which need only the existing calendar data.
    - Golden tests at dawn, noon, sunset, crescent night and full-moon night,
      each in light and dark.
    - A Semantics test.
@@ -294,7 +315,7 @@ Each step ends with the project's definition of done:
 | D1 | Fallback location when there's no permission | Makkah, marked "Approximate". An alternative is to guess the city from the device time zone (`flutter_timezone`), which is more accurate with no prompt but adds a dependency and a mapping table. |
 | D2 | Arc direction in RTL | Follow reading direction (rise at the start edge). The alternative is physical east-left for everyone. |
 | D3 | Show "Iftar in …" in place of "Sunset in …" | Not in v1. Maghrib ≈ sunset, but calling it iftar is a religious claim, so wait for a proper prayer-times method (for example the `adhan` package) and a user setting. |
-| D4 | Horizon silhouette | Plain hills in v1. A minaret skyline is a later design pass. |
+| D4 | Horizon silhouette | Decided: low hills with one dome and one minaret, as on the Hilal Home board. |
 
 ## 8. Later (out of scope for v1)
 
