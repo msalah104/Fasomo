@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 
 class InfoSection extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String content;
-
-  const InfoSection({
-    super.key,
+  const new({
     required this.icon,
     required this.title,
     required this.content,
+    super.key,
   });
+  final IconData icon;
+  final String title;
+  final String content;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsetsDirectional.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -26,7 +25,7 @@ class InfoSection extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withOpacity(0.1),
+                color: theme.colorScheme.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(

@@ -1,21 +1,37 @@
+import 'package:fasomo/core/error/failures.dart';
+import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
+import 'package:fasomo/features/reminders/presentation/widgets/reminder_card.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/utils/app_localizations.dart';
-import '../bloc/reminder_bloc.dart';
-import '../widgets/reminder_card.dart';
-
 class ReminderSettingsPage extends StatelessWidget {
-  const ReminderSettingsPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
 
-    return BlocBuilder<ReminderBloc, ReminderState>(
+    return BlocConsumer<ReminderBloc, ReminderState>(
+      listenWhen: (previous, current) =>
+          current.status != ReminderStatus.error &&
+          (current.failure != null || current.permissionDenied) &&
+          current != previous,
+      listener: (context, state) {
+        final message = state.permissionDenied
+            ? localization.notificationsDenied
+            : switch (state.failure) {
+                NotificationFailure() => localization.reminderSyncFailed,
+                StorageFailure() ||
+                CalendarFailure() ||
+                null => localization.reminderSaveFailed,
+              };
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      },
       builder: (context, state) {
-        if (state.status == ReminderStatus.loading &&
-            state.reminders.isEmpty) {
+        if (state.status == ReminderStatus.loading && state.reminders.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
@@ -26,13 +42,13 @@ class ReminderSettingsPage extends StatelessWidget {
               children: [
                 const Icon(Icons.error_outline, size: 48, color: Colors.red),
                 const SizedBox(height: 16),
-                Text(state.errorMessage ?? localization.errorOccurred),
+                Text(localization.errorOccurred),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<ReminderBloc>().add(LoadReminders());
+                    context.read<ReminderBloc>().add(const LoadReminders());
                   },
-                  child: const Text('Retry'),
+                  child: Text(localization.retry),
                 ),
               ],
             ),
@@ -65,7 +81,7 @@ class ReminderSettingsPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Manage your fasting day reminders',
+                              localization.manageReminders,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
@@ -77,7 +93,7 @@ class ReminderSettingsPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'Active Reminders',
+                localization.activeReminders,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 16),
@@ -95,12 +111,12 @@ class ReminderSettingsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No reminders set yet',
+                            localization.noRemindersYet,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Add reminders from the Home page',
+                            localization.addRemindersFromHome,
                             style: Theme.of(context).textTheme.bodyMedium,
                             textAlign: TextAlign.center,
                           ),

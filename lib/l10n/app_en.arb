@@ -1,0 +1,166 @@
+{
+  "@@locale": "en",
+  "appName": "Fasomo",
+  "home": "Home",
+  "calendar": "Calendar",
+  "reminders": "Reminders",
+  "about": "About",
+  "currentHijriDate": "Current Hijri Date",
+  "upcomingFastingDays": "Upcoming Fasting Days",
+  "activateReminder": "Activate Reminder",
+  "deactivateReminder": "Deactivate Reminder",
+  "whiteDays": "White Days",
+  "mondayThursday": "Monday & Thursday",
+  "dayOfArafah": "Day of Arafah",
+  "dayOfAshura": "Day of Ashura",
+  "dayOfTasua": "Day of Tasua",
+  "ramadan": "Ramadan",
+  "shawwalSixDays": "Six Days of Shawwal",
+  "whiteDaysDesc": "The 13th, 14th, and 15th of every Hijri month. Fasting these days is highly recommended.",
+  "mondayThursdayDesc": "The Prophet (PBUH) used to fast on Mondays and Thursdays.",
+  "arafahDesc": "The 9th of Dhul Hijjah. Fasting this day expiates sins of two years.",
+  "ashuraDesc": "The 10th of Muharram. Fasting this day expiates sins of one year.",
+  "tasuaDesc": "The 9th of Muharram. It is recommended to fast along with Ashura.",
+  "ramadanDesc": "The month of Ramadan - obligatory fasting.",
+  "shawwalDesc": "Six days of fasting in Shawwal after Eid al-Fitr equals fasting the whole year.",
+  "reminderSettings": "Reminder Settings",
+  "reminderTime": "Reminder Time",
+  "dayBefore": "Day Before",
+  "morningOfDay": "Morning of the Day",
+  "customTime": "Custom Time",
+  "sameDay": "Same day",
+  "atTime": "at {time}",
+  "@atTime": {
+    "description": "Time-of-day suffix, e.g. \"at 8:00 PM\".",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "8:00 PM"
+      }
+    }
+  },
+  "notificationMessage": "Notification Message",
+  "customMessageHint": "Enter a custom notification message",
+  "save": "Save",
+  "cancel": "Cancel",
+  "close": "Close",
+  "edit": "Edit",
+  "delete": "Delete",
+  "retry": "Retry",
+  "editReminder": "Edit Reminder",
+  "deleteReminderTitle": "Delete Reminder",
+  "deleteReminderConfirm": "Are you sure you want to delete this reminder?",
+  "manageReminders": "Manage your fasting day reminders",
+  "activeReminders": "Active Reminders",
+  "noRemindersYet": "No reminders set yet",
+  "addRemindersFromHome": "Add reminders from the Home page",
+  "notificationsDenied": "Notifications are turned off for Fasomo. Enable them in system settings to get reminders.",
+  "reminderSyncFailed": "Could not update scheduled reminders",
+  "reminderSaveFailed": "Could not save the reminder",
+  "reminderTitle": "{daysBefore, plural, =0{Today: {type}} =1{Tomorrow: {type}} other{In {daysBefore} days: {type}}}",
+  "@reminderTitle": {
+    "description": "Notification title announcing a fasting day.",
+    "placeholders": {
+      "daysBefore": {
+        "type": "int"
+      },
+      "type": {
+        "type": "String",
+        "example": "White Days"
+      }
+    }
+  },
+  "daysUntil": "{count, plural, =0{Today} =1{Tomorrow} other{In {count} days}}",
+  "@daysUntil": {
+    "description": "How far away a fasting day is.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fastingDay": "Fasting Day",
+  "noUpcomingFasting": "No upcoming fasting days",
+  "noSpecificFastingDay": "No specific fasting day",
+  "errorOccurred": "An error occurred",
+  "monthUnavailable": "This month is outside the supported calendar range",
+  "specialDays": "Special Days",
+  "previousMonth": "Previous month",
+  "nextMonth": "Next month",
+  "hijriYear": "{year} AH",
+  "@hijriYear": {
+    "description": "A Hijri year.",
+    "placeholders": {
+      "year": {
+        "type": "String",
+        "example": "1448"
+      }
+    }
+  },
+  "hijriDate": "{day} {month} {year}",
+  "@hijriDate": {
+    "description": "A full Hijri date; numbers are pre-formatted for the locale.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "month": {
+        "type": "String"
+      },
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "hijriMonth1": "Muharram",
+  "hijriMonth2": "Safar",
+  "hijriMonth3": "Rabi' al-Awwal",
+  "hijriMonth4": "Rabi' al-Thani",
+  "hijriMonth5": "Jumada al-Ula",
+  "hijriMonth6": "Jumada al-Akhirah",
+  "hijriMonth7": "Rajab",
+  "hijriMonth8": "Sha'ban",
+  "hijriMonth9": "Ramadan",
+  "hijriMonth10": "Shawwal",
+  "hijriMonth11": "Dhul Qa'dah",
+  "hijriMonth12": "Dhul Hijjah",
+  "language": "Language",
+  "languageSystem": "System default",
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Always shown in English."
+  },
+  "languageArabic": "العربية",
+  "@languageArabic": {
+    "description": "Always shown in Arabic."
+  },
+  "aboutApp": "About Fasomo",
+  "aboutDesc": "Fasomo is an Islamic fasting tracker app that helps Muslims keep track of recommended fasting days according to the Sunnah of Prophet Muhammad (PBUH).",
+  "version": "Version {version}",
+  "@version": {
+    "placeholders": {
+      "version": {
+        "type": "String",
+        "example": "1.0.0"
+      }
+    }
+  },
+  "islamicReferences": "Islamic References",
+  "hadithWhiteDays": "\"Whoever fasts three days of each month, it is like fasting the entire year.\" (Bukhari & Muslim)",
+  "hadithMondayThursday": "\"The Prophet used to fast on Mondays and Thursdays.\" (Tirmidhi)",
+  "hadithArafah": "\"Fasting the day of Arafah expiates the sins of the past year and the coming year.\" (Muslim)",
+  "hadithAshura": "\"Fasting the day of Ashura expiates the sins of the previous year.\" (Muslim)",
+  "features": "Features",
+  "featureCalendarTitle": "Hijri Calendar",
+  "featureCalendarDesc": "Full Hijri calendar with recommended fasting days marked",
+  "featureRemindersDesc": "Smart notifications for upcoming fasting days",
+  "featureLanguagesTitle": "Language Support",
+  "featureLanguagesDesc": "Full support for Arabic and English languages",
+  "contactSupport": "Contact & Support",
+  "email": "Email",
+  "website": "Website",
+  "sourceCode": "Source code",
+  "credits": "Credits",
+  "creditsText": "This app was developed to help Muslims track recommended fasting days according to the Sunnah of Prophet Muhammad (PBUH).",
+  "copyright": "© Fasomo. All rights reserved."
+}

@@ -1,14 +1,16 @@
-import '../../../../core/usecases/usecase.dart';
-import '../entities/fasting_day.dart';
-import '../repositories/fasting_repository.dart';
+import 'package:fasomo/core/error/failures.dart';
+import 'package:fasomo/core/error/result.dart';
+import 'package:fasomo/core/usecases/usecase.dart';
+import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
+import 'package:fasomo/features/home/domain/repositories/fasting_repository.dart';
 
-class GetUpcomingFastingDays implements UseCase<List<FastingDay>, String> {
+class GetUpcomingFastingDays
+    implements UseCase<Result<List<FastingDay>, CalendarFailure>, NoParams> {
+  const new(this.repository);
+
   final FastingRepository repository;
 
-  GetUpcomingFastingDays(this.repository);
-
   @override
-  List<FastingDay> call(String languageCode) {
-    return repository.getUpcomingFastingDays(languageCode);
-  }
+  Result<List<FastingDay>, CalendarFailure> call(NoParams params) =>
+      repository.getUpcomingFastingDays();
 }

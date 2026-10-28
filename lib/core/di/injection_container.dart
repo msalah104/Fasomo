@@ -1,99 +1,108 @@
+import 'package:clock/clock.dart';
+import 'package:fasomo/core/calendar/fasting_calendar.dart';
+import 'package:fasomo/core/calendar/hijri_converter.dart';
+import 'package:fasomo/core/notifications/notification_gateway.dart';
+import 'package:fasomo/core/notifications/notification_reconciler.dart';
+import 'package:fasomo/core/services/notifications/fln_notification_gateway.dart';
+import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
+import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
+import 'package:fasomo/features/calendar/domain/usecases/get_current_hijri_month.dart';
+import 'package:fasomo/features/calendar/domain/usecases/get_hijri_month.dart';
+import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
+import 'package:fasomo/features/home/data/repositories/fasting_repository_impl.dart';
+import 'package:fasomo/features/home/domain/repositories/fasting_repository.dart';
+import 'package:fasomo/features/home/domain/usecases/get_current_hijri_date.dart';
+import 'package:fasomo/features/home/domain/usecases/get_upcoming_fasting_days.dart';
+import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
+import 'package:fasomo/features/reminders/data/repositories/reminder_repository_impl.dart';
+import 'package:fasomo/features/reminders/domain/repositories/reminder_repository.dart';
+import 'package:fasomo/features/reminders/domain/usecases/delete_reminder.dart';
+import 'package:fasomo/features/reminders/domain/usecases/get_reminders.dart';
+import 'package:fasomo/features/reminders/domain/usecases/save_reminder.dart';
+import 'package:fasomo/features/reminders/domain/usecases/sync_reminder_notifications.dart';
+import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
+import 'package:fasomo/features/settings/data/repositories/settings_repository_impl.dart';
+import 'package:fasomo/features/settings/domain/repositories/settings_repository.dart';
+import 'package:fasomo/features/settings/domain/usecases/get_language.dart';
+import 'package:fasomo/features/settings/domain/usecases/save_language.dart';
+import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import '../../features/home/data/datasources/fasting_local_data_source.dart';
-import '../../features/home/data/repositories/fasting_repository_impl.dart';
-import '../../features/home/domain/repositories/fasting_repository.dart';
-import '../../features/home/domain/usecases/get_upcoming_fasting_days.dart';
-import '../../features/home/domain/usecases/get_current_hijri_date.dart';
-import '../../features/home/presentation/bloc/home_bloc.dart';
+final GetIt sl = GetIt.instance;
 
-import '../../features/calendar/data/datasources/calendar_local_data_source.dart';
-import '../../features/calendar/data/repositories/calendar_repository_impl.dart';
-import '../../features/calendar/domain/repositories/calendar_repository.dart';
-import '../../features/calendar/domain/usecases/get_hijri_month.dart';
-import '../../features/calendar/presentation/bloc/calendar_bloc.dart';
-
-import '../../features/reminders/data/datasources/reminder_local_data_source.dart';
-import '../../features/reminders/data/repositories/reminder_repository_impl.dart';
-import '../../features/reminders/domain/repositories/reminder_repository.dart';
-import '../../features/reminders/domain/usecases/get_reminders.dart';
-import '../../features/reminders/domain/usecases/save_reminder.dart';
-import '../../features/reminders/domain/usecases/delete_reminder.dart';
-import '../../features/reminders/presentation/bloc/reminder_bloc.dart';
-
-final sl = GetIt.instance;
-
+/// The composition root: the only place concrete implementations are chosen.
 Future<void> init() async {
   // ============ Features ============
 
-  // --- Home Feature ---
-  // Bloc
-  sl.registerFactory(() => HomeBloc(
-        getUpcomingFastingDays: sl(),
-        getCurrentHijriDate: sl(),
-      ));
-
-  // Use cases
-  sl.registerLazySingleton(() => GetUpcomingFastingDays(sl()));
-  sl.registerLazySingleton(() => GetCurrentHijriDate(sl()));
-
-  // Repository
-  sl.registerLazySingleton<FastingRepository>(
-    () => FastingRepositoryImpl(localDataSource: sl()),
-  );
-
-  // Data source
-  sl.registerLazySingleton<FastingLocalDataSource>(
-    () => FastingLocalDataSourceImpl(sharedPreferences: sl()),
-  );
-
-  // --- Calendar Feature ---
-  // Bloc
-  sl.registerFactory(() => CalendarBloc(getHijriMonth: sl()));
-
-  // Use cases
-  sl.registerLazySingleton(() => GetHijriMonth(sl()));
-
-  // Repository
-  sl.registerLazySingleton<CalendarRepository>(
-    () => CalendarRepositoryImpl(localDataSource: sl()),
-  );
-
-  // Data source
-  sl.registerLazySingleton<CalendarLocalDataSource>(
-    () => CalendarLocalDataSourceImpl(),
-  );
-
-  // --- Reminders Feature ---
-  // Bloc
-  sl.registerFactory(() => ReminderBloc(
+  // --- Home ---
+  sl
+    ..registerFactory(
+      () => HomeBloc(getCurrentHijriDate: sl(), getUpcomingFastingDays: sl()),
+    )
+    ..registerLazySingleton(() => GetUpcomingFastingDays(sl()))
+    ..registerLazySingleton(() => GetCurrentHijriDate(sl()))
+    ..registerLazySingleton<FastingRepository>(
+      () => FastingRepositoryImpl(calendar: sl(), clock: sl()),
+    )
+    // --- Calendar ---
+    ..registerFactory(
+      () => CalendarBloc(getCurrentHijriMonth: sl(), getHijriMonth: sl()),
+    )
+    ..registerLazySingleton(() => GetCurrentHijriMonth(sl()))
+    ..registerLazySingleton(() => GetHijriMonth(sl()))
+    ..registerLazySingleton<CalendarRepository>(
+      () => CalendarRepositoryImpl(calendar: sl(), clock: sl()),
+    )
+    // --- Reminders ---
+    ..registerFactory(
+      () => ReminderBloc(
         getReminders: sl(),
         saveReminder: sl(),
         deleteReminder: sl(),
-        notificationPlugin: sl(),
-      ));
+        syncNotifications: sl(),
+        notificationPermission: sl(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => SyncReminderNotifications(
+        repository: sl(),
+        calendar: sl(),
+        reconciler: sl(),
+        clock: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => GetReminders(sl()))
+    ..registerLazySingleton(() => SaveReminder(sl()))
+    ..registerLazySingleton(() => DeleteReminder(sl()))
+    ..registerLazySingleton<ReminderRepository>(
+      () => ReminderRepositoryImpl(localDataSource: sl()),
+    )
+    ..registerLazySingleton<ReminderLocalDataSource>(
+      () => ReminderLocalDataSourceImpl(sharedPreferences: sl()),
+    )
+    // --- Settings ---
+    ..registerFactory(() => LanguageBloc(getLanguage: sl(), saveLanguage: sl()))
+    ..registerLazySingleton(() => GetLanguage(sl()))
+    ..registerLazySingleton(() => SaveLanguage(sl()))
+    ..registerLazySingleton<SettingsRepository>(
+      () => SettingsRepositoryImpl(sharedPreferences: sl()),
+    )
+    // ============ Core ============
+    ..registerLazySingleton<Clock>(() => const Clock())
+    ..registerLazySingleton<HijriConverter>(
+      () => const UmmAlQuraHijriConverter(),
+    )
+    ..registerLazySingleton(() => FastingCalendar(sl()));
 
-  // Use cases
-  sl.registerLazySingleton(() => GetReminders(sl()));
-  sl.registerLazySingleton(() => SaveReminder(sl()));
-  sl.registerLazySingleton(() => DeleteReminder(sl()));
-
-  // Repository
-  sl.registerLazySingleton<ReminderRepository>(
-    () => ReminderRepositoryImpl(localDataSource: sl()),
-  );
-
-  // Data source
-  sl.registerLazySingleton<ReminderLocalDataSource>(
-    () => ReminderLocalDataSourceImpl(sharedPreferences: sl()),
-  );
-
-  // ============ Core ============
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
 
-  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  sl.registerLazySingleton(() => flutterLocalNotificationsPlugin);
+  final notifications = FlnNotificationGateway();
+  await notifications.initialize();
+  sl
+    ..registerLazySingleton<NotificationGateway>(() => notifications)
+    ..registerLazySingleton<NotificationPermission>(() => notifications)
+    ..registerLazySingleton(() => NotificationReconciler(sl()));
 }

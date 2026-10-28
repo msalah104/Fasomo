@@ -1,171 +1,173 @@
+import 'dart:async';
+
+import 'package:fasomo/core/calendar/fasting_type.dart';
+import 'package:fasomo/core/presentation/fasting_type_style.dart';
+import 'package:fasomo/core/presentation/fasting_type_text.dart';
+import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
+import 'package:fasomo/features/calendar/presentation/widgets/calendar_grid.dart';
+import 'package:fasomo/features/calendar/presentation/widgets/calendar_header.dart';
+import 'package:fasomo/features/calendar/presentation/widgets/day_detail_sheet.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/utils/app_localizations.dart';
-import '../../../home/presentation/bloc/home_bloc.dart';
-import '../bloc/calendar_bloc.dart';
-import '../widgets/calendar_grid.dart';
-import '../widgets/calendar_header.dart';
-import '../widgets/day_detail_sheet.dart';
-
 class CalendarPage extends StatelessWidget {
-  const CalendarPage({super.key});
+  const new({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CalendarBloc, CalendarState>(
+    return BlocConsumer<CalendarBloc, CalendarState>(
+      // A failed month change keeps the last good month and shows a snackbar.
+      listenWhen: (previous, current) =>
+          current.status == CalendarStatus.error && current.days.isNotEmpty,
+      listener: (context, state) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context).monthUnavailable)),
+      ),
       builder: (context, state) {
-        if (state.status == CalendarStatus.loading &&
-            state.days.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+        final month = state.month;
+        if (month == null || state.days.isEmpty) {
+          return state.status == CalendarStatus.error
+              ? const _CalendarError()
+              : const Center(child: CircularProgressIndicator());
         }
 
-        if (state.status == CalendarStatus.error) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                const SizedBox(height: 16),
-                Text(state.errorMessage ?? 'Error loading calendar'),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<CalendarBloc>().add(LoadCalendar());
-                  },
-                  child: const Text('Retry'),
+        final bloc = context.read<CalendarBloc>();
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              CalendarHeader(
+                month: month,
+                onPreviousMonth: () => bloc.add(const PreviousMonth()),
+                onNextMonth: () => bloc.add(const NextMonth()),
+              ),
+              const SizedBox(height: 16),
+              const _WeekdayHeaders(),
+              const SizedBox(height: 8),
+              Expanded(
+                child: CalendarGrid(
+                  days: state.days,
+                  onDayTap: (day) => _showDay(context, day),
                 ),
-              ],
-            ),
-          );
-        }
-
-        return BlocListener<CalendarBloc, CalendarState>(
-          listenWhen: (previous, current) =>
-              previous.selectedDay != current.selectedDay &&
-              current.selectedDay != null,
-          listener: (context, state) {
-            if (state.selectedDay != null) {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                builder: (context) => DayDetailSheet(day: state.selectedDay!),
-              );
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                CalendarHeader(
-                  month: state.currentMonth,
-                  year: state.currentYear,
-                  onPreviousMonth: () {
-                    context.read<CalendarBloc>().add(PreviousMonth());
-                  },
-                  onNextMonth: () {
-                    context.read<CalendarBloc>().add(NextMonth());
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildWeekdayHeaders(context),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: CalendarGrid(
-                    days: state.days,
-                    onDayTap: (day) {
-                      context.read<CalendarBloc>().add(SelectDay(day));
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildLegend(context),
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
+              const _Legend(),
+            ],
           ),
         );
       },
     );
   }
 
-  Widget _buildWeekdayHeaders(BuildContext context) {
-    final locale = context.watch<HomeBloc>().state.locale;
-    final weekdays = locale.languageCode == 'ar'
-        ? ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س']
-        : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: weekdays
-          .map((day) => Expanded(
-                child: Center(
-                  child: Text(
-                    day,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                  ),
-                ),
-              ))
-          .toList(),
+  void _showDay(BuildContext context, CalendarDay day) {
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (context) => DayDetailSheet(day: day),
+      ),
     );
   }
+}
 
-  Widget _buildLegend(BuildContext context) {
+class _CalendarError extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
-    final theme = Theme.of(context);
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: Theme.of(context).colorScheme.error,
+          ),
+          const SizedBox(height: 16),
+          Text(localization.monthUnavailable),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () =>
+                context.read<CalendarBloc>().add(const LoadCalendar()),
+            child: Text(localization.retry),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
+class _WeekdayHeaders extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    // Sunday first, matching CalendarGrid.
+    final weekdays = MaterialLocalizations.of(context).narrowWeekdays;
+    final style = Theme.of(context).textTheme.titleSmall?.copyWith(
+      fontWeight: FontWeight.bold,
+      color: Theme.of(context).colorScheme.primary,
+    );
+    return Row(
+      children: [
+        for (final day in weekdays)
+          Expanded(
+            child: Center(child: Text(day, style: style)),
+          ),
+      ],
+    );
+  }
+}
+
+class _Legend extends StatelessWidget {
+  const new();
+
+  static const List<FastingType> _types = [
+    FastingType.whiteDays,
+    FastingType.mondayThursday,
+    FastingType.ramadan,
+    FastingType.shawwal,
+    FastingType.arafah,
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Wrap(
+          spacing: 16,
+          runSpacing: 8,
           children: [
-            Text(
-              'Legend:',
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.bold,
+            for (final type in _types)
+              _LegendItem(
+                type: type,
+                label: type == FastingType.arafah
+                    ? localization.specialDays
+                    : localization.fastingTypeTitle(type),
               ),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 16,
-              runSpacing: 8,
-              children: [
-                _buildLegendItem(
-                  context,
-                  Colors.green,
-                  localization.whiteDays,
-                ),
-                _buildLegendItem(
-                  context,
-                  Colors.orange,
-                  localization.mondayThursday,
-                ),
-                _buildLegendItem(
-                  context,
-                  Colors.purple,
-                  localization.ramadan,
-                ),
-                _buildLegendItem(
-                  context,
-                  Colors.blue,
-                  'Special Days',
-                ),
-              ],
-            ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildLegendItem(BuildContext context, Color color, String label) {
+class _LegendItem extends StatelessWidget {
+  const new({required this.type, required this.label});
+
+  final FastingType type;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -173,16 +175,13 @@ class CalendarPage extends StatelessWidget {
           width: 16,
           height: 16,
           decoration: BoxDecoration(
-            color: color.withOpacity(0.3),
+            color: type.color.withValues(alpha: 0.3),
             shape: BoxShape.circle,
-            border: Border.all(color: color, width: 2),
+            border: Border.all(color: type.color, width: 2),
           ),
         ),
         const SizedBox(width: 6),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
+        Text(label, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
   }

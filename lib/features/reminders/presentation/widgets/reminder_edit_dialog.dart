@@ -1,38 +1,60 @@
+import 'dart:async';
+
+import 'package:fasomo/core/notifications/reminder_timing.dart';
+import 'package:fasomo/core/presentation/fasting_type_text.dart';
+import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
+import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
+import 'package:fasomo/features/reminders/presentation/widgets/reminder_timing_text.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/utils/app_localizations.dart';
-import '../../domain/entities/reminder.dart';
-import '../bloc/reminder_bloc.dart';
-
 class ReminderEditDialog extends StatefulWidget {
-  final Reminder reminder;
+  const new({required this.reminder, super.key});
 
-  const ReminderEditDialog({
-    super.key,
-    required this.reminder,
-  });
+  final Reminder reminder;
 
   @override
   State<ReminderEditDialog> createState() => _ReminderEditDialogState();
 }
 
 class _ReminderEditDialogState extends State<ReminderEditDialog> {
-  late ReminderTime _selectedTime;
-  late TextEditingController _messageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedTime = widget.reminder.reminderTime;
-    _messageController =
-        TextEditingController(text: widget.reminder.customMessage ?? '');
-  }
+  late ReminderTime _selectedTime = widget.reminder.reminderTime;
+  late ReminderTiming _customTiming = widget.reminder.customTiming;
+  late final TextEditingController _messageController = TextEditingController(
+    text: widget.reminder.customMessage ?? '',
+  );
 
   @override
   void dispose() {
     _messageController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(
+        hour: _customTiming.time.hour,
+        minute: _customTiming.time.minute,
+      ),
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      _customTiming = ReminderTiming(
+        daysBefore: _customTiming.daysBefore,
+        time: WallClockTime(picked.hour, picked.minute),
+      );
+    });
+  }
+
+  void _save() {
+    final message = _messageController.text.trim();
+    final updated = widget.reminder
+        .copyWith(reminderTime: _selectedTime, customTiming: _customTiming)
+        .withCustomMessage(message.isEmpty ? null : message);
+    context.read<ReminderBloc>().add(UpdateReminderSettings(updated));
+    Navigator.pop(context);
   }
 
   @override
@@ -41,55 +63,62 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: const Text('Edit Reminder'),
+      title: Text(localization.editReminder),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.reminder.title,
+              localization.fastingTypeTitle(widget.reminder.fastingType),
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 24),
-            Text(
-              localization.reminderTime,
-              style: theme.textTheme.titleSmall,
-            ),
+            Text(localization.reminderTime, style: theme.textTheme.titleSmall),
             const SizedBox(height: 12),
-            RadioListTile<ReminderTime>(
-              title: Text(localization.dayBefore),
-              subtitle: const Text('One day before the fasting day'),
-              value: ReminderTime.dayBefore,
+            RadioGroup<ReminderTime>(
               groupValue: _selectedTime,
               onChanged: (value) {
-                setState(() {
-                  _selectedTime = value!;
-                });
+                if (value != null) setState(() => _selectedTime = value);
               },
+              child: Column(
+                children: [
+                  RadioListTile<ReminderTime>(
+                    title: Text(localization.dayBefore),
+                    subtitle: Text(
+                      localization.atTime(
+                        formatWallClock(context, ReminderTiming.dayBefore.time),
+                      ),
+                    ),
+                    value: ReminderTime.dayBefore,
+                  ),
+                  RadioListTile<ReminderTime>(
+                    title: Text(localization.morningOfDay),
+                    subtitle: Text(
+                      localization.atTime(
+                        formatWallClock(context, ReminderTiming.morningOf.time),
+                      ),
+                    ),
+                    value: ReminderTime.morningOfDay,
+                  ),
+                  RadioListTile<ReminderTime>(
+                    title: Text(localization.customTime),
+                    value: ReminderTime.custom,
+                  ),
+                ],
+              ),
             ),
-            RadioListTile<ReminderTime>(
-              title: Text(localization.morningOfDay),
-              subtitle: const Text('Morning of the fasting day'),
-              value: ReminderTime.morningOfDay,
-              groupValue: _selectedTime,
-              onChanged: (value) {
-                setState(() {
-                  _selectedTime = value!;
-                });
-              },
-            ),
-            RadioListTile<ReminderTime>(
-              title: Text(localization.customTime),
-              subtitle: const Text('Set a custom time'),
-              value: ReminderTime.custom,
-              groupValue: _selectedTime,
-              onChanged: (value) {
-                setState(() {
-                  _selectedTime = value!;
-                });
-              },
-            ),
+            if (_selectedTime == ReminderTime.custom)
+              _CustomTimingEditor(
+                timing: _customTiming,
+                onDaysBeforeChanged: (days) => setState(() {
+                  _customTiming = ReminderTiming(
+                    daysBefore: days,
+                    time: _customTiming.time,
+                  );
+                }),
+                onPickTime: () => unawaited(_pickTime()),
+              ),
             const SizedBox(height: 24),
             Text(
               localization.notificationMessage,
@@ -99,7 +128,7 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
             TextField(
               controller: _messageController,
               decoration: InputDecoration(
-                hintText: 'Enter custom notification message',
+                hintText: localization.customMessageHint,
                 border: const OutlineInputBorder(),
               ),
               maxLines: 3,
@@ -112,24 +141,48 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
           onPressed: () => Navigator.pop(context),
           child: Text(localization.cancel),
         ),
-        ElevatedButton(
-          onPressed: () {
-            final updatedReminder = widget.reminder.copyWith(
-              reminderTime: _selectedTime,
-              customMessage: _messageController.text.isEmpty
-                  ? null
-                  : _messageController.text,
-            );
-
-            context
-                .read<ReminderBloc>()
-                .add(UpdateReminderSettings(updatedReminder));
-
-            Navigator.pop(context);
-          },
-          child: Text(localization.save),
-        ),
+        ElevatedButton(onPressed: _save, child: Text(localization.save)),
       ],
+    );
+  }
+}
+
+class _CustomTimingEditor extends StatelessWidget {
+  const new({
+    required this.timing,
+    required this.onDaysBeforeChanged,
+    required this.onPickTime,
+  });
+
+  final ReminderTiming timing;
+  final ValueChanged<int> onDaysBeforeChanged;
+  final VoidCallback onPickTime;
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(start: 16, top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SegmentedButton<int>(
+            segments: [
+              ButtonSegment(value: 1, label: Text(localization.dayBefore)),
+              ButtonSegment(value: 0, label: Text(localization.sameDay)),
+            ],
+            selected: {timing.daysBefore},
+            onSelectionChanged: (selection) =>
+                onDaysBeforeChanged(selection.first),
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: onPickTime,
+            icon: const Icon(Icons.schedule),
+            label: Text(formatWallClock(context, timing.time)),
+          ),
+        ],
+      ),
     );
   }
 }

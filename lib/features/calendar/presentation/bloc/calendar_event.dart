@@ -1,33 +1,30 @@
 part of 'calendar_bloc.dart';
 
-abstract class CalendarEvent extends Equatable {
-  const CalendarEvent();
+sealed class CalendarEvent extends Equatable {
+  const new();
 
   @override
   List<Object> get props => [];
 }
 
-class LoadCalendar extends CalendarEvent {}
-
-class ChangeMonth extends CalendarEvent {
-  final int month;
-  final int year;
-
-  const ChangeMonth(this.month, this.year);
-
-  @override
-  List<Object> get props => [month, year];
+/// Opens the month containing today.
+final class LoadCalendar extends CalendarEvent {
+  const new();
 }
 
-class NextMonth extends CalendarEvent {}
+final class ChangeMonth extends CalendarEvent {
+  const new(this.month);
 
-class PreviousMonth extends CalendarEvent {}
-
-class SelectDay extends CalendarEvent {
-  final CalendarDay day;
-
-  const SelectDay(this.day);
+  final HijriMonth month;
 
   @override
-  List<Object> get props => [day];
+  List<Object> get props => [month];
+}
+
+final class NextMonth extends CalendarEvent {
+  const new();
+}
+
+final class PreviousMonth extends CalendarEvent {
+  const new();
 }
