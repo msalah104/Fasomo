@@ -39,6 +39,7 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 ### 🎨 Look
 - **Hilal theme**: night blue and moon gold on warm ivory, with a hand-tuned dark theme. The app follows the system light or dark setting.
 - Every text colour pair passes WCAG AA contrast, checked by a unit test.
+- **App icon**: the gold ف mark (the letter Fa with the new moon as its dot) on night blue, with an adaptive icon on Android. Regenerate with `dart run flutter_launcher_icons` after changing `design/art/app_icon.svg` and its render in `assets/icon/`.
 
 ### ℹ️ About
 - App information, the hadith behind each recommended fast, and contact details.
@@ -165,7 +166,7 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 | P1 | [Qada (make-up) tracker](#qada-make-up-tracker-p1) | — (shares the tracker store) | No |
 | P2 | [Hijri date adjustment](#hijri-date-adjustment-p2) | — | No |
 | P2 | [Theme switch](#theme-switch-p2) | — | No |
-| P2 | [Hilal fonts and app icon](#hilal-fonts-and-app-icon-p2) | `flutter_launcher_icons` (dev) | No |
+| P2 | [Hilal fonts](#hilal-fonts-p2) | — (bundled font files) | No |
 | P2 | [Notification tones](#notification-tones-p2) | — (bundled sounds) | No |
 | P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
 | P2 | [Onboarding](#onboarding-p2) | — | No |
@@ -219,10 +220,9 @@ A setting to shift the Hijri calendar by −2 to +2 days.
 
 - The Hilal dark theme is done and the app follows the system setting. What's left is a **System / Light / Dark** choice in settings, saved and restored before the first frame, like the language choice.
 
-### Hilal fonts and app icon (P2)
+### Hilal fonts (P2)
 
 - Bundle El Messiri (headings) and IBM Plex Sans Arabic (body) as assets, with their licences registered, so the app stays fully offline.
-- Ship the ف logo (the letter Fa with the new moon as its dot) as the launcher icon on Android and iOS.
 
 ### Notification tones (P2)
 
