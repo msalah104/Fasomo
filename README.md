@@ -11,12 +11,12 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 
 ### 📅 Calendar
 - **Full Hijri month view** for any month from 1356 to 1500 AH, with month navigation.
-- **Colour- and icon-coded fasting days**:
-  - 🟢 Green: White Days (13th, 14th, 15th)
-  - 🟠 Orange: Monday & Thursday
-  - 🟣 Purple: Ramadan
-  - 🩵 Teal: Six Days of Shawwal
-  - 🔵 Blue: special days (Arafah, Ashura, Tasua)
+- **Colour- and icon-coded fasting days**, in the Hilal palette:
+  - Pale moon: White Days (13th, 14th, 15th)
+  - Gold: Monday & Thursday
+  - Violet: Ramadan
+  - Teal: Six Days of Shawwal
+  - Clay red: special days (Arafah, Ashura, Tasua)
 - **Day details**: tap a day to see both dates and what each fasting type means.
 
 ### 🔔 Reminders
@@ -32,6 +32,10 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 ### 🌐 Language
 - Arabic and English, with full right-to-left layout in Arabic.
 - Choose **System default**, **English** or **العربية** from the language menu. The choice is saved.
+
+### 🎨 Look
+- **Hilal theme**: night blue and moon gold on warm ivory, with a hand-tuned dark theme. The app follows the system light or dark setting.
+- Every text colour pair passes WCAG AA contrast, checked by a unit test.
 
 ### ℹ️ About
 - App information, the hadith behind each recommended fast, and contact details.
@@ -105,8 +109,8 @@ lib/
 │   ├── services/           # Platform adapters (flutter_local_notifications, time zone)
 │   ├── error/              # Result<T, F> and sealed Failure types
 │   ├── di/                 # GetIt composition root
-│   ├── presentation/       # Shared labels, colours, date text
-│   └── themes/
+│   ├── presentation/       # Shared labels, fasting-type colours and icons, date text
+│   └── theme/              # Hilal tokens: primitives, AppColors, AppShapes, buildAppTheme
 ├── features/
 │   ├── home/  calendar/  reminders/  settings/  about/
 │   │   ├── domain/         # Entities, repository interfaces, use cases (pure Dart)
@@ -157,7 +161,8 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 | P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | `adhan`, `geolocator` | No |
 | P1 | [Qada (make-up) tracker](#qada-make-up-tracker-p1) | — (shares the tracker store) | No |
 | P2 | [Hijri date adjustment](#hijri-date-adjustment-p2) | — | No |
-| P2 | [Dark mode](#dark-mode-p2) | — | No |
+| P2 | [Theme switch](#theme-switch-p2) | — | No |
+| P2 | [Hilal fonts and app icon](#hilal-fonts-and-app-icon-p2) | `flutter_launcher_icons` (dev) | No |
 | P2 | [Notification tones](#notification-tones-p2) | — (bundled sounds) | No |
 | P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
 | P2 | [Onboarding](#onboarding-p2) | — | No |
@@ -205,10 +210,14 @@ A setting to shift the Hijri calendar by −2 to +2 days.
 - **Why:** the app uses the Umm al-Qura table, but many countries start months by local moon sighting, so the date can be a day off. This is the most common correctness complaint in Hijri apps.
 - **How:** one offset stored in settings and applied inside the Hijri converter, so the calendar, fasting rules and reminders all move together. Reminders re-sync when it changes. Later, the default could come from a remote config per country (see backend).
 
-### Dark mode (P2)
+### Theme switch (P2)
 
-- A complete dark theme and a **System / Light / Dark** choice in settings, saved and restored before the first frame (today `themeMode` is fixed to light).
-- Fasting-type colours are checked for contrast in both themes, and states keep an icon or label so colour is never the only signal.
+- The Hilal dark theme is done and the app follows the system setting. What's left is a **System / Light / Dark** choice in settings, saved and restored before the first frame, like the language choice.
+
+### Hilal fonts and app icon (P2)
+
+- Bundle El Messiri (headings) and IBM Plex Sans Arabic (body) as assets, with their licences registered, so the app stays fully offline.
+- Ship the ف logo (the letter Fa with the new moon as its dot) as the launcher icon on Android and iOS.
 
 ### Notification tones (P2)
 

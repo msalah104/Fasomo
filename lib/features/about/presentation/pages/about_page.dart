@@ -2,6 +2,7 @@ import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/presentation/fasting_type_style.dart';
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
+import 'package:fasomo/core/theme/app_colors.dart';
 import 'package:fasomo/features/about/presentation/widgets/hadith_card.dart';
 import 'package:fasomo/features/about/presentation/widgets/info_section.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
@@ -14,6 +15,7 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final colors = AppColors.of(context);
 
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -43,7 +45,8 @@ class AboutPage extends StatelessWidget {
             title: localization.fastingTypeTitle(type),
             hadith: hadith,
             icon: type.icon,
-            color: type.color,
+            color: type.color(colors),
+            onColor: type.onColor(colors),
           ),
         const SizedBox(height: 24),
         Text(localization.features, style: theme.textTheme.headlineSmall),
@@ -90,7 +93,7 @@ class _AppHeader extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                color: AppColors.of(context).tint(theme.colorScheme.primary),
                 shape: BoxShape.circle,
               ),
               child: Icon(

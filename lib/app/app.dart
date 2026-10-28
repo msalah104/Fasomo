@@ -1,6 +1,6 @@
 import 'package:fasomo/app/app_shell.dart';
 import 'package:fasomo/core/di/injection_container.dart';
-import 'package:fasomo/core/themes/app_theme.dart';
+import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
@@ -31,9 +31,8 @@ class FasomoApp extends StatelessWidget {
           return MaterialApp(
             onGenerateTitle: (context) => AppLocalizations.of(context).appName,
             debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: ThemeMode.light,
+            theme: buildAppTheme(Brightness.light),
+            darkTheme: buildAppTheme(Brightness.dark),
             locale: locale,
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,

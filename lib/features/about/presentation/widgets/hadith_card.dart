@@ -6,12 +6,18 @@ class HadithCard extends StatelessWidget {
     required this.hadith,
     required this.icon,
     required this.color,
+    required this.onColor,
     super.key,
   });
   final String title;
   final String hadith;
   final IconData icon;
+
+  /// The fasting type's colour, used for the icon well and the quote rule.
   final Color color;
+
+  /// The icon colour drawn on [color].
+  final Color onColor;
 
   @override
   Widget build(BuildContext context) {
@@ -29,21 +35,16 @@ class HadithCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    icon,
                     color: color,
-                    size: 24,
+                    shape: BoxShape.circle,
                   ),
+                  child: Icon(icon, color: onColor, size: 24),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     title,
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: color,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

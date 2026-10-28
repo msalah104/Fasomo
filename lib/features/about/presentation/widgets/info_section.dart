@@ -1,3 +1,5 @@
+import 'package:fasomo/core/theme/app_colors.dart';
+import 'package:fasomo/core/theme/app_shapes.dart';
 import 'package:flutter/material.dart';
 
 class InfoSection extends StatelessWidget {
@@ -14,6 +16,7 @@ class InfoSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = AppColors.of(context);
 
     return Card(
       margin: const EdgeInsetsDirectional.only(bottom: 12),
@@ -25,8 +28,8 @@ class InfoSection extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
+                color: colors.tint(theme.colorScheme.primary),
+                borderRadius: AppShapes.of(context).smallRadius,
               ),
               child: Icon(
                 icon,

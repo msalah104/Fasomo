@@ -2,6 +2,7 @@ import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/presentation/date_formatter.dart';
 import 'package:fasomo/core/presentation/fasting_type_style.dart';
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
+import 'package:fasomo/core/theme/app_colors.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -71,10 +72,11 @@ class _FastingTypeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final colors = AppColors.of(context);
 
     return Card(
       margin: const EdgeInsetsDirectional.only(bottom: 12),
-      color: type.color.withValues(alpha: 0.1),
+      color: type.fill(colors),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -82,13 +84,19 @@ class _FastingTypeCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(type.icon, color: type.color),
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: type.color(colors),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(type.icon, color: type.onColor(colors)),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     localization.fastingTypeTitle(type),
                     style: theme.textTheme.titleMedium?.copyWith(
-                      color: type.color,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

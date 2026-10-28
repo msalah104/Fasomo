@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/presentation/fasting_type_style.dart';
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
+import 'package:fasomo/core/theme/app_colors.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/calendar_grid.dart';
@@ -65,9 +66,6 @@ class CalendarPage extends StatelessWidget {
       showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
         builder: (context) => DayDetailSheet(day: day),
       ),
     );
@@ -168,6 +166,7 @@ class _LegendItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -175,9 +174,9 @@ class _LegendItem extends StatelessWidget {
           width: 16,
           height: 16,
           decoration: BoxDecoration(
-            color: type.color.withValues(alpha: 0.3),
+            color: type.color(colors),
             shape: BoxShape.circle,
-            border: Border.all(color: type.color, width: 2),
+            border: Border.all(color: colors.onSurfaceMuted),
           ),
         ),
         const SizedBox(width: 6),

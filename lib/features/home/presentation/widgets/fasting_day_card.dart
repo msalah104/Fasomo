@@ -1,5 +1,6 @@
 import 'package:fasomo/core/presentation/fasting_type_style.dart';
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
+import 'package:fasomo/core/theme/app_colors.dart';
 import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class FastingDayCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final colors = AppColors.of(context);
     final type = fastingDay.primaryType;
 
     return Card(
@@ -36,10 +38,10 @@ class FastingDayCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: type.color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    color: type.color(colors),
+                    shape: BoxShape.circle,
                   ),
-                  child: Icon(type.icon, color: type.color),
+                  child: Icon(type.icon, color: type.onColor(colors)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

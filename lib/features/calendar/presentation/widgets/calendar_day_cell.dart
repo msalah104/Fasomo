@@ -1,4 +1,6 @@
 import 'package:fasomo/core/presentation/fasting_type_style.dart';
+import 'package:fasomo/core/theme/app_colors.dart';
+import 'package:fasomo/core/theme/app_shapes.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
 import 'package:flutter/material.dart';
 
@@ -11,18 +13,20 @@ class CalendarDayCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = AppColors.of(context);
+    final radius = AppShapes.of(context).smallRadius;
     final primaryType = day.fastingTypes.firstOrNull;
-    final background = day.isToday
-        ? theme.colorScheme.primary.withValues(alpha: 0.1)
-        : primaryType?.color.withValues(alpha: 0.15) ?? Colors.transparent;
+    final background = primaryType == null
+        ? Colors.transparent
+        : primaryType.fill(colors);
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: radius,
       child: Ink(
         decoration: BoxDecoration(
           color: background,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: radius,
           border: day.isToday
               ? Border.all(color: theme.colorScheme.primary, width: 2)
               : null,
@@ -61,6 +65,7 @@ class _FastingDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -70,8 +75,10 @@ class _FastingDots extends StatelessWidget {
             height: 6,
             margin: const EdgeInsets.symmetric(horizontal: 1),
             decoration: BoxDecoration(
-              color: type.color,
+              color: type.color(colors),
               shape: BoxShape.circle,
+              // The outline keeps pale dots (White Days) visible on their tint.
+              border: Border.all(color: colors.onSurfaceMuted, width: 0.5),
             ),
           ),
       ],

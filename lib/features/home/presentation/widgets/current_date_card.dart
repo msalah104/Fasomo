@@ -1,4 +1,6 @@
 import 'package:fasomo/core/presentation/date_formatter.dart';
+import 'package:fasomo/core/theme/app_colors.dart';
+import 'package:fasomo/core/theme/app_shapes.dart';
 import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -12,23 +14,17 @@ class CurrentDateCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final onPrimary = theme.colorScheme.onPrimary;
+    final colors = AppColors.of(context);
+    final onPrimary = colors.onBrand;
 
     return Card(
-      elevation: 4,
+      color: colors.brand,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              theme.colorScheme.primary,
-              theme.colorScheme.primary.withValues(alpha: 0.8),
-            ],
-            begin: AlignmentDirectional.topStart,
-            end: AlignmentDirectional.bottomEnd,
-          ),
+          color: colors.brand,
+          borderRadius: AppShapes.of(context).cardRadius,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

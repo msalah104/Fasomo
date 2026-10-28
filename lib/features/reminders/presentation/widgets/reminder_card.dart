@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
+import 'package:fasomo/core/theme/app_shapes.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/widgets/reminder_edit_dialog.dart';
@@ -75,7 +76,7 @@ class ReminderCard extends StatelessWidget {
                   color: theme.colorScheme.surfaceContainerHighest.withValues(
                     alpha: 0.3,
                   ),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppShapes.of(context).smallRadius,
                 ),
                 child: Row(
                   children: [
