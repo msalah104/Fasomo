@@ -80,6 +80,13 @@ class TrackerSummaryCard extends StatelessWidget {
                       style: theme.textTheme.bodyMedium,
                     ),
                   ],
+                  if (summary.qada.remaining > 0) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      localization.qadaHomeSummary(summary.qada.remaining),
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
                 ],
               ),
             ),

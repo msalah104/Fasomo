@@ -405,4 +405,78 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get fastLogLoadFailed => 'تعذّر تحميل سجل الصيام';
+
+  @override
+  String get qadaTitle => 'صيام القضاء';
+
+  @override
+  String get qadaDaysLeft => 'أيام متبقية للقضاء';
+
+  @override
+  String qadaMadeUpOfOwed(int madeUp, int owed) {
+    return 'قُضي $madeUp من $owed';
+  }
+
+  @override
+  String qadaHomeSummary(int count) {
+    return 'أيام القضاء المتبقية: $count';
+  }
+
+  @override
+  String ramadanOfYear(String year) {
+    return 'رمضان $year هـ';
+  }
+
+  @override
+  String daysUntilRamadan(int count) {
+    return 'الأيام المتبقية حتى رمضان: $count';
+  }
+
+  @override
+  String get qadaNoneOwed => 'لا يوجد صيام قضاء مستحق.';
+
+  @override
+  String get qadaAddOwed => 'إضافة أيام مستحقة';
+
+  @override
+  String get qadaOwedDialogTitle => 'أيام مستحقة من رمضان';
+
+  @override
+  String get qadaOwedDialogHint =>
+      'الأيام التي أفطرتها ولم تُسجَّل في التقويم.';
+
+  @override
+  String get qadaOwedYear => 'رمضان عام';
+
+  @override
+  String get qadaOwedDays => 'الأيام المستحقة';
+
+  @override
+  String get addOneDay => 'إضافة يوم';
+
+  @override
+  String get removeOneDay => 'إزالة يوم';
+
+  @override
+  String get missed => 'أفطرت';
+
+  @override
+  String get madeUp => 'قضاء';
+
+  @override
+  String get makeUpFast => 'صيام قضاء';
+
+  @override
+  String get makeUpFastHint => 'يُحتسب من الأيام المستحقة عليك';
+
+  @override
+  String get makeUpFastToday => 'قضيت يومًا اليوم';
+
+  @override
+  String get qadaExplanation =>
+      'سجّل أيام رمضان التي أفطرتها في التقويم، أو أضف أيامًا مستحقة من أعوام سابقة. كل يوم قضاء يسدّ أقدم رمضان أولًا، ويُحتسب أيضًا في سلسلتك ومجاميعك.';
+
+  @override
+  String get qadaSaveFailed =>
+      'تعذّر الحفظ. لا يكون صيام القضاء في رمضان ولا في العيد ولا في يوم لم يأتِ بعد.';
 }

@@ -409,4 +409,78 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fastLogLoadFailed => 'Could not load your fasting log';
+
+  @override
+  String get qadaTitle => 'Make-up fasts (Qada)';
+
+  @override
+  String get qadaDaysLeft => 'days left to make up';
+
+  @override
+  String qadaMadeUpOfOwed(int madeUp, int owed) {
+    return '$madeUp of $owed made up';
+  }
+
+  @override
+  String qadaHomeSummary(int count) {
+    return 'Make-up days left: $count';
+  }
+
+  @override
+  String ramadanOfYear(String year) {
+    return 'Ramadan $year AH';
+  }
+
+  @override
+  String daysUntilRamadan(int count) {
+    return 'Days until Ramadan: $count';
+  }
+
+  @override
+  String get qadaNoneOwed => 'No make-up fasts owed.';
+
+  @override
+  String get qadaAddOwed => 'Add days owed';
+
+  @override
+  String get qadaOwedDialogTitle => 'Days owed from a Ramadan';
+
+  @override
+  String get qadaOwedDialogHint =>
+      'Days you missed that aren\'t marked in the calendar.';
+
+  @override
+  String get qadaOwedYear => 'Ramadan of';
+
+  @override
+  String get qadaOwedDays => 'Days owed';
+
+  @override
+  String get addOneDay => 'Add a day';
+
+  @override
+  String get removeOneDay => 'Remove a day';
+
+  @override
+  String get missed => 'Missed';
+
+  @override
+  String get madeUp => 'Made up';
+
+  @override
+  String get makeUpFast => 'Make-up fast';
+
+  @override
+  String get makeUpFastHint => 'Counts toward the days you owe';
+
+  @override
+  String get makeUpFastToday => 'I made up a fast today';
+
+  @override
+  String get qadaExplanation =>
+      'Mark the Ramadan days you missed in the calendar, or add days owed from earlier years. Each make-up fast pays off the oldest Ramadan first, and still counts toward your streak and totals.';
+
+  @override
+  String get qadaSaveFailed =>
+      'Could not save. A make-up fast can\'t be in Ramadan, on an Eid or in the future.';
 }

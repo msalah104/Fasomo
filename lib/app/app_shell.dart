@@ -1,4 +1,5 @@
 import 'package:clock/clock.dart';
+import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/features/about/presentation/pages/about_page.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
@@ -6,9 +7,10 @@ import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/localized_reminder_copy.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/language_menu_button.dart';
-import 'package:fasomo/features/tracker/domain/fast_log_rules.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/fasted_toggle.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/tracker_day_actions.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/tracker_day_badge.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/tracker_summary_card.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -73,9 +75,12 @@ class _AppShellState extends State<AppShell> {
       listener: (context, state) => ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            state.status == TrackerStatus.error
-                ? localization.fastLogLoadFailed
-                : localization.fastLogSaveFailed,
+            switch (state.failure) {
+              _ when state.status == TrackerStatus.error =>
+                localization.fastLogLoadFailed,
+              TrackerFailure() => localization.qadaSaveFailed,
+              _ => localization.fastLogSaveFailed,
+            },
           ),
         ),
       ),
@@ -153,16 +158,19 @@ class _CalendarTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tracker = context.watch<TrackerBloc>().state;
+    final summary = context.watch<TrackerBloc>().state.summary;
     return CalendarPage(
-      isFasted: tracker.isFasted,
+      dayBadgeBuilder: (day) => switch (summary.markFor(day.gregorianDate)) {
+        final mark? => TrackerDayBadge(mark: mark),
+        null => null,
+      },
       dayActionBuilder: (day) =>
-          FastLogRules.canLog(
+          TrackerDayActions.appliesTo(
             date: day.gregorianDate,
             hijri: day.hijriDate,
             today: clock.now(),
           )
-          ? FastedToggle(date: day.gregorianDate, hijri: day.hijriDate)
+          ? TrackerDayActions(date: day.gregorianDate, hijri: day.hijriDate)
           : null,
     );
   }

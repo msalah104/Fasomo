@@ -32,6 +32,9 @@ import 'package:fasomo/features/tracker/data/repositories/fast_log_repository_im
 import 'package:fasomo/features/tracker/domain/repositories/fast_log_repository.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
+import 'package:fasomo/features/tracker/domain/usecases/set_extra_qada_owed.dart';
+import 'package:fasomo/features/tracker/domain/usecases/set_make_up_fast.dart';
+import 'package:fasomo/features/tracker/domain/usecases/set_ramadan_day_missed.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -90,10 +93,19 @@ Future<void> init() async {
     )
     // --- Tracker ---
     ..registerFactory(
-      () => TrackerBloc(getSummary: sl(), setDayFasted: sl()),
+      () => TrackerBloc(
+        getSummary: sl(),
+        setDayFasted: sl(),
+        setRamadanDayMissed: sl(),
+        setMakeUpFast: sl(),
+        setExtraQadaOwed: sl(),
+      ),
     )
     ..registerLazySingleton(() => GetFastLogSummary(sl()))
     ..registerLazySingleton(() => SetDayFasted(sl()))
+    ..registerLazySingleton(() => SetRamadanDayMissed(sl()))
+    ..registerLazySingleton(() => SetMakeUpFast(sl()))
+    ..registerLazySingleton(() => SetExtraQadaOwed(sl()))
     ..registerLazySingleton<FastLogRepository>(
       () => FastLogRepositoryImpl(
         localDataSource: sl(),

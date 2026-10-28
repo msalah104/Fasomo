@@ -9,6 +9,9 @@ import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/pages/tracker_page.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/fasted_toggle.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/qada_section.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/tracker_day_actions.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/tracker_day_badge.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/tracker_summary_card.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -150,7 +153,9 @@ void main() {
     });
   });
 
-  testWidgets('a fasted calendar day shows a check badge', (tester) async {
+  testWidgets('calendar badges have their own icon and label', (
+    tester,
+  ) async {
     final day = CalendarDay(
       hijriDate: const HijriDate(1448, 5, 15),
       gregorianDate: DateTime(2026, 10, 26),
@@ -161,10 +166,15 @@ void main() {
       tester,
       Row(
         children: [
-          SizedBox.square(
-            dimension: 48,
-            child: CalendarDayCell(day: day, onTap: () {}, isFasted: true),
-          ),
+          for (final mark in DayMark.values)
+            SizedBox.square(
+              dimension: 48,
+              child: CalendarDayCell(
+                day: day,
+                onTap: () {},
+                badge: TrackerDayBadge(mark: mark),
+              ),
+            ),
           SizedBox.square(
             dimension: 48,
             child: CalendarDayCell(day: day, onTap: () {}),
@@ -174,5 +184,156 @@ void main() {
     );
 
     expect(find.byIcon(Icons.check_circle), findsOneWidget);
+    expect(find.byIcon(Icons.history), findsOneWidget);
+    expect(find.byIcon(Icons.cancel), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('Missed')), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp('Made up')), findsOneWidget);
   });
+
+  group('TrackerDayActions', () {
+    // 10 Ramadan 1447, in the past.
+    final ramadanDay = DateTime(2026, 2, 27);
+    const ramadanHijri = HijriDate(1447, 9, 10);
+    final tuesday = DateTime(2026, 10, 27);
+    const tuesdayHijri = HijriDate(1448, 5, 16);
+    final owing = summary.withQada(
+      const QadaSummary(
+        owed: 2,
+        madeUp: 0,
+        byYear: [QadaYear(hijriYear: 1447, owed: 2, madeUp: 0, extraOwed: 2)],
+        latestOwableYear: 1447,
+      ),
+    );
+
+    testWidgets('a Ramadan day offers fasted or missed', (tester) async {
+      await pump(
+        tester,
+        TrackerDayActions(date: ramadanDay, hijri: ramadanHijri),
+      );
+
+      expect(find.byType(SegmentedButton<DayMark>), findsOneWidget);
+      expect(find.text('Make-up fast'), findsNothing);
+      await tester.tap(find.text('Missed'));
+      verify(() => bloc.add(ToggleRamadanMissed(ramadanDay))).called(1);
+    });
+
+    testWidgets('another day offers a make-up fast while days are owed', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        TrackerDayActions(date: tuesday, hijri: tuesdayHijri),
+        state: TrackerState(status: TrackerStatus.success, summary: owing),
+      );
+
+      expect(find.text('Mark as fasted'), findsOneWidget);
+      await tester.tap(find.text('Make-up fast'));
+      verify(() => bloc.add(ToggleMakeUp(tuesday))).called(1);
+    });
+
+    testWidgets('hides the make-up switch when nothing is owed', (
+      tester,
+    ) async {
+      await pump(tester, TrackerDayActions(date: tuesday, hijri: tuesdayHijri));
+
+      expect(find.text('Mark as fasted'), findsOneWidget);
+      expect(find.text('Make-up fast'), findsNothing);
+    });
+  });
+
+  group('QadaSection', () {
+    final owing = summary.withQada(
+      const QadaSummary(
+        owed: 6,
+        madeUp: 2,
+        byYear: [
+          QadaYear(hijriYear: 1446, owed: 2, madeUp: 2, extraOwed: 2),
+          QadaYear(hijriYear: 1447, owed: 4, madeUp: 0, extraOwed: 0),
+        ],
+        latestOwableYear: 1447,
+        daysUntilRamadan: 103,
+      ),
+      canMakeUpToday: true,
+    );
+
+    testWidgets('shows the balance, each Ramadan and the countdown', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        SingleChildScrollView(child: QadaSection(summary: owing)),
+      );
+
+      expect(find.text('4'), findsOneWidget);
+      expect(find.text('Days until Ramadan: 103'), findsOneWidget);
+      expect(find.text('Ramadan 1446 AH'), findsOneWidget);
+      expect(find.text('2 of 2 made up'), findsOneWidget);
+      expect(find.text('0 of 4 made up'), findsOneWidget);
+
+      await tester.tap(find.text('I made up a fast today'));
+      verify(() => bloc.add(ToggleMakeUp(today))).called(1);
+    });
+
+    testWidgets('says nothing is owed when the balance is clear', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        SingleChildScrollView(child: QadaSection(summary: summary)),
+      );
+
+      expect(find.text('No make-up fasts owed.'), findsOneWidget);
+      expect(find.text('I made up a fast today'), findsNothing);
+    });
+
+    testWidgets('enters days owed for an earlier Ramadan', (tester) async {
+      await pump(
+        tester,
+        SingleChildScrollView(child: QadaSection(summary: owing)),
+      );
+
+      await tester.tap(find.text('Add days owed'));
+      await tester.pumpAndSettle();
+      expect(find.text('Days owed from a Ramadan'), findsOneWidget);
+
+      await tester.tap(find.text('Ramadan 1447 AH').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Ramadan 1446 AH').last);
+      await tester.pumpAndSettle();
+      // Pre-filled with the 2 days already entered for 1446.
+      expect(find.text('2'), findsWidgets);
+      await tester.tap(find.byTooltip('Add a day'));
+      await tester.pump();
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => bloc.add(const SetExtraOwed(hijriYear: 1446, days: 3)),
+      ).called(1);
+    });
+
+    testWidgets('lays out in Arabic without overflow', (tester) async {
+      await pump(
+        tester,
+        SingleChildScrollView(child: QadaSection(summary: owing)),
+        locale: const Locale('ar'),
+      );
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('صيام القضاء'), findsOneWidget);
+    });
+  });
+}
+
+extension on FastLogSummary {
+  FastLogSummary withQada(QadaSummary qada, {bool canMakeUpToday = false}) =>
+      FastLogSummary(
+        fastedDays: fastedDays,
+        currentStreak: currentStreak,
+        longestStreak: longestStreak,
+        month: month,
+        year: year,
+        qada: qada,
+        canMakeUpToday: canMakeUpToday,
+      );
 }

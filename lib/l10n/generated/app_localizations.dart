@@ -793,6 +793,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not load your fasting log'**
   String get fastLogLoadFailed;
+
+  /// No description provided for @qadaTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Make-up fasts (Qada)'**
+  String get qadaTitle;
+
+  /// No description provided for @qadaDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'days left to make up'**
+  String get qadaDaysLeft;
+
+  /// Make-up fasts done out of those owed.
+  ///
+  /// In en, this message translates to:
+  /// **'{madeUp} of {owed} made up'**
+  String qadaMadeUpOfOwed(int madeUp, int owed);
+
+  /// Qada balance line on the Home progress card.
+  ///
+  /// In en, this message translates to:
+  /// **'Make-up days left: {count}'**
+  String qadaHomeSummary(int count);
+
+  /// The Ramadan of a Hijri year, e.g. "Ramadan 1446 AH".
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan {year} AH'**
+  String ramadanOfYear(String year);
+
+  /// Countdown shown while make-up days are still owed.
+  ///
+  /// In en, this message translates to:
+  /// **'Days until Ramadan: {count}'**
+  String daysUntilRamadan(int count);
+
+  /// No description provided for @qadaNoneOwed.
+  ///
+  /// In en, this message translates to:
+  /// **'No make-up fasts owed.'**
+  String get qadaNoneOwed;
+
+  /// No description provided for @qadaAddOwed.
+  ///
+  /// In en, this message translates to:
+  /// **'Add days owed'**
+  String get qadaAddOwed;
+
+  /// No description provided for @qadaOwedDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Days owed from a Ramadan'**
+  String get qadaOwedDialogTitle;
+
+  /// No description provided for @qadaOwedDialogHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Days you missed that aren\'t marked in the calendar.'**
+  String get qadaOwedDialogHint;
+
+  /// No description provided for @qadaOwedYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan of'**
+  String get qadaOwedYear;
+
+  /// No description provided for @qadaOwedDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Days owed'**
+  String get qadaOwedDays;
+
+  /// No description provided for @addOneDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a day'**
+  String get addOneDay;
+
+  /// No description provided for @removeOneDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove a day'**
+  String get removeOneDay;
+
+  /// No description provided for @missed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed'**
+  String get missed;
+
+  /// No description provided for @madeUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Made up'**
+  String get madeUp;
+
+  /// No description provided for @makeUpFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Make-up fast'**
+  String get makeUpFast;
+
+  /// No description provided for @makeUpFastHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Counts toward the days you owe'**
+  String get makeUpFastHint;
+
+  /// No description provided for @makeUpFastToday.
+  ///
+  /// In en, this message translates to:
+  /// **'I made up a fast today'**
+  String get makeUpFastToday;
+
+  /// No description provided for @qadaExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark the Ramadan days you missed in the calendar, or add days owed from earlier years. Each make-up fast pays off the oldest Ramadan first, and still counts toward your streak and totals.'**
+  String get qadaExplanation;
+
+  /// No description provided for @qadaSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save. A make-up fast can\'t be in Ramadan, on an Eid or in the future.'**
+  String get qadaSaveFailed;
 }
 
 class _AppLocalizationsDelegate

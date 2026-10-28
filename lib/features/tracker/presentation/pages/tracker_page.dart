@@ -3,6 +3,7 @@ import 'package:fasomo/core/presentation/fasting_type_text.dart';
 import 'package:fasomo/core/theme/app_colors.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/qada_section.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/streak_stat.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +80,8 @@ class _TrackerContent extends StatelessWidget {
         _PeriodSection(title: localization.thisMonth, totals: summary.month),
         const SizedBox(height: 24),
         _PeriodSection(title: localization.thisYear, totals: summary.year),
+        const SizedBox(height: 24),
+        QadaSection(summary: summary),
       ],
     );
   }

@@ -34,4 +34,46 @@ void main() {
     }
     expect(check(past, const HijriDate(1447, 12, 9)), isNull);
   });
+
+  group('make-up fasts', () {
+    TrackerFailure? makeUp(DateTime date, HijriDate hijri) =>
+        FastLogRules.whyNotMakeUp(date: date, hijri: hijri, today: today);
+
+    test('are allowed on past days outside Ramadan', () {
+      expect(makeUp(DateTime(2026, 10, 27), ordinary), isNull);
+    });
+
+    test('are rejected in Ramadan, on Eid and in the future', () {
+      final past = DateTime(2026, 3);
+      expect(
+        makeUp(past, const HijriDate(1447, 9, 12)),
+        isA<RamadanDayNotMakeUp>(),
+      );
+      expect(
+        makeUp(past, const HijriDate(1447, 10, 1)),
+        isA<ForbiddenDayNotLoggable>(),
+      );
+      expect(
+        makeUp(DateTime(2026, 10, 29), ordinary),
+        isA<FutureDayNotLoggable>(),
+      );
+    });
+  });
+
+  group('missed days', () {
+    TrackerFailure? missed(DateTime date, HijriDate hijri) =>
+        FastLogRules.whyNotMissed(date: date, hijri: hijri, today: today);
+
+    test('are Ramadan days up to today', () {
+      expect(missed(DateTime(2026, 3), const HijriDate(1447, 9, 12)), isNull);
+    });
+
+    test('are rejected outside Ramadan and in the future', () {
+      expect(missed(DateTime(2026, 10, 27), ordinary), isA<NotARamadanDay>());
+      expect(
+        missed(DateTime(2027, 2, 20), const HijriDate(1448, 9, 12)),
+        isA<FutureDayNotLoggable>(),
+      );
+    });
+  });
 }

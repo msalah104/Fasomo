@@ -22,6 +22,12 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - **Progress page**: current and longest streak, plus this Hijri month's and this Hijri year's totals per fasting type so far (e.g. "White Days · 9 of 12").
 - Streaks and totals are worked out from the log every time, never stored. The log is kept on the device.
 
+### ↺ Make-up fasts (Qada)
+- **Days owed per Ramadan**: mark the Ramadan days you missed in the calendar (a Ramadan day is either *Fasted* or *Missed*), or enter how many days you owe from an earlier Ramadan.
+- **Make-up fasts**: switch on *Make-up fast* for any past day outside Ramadan, or tap *I made up a fast today* on the progress page. A make-up fast is also a fasted day, so one on a Monday counts toward the Monday & Thursday totals and the streak.
+- **Balance**: the progress page shows the days left, each Ramadan's "made up of owed" (make-up fasts pay off the oldest Ramadan first) and, while days are owed, the days until the next Ramadan. Home shows the days left too.
+- Missed days carry a ✗ badge in the calendar and make-up fasts a ↺ badge.
+
 ### 📅 Calendar
 - **Full Hijri month view** for any month from 1356 to 1500 AH, with month navigation.
 - **Colour- and icon-coded fasting days**, in the Hilal palette:
@@ -31,8 +37,8 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
   - Teal: Six Days of Shawwal
   - Clay red: special days (Arafah, Ashura, Tasua)
   - Each type also has its own outlined icon: crescent (Ramadan), peak (special days), sparkle (Shawwal), full moon (White Days) and calendar (Monday & Thursday).
-- **Day details**: tap a day to see both dates and what each fasting type means, and mark it as fasted.
-- **Fasted days** carry a check badge.
+- **Day details**: tap a day to see both dates and what each fasting type means, and mark it as fasted, missed (in Ramadan) or a make-up fast.
+- **Logged days** carry a badge: ✓ fasted, ↺ make-up fast, ✗ missed in Ramadan.
 
 ### 🔔 Reminders
 - **Real fire times**, worked out from each actual fasting date:
@@ -174,7 +180,7 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 |---|---|---|---|
 | P1 | [Home sky header](#home-sky-header-p1) | `dart_suncalc`, `geolocator` (optional) | No |
 | P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | `adhan`, `geolocator` | No |
-| P1 | [Qada (make-up) tracker](#qada-make-up-tracker-p1) | — (shares the tracker store) | No |
+| P2 | [Qada reminders](#qada-reminders-p2) | — | No |
 | P2 | [Hijri date adjustment](#hijri-date-adjustment-p2) | — | No |
 | P2 | [Theme switch](#theme-switch-p2) | — | No |
 | P2 | [Hilal fonts](#hilal-fonts-p2) | — (bundled font files) | No |
@@ -205,12 +211,12 @@ During Ramadan (and optionally on any fasting day), Home switches to a Ramadan v
 - **Reminders:** new reminder timings relative to prayer times, e.g. "30 minutes before Fajr" for suhoor and "at Maghrib" for iftar, instead of fixed clock times.
 - **How:** the `adhan` package computes prayer times offline from coordinates and a calculation method (Umm al-Qura, Egyptian, MWL, ISNA, …, chosen in settings, with a sensible default per country). Location comes from `geolocator` or a manually picked city, so the app still works with location permission denied. Prayer-time math stays pure and clock-injected; the reminder scheduler gains a "relative to prayer" timing.
 
-### Qada (make-up) tracker (P1)
+### Qada reminders (P2)
 
-For Ramadan days that were missed and must be made up.
+Gentle reminders for make-up fasts while days are still owed.
 
-- **What it does:** enter how many days you owe per year (or tick them on the calendar during Ramadan); log each make-up fast; see the remaining balance and an optional gentle reminder (e.g. every Monday and Thursday until it reaches zero). Reminds before the next Ramadan if days are still owed.
-- **How:** part of the fasting log, so a make-up fast on a Monday can count toward both the Qada balance and the Monday/Thursday streak. The balance is derived from the log, never stored separately.
+- **What it does:** an optional nudge (e.g. every Monday and Thursday) until the Qada balance reaches zero, and a warning a few weeks before Ramadan if days are still owed.
+- **How:** a new reminder kind in the scheduler that reads the balance from the fasting log, so it stops by itself once everything is made up.
 
 ### Hijri date adjustment (P2)
 

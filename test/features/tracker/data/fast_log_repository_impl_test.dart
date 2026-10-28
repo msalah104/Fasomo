@@ -8,6 +8,7 @@ import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/error/storage_write_exception.dart';
 import 'package:fasomo/features/tracker/data/datasources/fast_log_local_data_source.dart';
 import 'package:fasomo/features/tracker/data/repositories/fast_log_repository_impl.dart';
+import 'package:fasomo/features/tracker/domain/entities/fast_log.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -38,7 +39,7 @@ void main() {
         Err() => fail('expected a summary'),
       };
 
-  setUpAll(() => registerFallbackValue(<DateTime>{}));
+  setUpAll(() => registerFallbackValue(FastLog.empty));
 
   test('starts empty', () async {
     final empty = summary(await repositoryWith({}));
@@ -111,9 +112,9 @@ void main() {
 
   test('a refused write is a write failure', () async {
     final dataSource = MockFastLogLocalDataSource();
-    when(dataSource.getFastedDays).thenReturn({});
+    when(dataSource.getLog).thenReturn(FastLog.empty);
     when(
-      () => dataSource.saveFastedDays(any()),
+      () => dataSource.saveLog(any()),
     ).thenThrow(const StorageWriteException(AppConstants.fastLogKey));
     final repository = FastLogRepositoryImpl(
       localDataSource: dataSource,
@@ -127,5 +128,97 @@ void main() {
     );
 
     expect((result as Err).failure, isA<StorageWriteFailed>());
+  });
+
+  group('make-up (Qada)', () {
+    DateTime ramadan1447(int day) =>
+        calendar.converter.toGregorian(HijriDate(1447, 9, day));
+
+    test('a missed Ramadan day and fasting it clear each other', () async {
+      final repository = await repositoryWith({});
+      final day = ramadan1447(3);
+
+      await repository.setFasted(day, fasted: true);
+      await repository.setMissedRamadan(day, missed: true);
+      expect(summary(repository).markFor(day), DayMark.missed);
+      expect(summary(repository).isFasted(day), isFalse);
+      expect(summary(repository).qada.owed, 1);
+
+      await repository.setFasted(day, fasted: true);
+      expect(summary(repository).markFor(day), DayMark.fasted);
+      expect(summary(repository).qada.owed, 0);
+    });
+
+    test('a make-up fast is also fasted; un-fasting clears it', () async {
+      final repository = await repositoryWith({});
+      final day = DateTime(2026, 10, 27);
+
+      await repository.setMakeUp(day, makeUp: true);
+      expect(summary(repository).isFasted(day), isTrue);
+      expect(summary(repository).isMakeUp(day), isTrue);
+
+      await repository.setMakeUp(day, makeUp: false);
+      expect(summary(repository).markFor(day), DayMark.fasted);
+
+      await repository.setMakeUp(day, makeUp: true);
+      await repository.setFasted(day, fasted: false);
+      expect(summary(repository).markFor(day), isNull);
+    });
+
+    test('stores every part of the log under its own key', () async {
+      final repository = await repositoryWith({});
+      await repository.setMissedRamadan(ramadan1447(3), missed: true);
+      await repository.setMakeUp(DateTime(2026, 10, 27), makeUp: true);
+      await repository.setExtraOwed(1446, days: 4);
+
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getStringList(AppConstants.fastLogKey), ['2026-10-27']);
+      expect(prefs.getStringList(AppConstants.makeUpDaysKey), ['2026-10-27']);
+      expect(prefs.getStringList(AppConstants.missedRamadanKey), hasLength(1));
+      expect(prefs.getStringList(AppConstants.extraOwedKey), ['1446:4']);
+      expect(summary(repository).qada.owed, 5);
+      expect(summary(repository).qada.remaining, 4);
+    });
+
+    test('setting zero days owed removes the entry', () async {
+      final repository = await repositoryWith({
+        AppConstants.extraOwedKey: ['1445:2', '1446:4'],
+      });
+
+      await repository.setExtraOwed(1446, days: 0);
+
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getStringList(AppConstants.extraOwedKey), ['1445:2']);
+    });
+
+    test('rejects a make-up fast in Ramadan', () async {
+      final repository = await repositoryWith({});
+
+      final result = await repository.setMakeUp(ramadan1447(5), makeUp: true);
+
+      expect((result as Err).failure, isA<RamadanDayNotMakeUp>());
+    });
+
+    test('rejects marking an ordinary day as missed', () async {
+      final repository = await repositoryWith({});
+
+      final result = await repository.setMissedRamadan(
+        DateTime(2026, 10, 27),
+        missed: true,
+      );
+
+      expect((result as Err).failure, isA<NotARamadanDay>());
+    });
+
+    test('malformed days owed are a read failure', () async {
+      final repository = await repositoryWith({
+        AppConstants.extraOwedKey: ['1446-4'],
+      });
+
+      expect(
+        repository.getSummary(),
+        isA<Err<FastLogSummary, StorageFailure>>(),
+      );
+    });
   });
 }

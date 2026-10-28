@@ -225,5 +225,61 @@
   "noFastingDaysYet": "No fasting days so far.",
   "streakExplanation": "Streaks count fasting days only: White Days, Monday & Thursday, Ramadan and the special days. Missing one before today resets the current streak. Other days never break it, and today counts once you mark it.",
   "fastLogSaveFailed": "Could not save your fasting log",
-  "fastLogLoadFailed": "Could not load your fasting log"
+  "fastLogLoadFailed": "Could not load your fasting log",
+  "qadaTitle": "Make-up fasts (Qada)",
+  "qadaDaysLeft": "days left to make up",
+  "qadaMadeUpOfOwed": "{madeUp} of {owed} made up",
+  "@qadaMadeUpOfOwed": {
+    "description": "Make-up fasts done out of those owed.",
+    "placeholders": {
+      "madeUp": {
+        "type": "int"
+      },
+      "owed": {
+        "type": "int"
+      }
+    }
+  },
+  "qadaHomeSummary": "Make-up days left: {count}",
+  "@qadaHomeSummary": {
+    "description": "Qada balance line on the Home progress card.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ramadanOfYear": "Ramadan {year} AH",
+  "@ramadanOfYear": {
+    "description": "The Ramadan of a Hijri year, e.g. \"Ramadan 1446 AH\".",
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "daysUntilRamadan": "Days until Ramadan: {count}",
+  "@daysUntilRamadan": {
+    "description": "Countdown shown while make-up days are still owed.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "qadaNoneOwed": "No make-up fasts owed.",
+  "qadaAddOwed": "Add days owed",
+  "qadaOwedDialogTitle": "Days owed from a Ramadan",
+  "qadaOwedDialogHint": "Days you missed that aren't marked in the calendar.",
+  "qadaOwedYear": "Ramadan of",
+  "qadaOwedDays": "Days owed",
+  "addOneDay": "Add a day",
+  "removeOneDay": "Remove a day",
+  "missed": "Missed",
+  "madeUp": "Made up",
+  "makeUpFast": "Make-up fast",
+  "makeUpFastHint": "Counts toward the days you owe",
+  "makeUpFastToday": "I made up a fast today",
+  "qadaExplanation": "Mark the Ramadan days you missed in the calendar, or add days owed from earlier years. Each make-up fast pays off the oldest Ramadan first, and still counts toward your streak and totals.",
+  "qadaSaveFailed": "Could not save. A make-up fast can't be in Ramadan, on an Eid or in the future."
 }

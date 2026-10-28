@@ -69,6 +69,22 @@ final class ForbiddenDayNotLoggable extends TrackerFailure {
   String get code => 'tracker.forbidden_day';
 }
 
+/// A make-up fast cannot fall in Ramadan, whose own fast is obligatory.
+final class RamadanDayNotMakeUp extends TrackerFailure {
+  const new();
+
+  @override
+  String get code => 'tracker.ramadan_make_up';
+}
+
+/// Only a Ramadan day can be marked as missed and owed.
+final class NotARamadanDay extends TrackerFailure {
+  const new();
+
+  @override
+  String get code => 'tracker.not_ramadan';
+}
+
 /// Failures from the OS notification scheduler.
 sealed class NotificationFailure extends Failure {
   const new();

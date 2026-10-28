@@ -6,6 +6,9 @@ import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
+import 'package:fasomo/features/tracker/domain/usecases/set_extra_qada_owed.dart';
+import 'package:fasomo/features/tracker/domain/usecases/set_make_up_fast.dart';
+import 'package:fasomo/features/tracker/domain/usecases/set_ramadan_day_missed.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -14,9 +17,18 @@ class MockGetFastLogSummary extends Mock implements GetFastLogSummary;
 
 class MockSetDayFasted extends Mock implements SetDayFasted;
 
+class MockSetRamadanDayMissed extends Mock implements SetRamadanDayMissed;
+
+class MockSetMakeUpFast extends Mock implements SetMakeUpFast;
+
+class MockSetExtraQadaOwed extends Mock implements SetExtraQadaOwed;
+
 void main() {
   late MockGetFastLogSummary getSummary;
   late MockSetDayFasted setDayFasted;
+  late MockSetRamadanDayMissed setRamadanDayMissed;
+  late MockSetMakeUpFast setMakeUpFast;
+  late MockSetExtraQadaOwed setExtraQadaOwed;
 
   final monday = DateTime(2026, 10, 26);
   final withMonday = FastLogSummary(
@@ -30,17 +42,37 @@ void main() {
   setUpAll(() {
     registerFallbackValue(const NoParams());
     registerFallbackValue(SetDayFastedParams(date: monday, fasted: true));
+    registerFallbackValue(
+      SetRamadanDayMissedParams(date: monday, missed: true),
+    );
+    registerFallbackValue(SetMakeUpFastParams(date: monday, makeUp: true));
+    registerFallbackValue(
+      const SetExtraQadaOwedParams(hijriYear: 1446, days: 1),
+    );
   });
 
   setUp(() {
     getSummary = MockGetFastLogSummary();
     setDayFasted = MockSetDayFasted();
     when(() => getSummary(any())).thenReturn(const Ok(FastLogSummary.empty));
+    setRamadanDayMissed = MockSetRamadanDayMissed();
+    setMakeUpFast = MockSetMakeUpFast();
+    setExtraQadaOwed = MockSetExtraQadaOwed();
     when(() => setDayFasted(any())).thenAnswer((_) async => const Ok(null));
+    when(
+      () => setRamadanDayMissed(any()),
+    ).thenAnswer((_) async => const Ok(null));
+    when(() => setMakeUpFast(any())).thenAnswer((_) async => const Ok(null));
+    when(() => setExtraQadaOwed(any())).thenAnswer((_) async => const Ok(null));
   });
 
-  TrackerBloc build() =>
-      TrackerBloc(getSummary: getSummary, setDayFasted: setDayFasted);
+  TrackerBloc build() => TrackerBloc(
+    getSummary: getSummary,
+    setDayFasted: setDayFasted,
+    setRamadanDayMissed: setRamadanDayMissed,
+    setMakeUpFast: setMakeUpFast,
+    setExtraQadaOwed: setExtraQadaOwed,
+  );
 
   test('starts in the initial state', () {
     expect(build().state, const TrackerState());
@@ -110,6 +142,67 @@ void main() {
       TrackerState(
         status: TrackerStatus.success,
         failure: FutureDayNotLoggable(),
+      ),
+    ],
+  );
+
+  blocTest<TrackerBloc, TrackerState>(
+    'toggling a Ramadan day missed marks it, then clears it',
+    build: build,
+    seed: () => const TrackerState(status: TrackerStatus.success),
+    act: (bloc) => bloc.add(ToggleRamadanMissed(monday)),
+    verify: (_) => verify(
+      () => setRamadanDayMissed(
+        SetRamadanDayMissedParams(date: monday, missed: true),
+      ),
+    ).called(1),
+  );
+
+  blocTest<TrackerBloc, TrackerState>(
+    'toggling a make-up fast on a day that is one clears it',
+    build: build,
+    seed: () => TrackerState(
+      status: TrackerStatus.success,
+      summary: FastLogSummary(
+        fastedDays: {monday},
+        makeUpDays: {monday},
+        currentStreak: 1,
+        longestStreak: 1,
+        month: PeriodTotals.empty,
+        year: PeriodTotals.empty,
+      ),
+    ),
+    act: (bloc) => bloc.add(ToggleMakeUp(monday)),
+    expect: () => const [TrackerState(status: TrackerStatus.success)],
+    verify: (_) => verify(
+      () => setMakeUpFast(SetMakeUpFastParams(date: monday, makeUp: false)),
+    ).called(1),
+  );
+
+  blocTest<TrackerBloc, TrackerState>(
+    'sets the days owed for a year',
+    build: build,
+    seed: () => const TrackerState(status: TrackerStatus.success),
+    act: (bloc) => bloc.add(const SetExtraOwed(hijriYear: 1446, days: 3)),
+    verify: (_) => verify(
+      () => setExtraQadaOwed(
+        const SetExtraQadaOwedParams(hijriYear: 1446, days: 3),
+      ),
+    ).called(1),
+  );
+
+  blocTest<TrackerBloc, TrackerState>(
+    'a rejected make-up fast reports the failure',
+    setUp: () => when(
+      () => setMakeUpFast(any()),
+    ).thenAnswer((_) async => const Err(RamadanDayNotMakeUp())),
+    build: build,
+    seed: () => const TrackerState(status: TrackerStatus.success),
+    act: (bloc) => bloc.add(ToggleMakeUp(monday)),
+    expect: () => const [
+      TrackerState(
+        status: TrackerStatus.success,
+        failure: RamadanDayNotMakeUp(),
       ),
     ],
   );
