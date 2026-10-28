@@ -46,6 +46,20 @@ abstract final class Primitives {
 
   // Daytime sky.
   static const sky68 = Color(0xFF7FA7D6);
+  static const sky88 = Color(0xFFCFE0EE);
+
+  // Dusk sky, between day and night.
+  static const dusk42 = Color(0xFF4A4A7A);
+  static const dusk70 = Color(0xFFE59A7A);
+  static const dusk82 = Color(0xFFF6C27A);
+
+  // Night horizon, the lowest band of the night sky.
+  static const indigo38 = Color(0xFF2A3866);
+
+  // Sun and moon.
+  static const sun85 = Color(0xFFFFC95C);
+  static const sun92 = Color(0xFFFFE3A3);
+  static const moon94 = Color(0xFFF3EBD6);
 
   // Errors.
   static const red45 = Color(0xFFB3261E);

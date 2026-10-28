@@ -4,6 +4,9 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 
 ## Features
 
+### ✨ Launch
+- **Animated splash**: the sun sets behind the dome, the sky turns through dusk to night and the stars come out. The new moon rises and settles as the dot of the ف logo, the letter draws itself around it, and the app name is typed out. Tap to skip; with reduced motion the finished scene shows briefly instead.
+
 ### 🏠 Home
 - **Sky header**: a full-width sky with the ف logo mark, showing a daytime scene from 06:00 to 18:00 and a night scene otherwise. Today's Hijri date and the short Gregorian date sit on the ground band. The scenes are static artwork for now; the live sun and moon are on the roadmap.
 - **This week**: today and the next six days with their Hijri day numbers, and a dot under each fasting day. The strip stays pinned at the top when the sky scrolls away. Tap a day to list the fasting days from that day on; today keeps an outline.
