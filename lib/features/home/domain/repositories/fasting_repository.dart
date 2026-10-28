@@ -7,8 +7,11 @@ abstract interface class FastingRepository {
   /// Today in both calendars.
   Result<HijriDateInfo, CalendarFailure> getCurrentHijriDate();
 
-  /// The next [limit] fasting days, starting today.
+  /// The next [limit] fasting days, starting on [from] (today when null).
+  ///
+  /// `daysUntil` is always counted from today, whatever [from] is.
   Result<List<FastingDay>, CalendarFailure> getUpcomingFastingDays({
     int limit,
+    DateTime? from,
   });
 }

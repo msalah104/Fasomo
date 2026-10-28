@@ -1,15 +1,17 @@
 import 'package:clock/clock.dart';
+import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
-import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/sky_period.dart';
 import 'package:fasomo/features/home/presentation/widgets/fasting_day_card.dart';
 import 'package:fasomo/features/home/presentation/widgets/month_progress_bar.dart';
 import 'package:fasomo/features/home/presentation/widgets/sky_hero.dart';
-import 'package:fasomo/features/home/presentation/widgets/week_strip.dart';
+import 'package:fasomo/features/home/presentation/widgets/week_header_delegate.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 /// The sky header with today's date, this week, the month so far and the
 /// upcoming fasting days.
@@ -67,54 +69,72 @@ class _HomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localization = AppLocalizations.of(context);
-    final theme = Theme.of(context);
     final currentDate = state.currentDate;
+    final selectedDate = state.selectedDate;
+    final art = skyArtAt(clock.now());
+    final bloc = context.read<HomeBloc>();
 
-    return RefreshIndicator(
-      onRefresh: () async =>
-          context.read<HomeBloc>().add(const RefreshHomeData()),
-      child: ListView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(bottom: 16),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: art.overlayStyle,
+      child: Column(
         children: [
-          if (currentDate != null)
-            _TodayHeader(
-              dateInfo: currentDate,
-              actionBuilder: headerActionBuilder,
+          // The status bar sits on the sky's top colour, so the sky reads as
+          // full-bleed and the pinned week strip has a band to sit under.
+          ColoredBox(
+            color: art.top,
+            child: SizedBox(
+              height: MediaQuery.paddingOf(context).top,
+              width: double.infinity,
             ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // The header's translated cards leave ~18 dp above this.
-                const SizedBox(height: 8),
-                Text(
-                  localization.upcomingFastingDays,
-                  style: theme.textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 16),
-                if (state.upcomingFastingDays.isEmpty)
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Center(
-                        child: Text(
-                          localization.noUpcomingFasting,
-                          style: theme.textTheme.bodyLarge,
+          ),
+          Expanded(
+            child: MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: RefreshIndicator(
+                onRefresh: () async => bloc.add(const RefreshHomeData()),
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    if (currentDate != null && selectedDate != null) ...[
+                      SliverToBoxAdapter(
+                        child: SkyHero(
+                          dateInfo: currentDate,
+                          art: art,
+                          actionBuilder: headerActionBuilder,
                         ),
                       ),
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: WeekHeaderDelegate(
+                          week: currentDate.week,
+                          selectedDate: selectedDate,
+                          onDaySelected: (date) => bloc.add(DaySelected(date)),
+                          art: art,
+                          textScaler: MediaQuery.textScalerOf(context),
+                        ),
+                      ),
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        sliver: SliverToBoxAdapter(
+                          child: MonthProgressBar(
+                            today: currentDate.hijriDate,
+                            daysInMonth: currentDate.daysInMonth,
+                          ),
+                        ),
+                      ),
+                    ],
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+                      sliver: _UpcomingList(
+                        state: state,
+                        isReminderOn: isReminderOn,
+                        onToggleReminder: onToggleReminder,
+                      ),
                     ),
-                  )
-                else
-                  for (final day in state.upcomingFastingDays)
-                    FastingDayCard(
-                      fastingDay: day,
-                      isReminderOn: isReminderOn(day.primaryType),
-                      onToggleReminder: () => onToggleReminder(day.primaryType),
-                    ),
-              ],
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -123,41 +143,56 @@ class _HomeContent extends StatelessWidget {
   }
 }
 
-/// The sky header with the week strip overlapping its bottom edge, then the
-/// month bar.
-class _TodayHeader extends StatelessWidget {
-  const new({required this.dateInfo, required this.actionBuilder});
+/// The fasting days from the selected day on, as a sliver.
+class _UpcomingList extends StatelessWidget {
+  const new({
+    required this.state,
+    required this.isReminderOn,
+    required this.onToggleReminder,
+  });
 
-  final HijriDateInfo dateInfo;
-  final Widget Function(Color color)? actionBuilder;
+  final HomeState state;
+  final bool Function(FastingType type) isReminderOn;
+  final ValueChanged<FastingType> onToggleReminder;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    final localization = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final today = state.currentDate?.gregorianDate;
+    final selected = state.selectedDate;
+    final title =
+        today == null ||
+            selected == null ||
+            CalendarDays.isSameDay(today, selected)
+        ? localization.upcomingFastingDays
+        : localization.fastingDaysFrom(
+            DateFormat.MMMEd(localization.localeName).format(selected),
+          );
+
+    return SliverList.list(
       children: [
-        SkyHero(
-          dateInfo: dateInfo,
-          art: skyArtAt(clock.now()),
-          actionBuilder: actionBuilder,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Transform.translate(
-            offset: const Offset(0, -SkyHero.overlap),
-            child: WeekStrip(week: dateInfo.week),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Transform.translate(
-            offset: const Offset(0, -SkyHero.overlap + 12),
-            child: MonthProgressBar(
-              today: dateInfo.hijriDate,
-              daysInMonth: dateInfo.daysInMonth,
+        Text(title, style: theme.textTheme.headlineMedium),
+        const SizedBox(height: 16),
+        if (state.upcomingFastingDays.isEmpty)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Center(
+                child: Text(
+                  localization.noUpcomingFasting,
+                  style: theme.textTheme.bodyLarge,
+                ),
+              ),
             ),
-          ),
-        ),
+          )
+        else
+          for (final day in state.upcomingFastingDays)
+            FastingDayCard(
+              fastingDay: day,
+              isReminderOn: isReminderOn(day.primaryType),
+              onToggleReminder: () => onToggleReminder(day.primaryType),
+            ),
       ],
     );
   }

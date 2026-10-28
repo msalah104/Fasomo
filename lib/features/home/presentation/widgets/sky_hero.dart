@@ -7,8 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-/// The full-bleed sky at the top of Home: the static [art] for the time of
-/// day, the logo mark, an optional action, and today's date on the ground band.
+/// The full-bleed sky at the top of Home, below the status bar: the static
+/// [art] for the time of day, the logo mark, an optional action, and today's
+/// date on the ground band. It scrolls away; the week strip stays.
 class SkyHero extends StatelessWidget {
   const new({
     required this.dateInfo,
@@ -18,10 +19,7 @@ class SkyHero extends StatelessWidget {
   });
 
   /// Height of the sky below the status bar.
-  static const double skyHeight = 250;
-
-  /// How far the content below overlaps the sky's bottom edge.
-  static const double overlap = 30;
+  static const double skyHeight = 230;
 
   final HijriDateInfo dateInfo;
   final SkyArt art;
@@ -32,14 +30,13 @@ class SkyHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topInset = MediaQuery.paddingOf(context).top;
     final localization = AppLocalizations.of(context);
     final actionBuilder = this.actionBuilder;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: art.overlayStyle,
       child: SizedBox(
-        height: topInset + skyHeight,
+        height: skyHeight,
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -51,7 +48,7 @@ class SkyHero extends StatelessWidget {
               ),
             ),
             PositionedDirectional(
-              top: topInset + 8,
+              top: 8,
               start: 16,
               end: 4,
               child: Row(
@@ -69,7 +66,7 @@ class SkyHero extends StatelessWidget {
             PositionedDirectional(
               start: 16,
               end: 16,
-              bottom: overlap + 16,
+              bottom: 12,
               child: _DateRow(dateInfo: dateInfo, color: art.groundInk),
             ),
           ],

@@ -36,7 +36,10 @@ void main() {
   ];
   const outOfRange = CalendarOutOfRange(minHijriYear: 1356, maxHijriYear: 1500);
 
-  setUpAll(() => registerFallbackValue(const NoParams()));
+  setUpAll(() {
+    registerFallbackValue(const NoParams());
+    registerFallbackValue(const UpcomingFrom());
+  });
 
   setUp(() {
     getCurrentHijriDate = MockGetCurrentHijriDate();
@@ -64,6 +67,7 @@ void main() {
         status: HomeStatus.success,
         currentDate: today,
         upcomingFastingDays: upcoming,
+        selectedDate: today.gregorianDate,
       ),
     ],
   );
@@ -77,6 +81,7 @@ void main() {
         status: HomeStatus.success,
         currentDate: today,
         upcomingFastingDays: upcoming,
+        selectedDate: today.gregorianDate,
       ),
     ],
   );
@@ -91,6 +96,28 @@ void main() {
     expect: () => [
       const HomeState(status: HomeStatus.loading),
       const HomeState(status: HomeStatus.error, failure: outOfRange),
+    ],
+  );
+
+  blocTest<HomeBloc, HomeState>(
+    'DaySelected restarts the list from the picked day',
+    build: build,
+    seed: () => HomeState(
+      status: HomeStatus.success,
+      currentDate: today,
+      upcomingFastingDays: upcoming,
+      selectedDate: today.gregorianDate,
+    ),
+    setUp: () => when(
+      () => getUpcomingFastingDays(UpcomingFrom(DateTime(2026, 11))),
+    ).thenReturn(const Ok([])),
+    act: (bloc) => bloc.add(DaySelected(DateTime(2026, 11))),
+    expect: () => [
+      HomeState(
+        status: HomeStatus.success,
+        currentDate: today,
+        selectedDate: DateTime(2026, 11),
+      ),
     ],
   );
 }

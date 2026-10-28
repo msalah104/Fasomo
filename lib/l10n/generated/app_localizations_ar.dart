@@ -347,4 +347,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get weekStripTitle => 'هذا الأسبوع';
+
+  @override
+  String fastingDaysFrom(String date) {
+    return 'أيام الصيام من $date';
+  }
 }

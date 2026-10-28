@@ -33,22 +33,26 @@ void main() {
       daysInMonth: 30,
       week: week,
     ),
+    selectedDate: DateTime(2026, 10, 28),
     upcomingFastingDays: [
-      FastingDay(
-        hijriDate: const HijriDate(1448, 5, 18),
-        gregorianDate: DateTime(2026, 10, 29),
-        types: const [FastingType.mondayThursday],
-        daysUntil: 1,
-      ),
+      for (final offset in [1, 5, 8, 12, 15])
+        FastingDay(
+          hijriDate: HijriDate(1448, 5, 10 + offset),
+          gregorianDate: DateTime(2026, 10, 28 + offset),
+          types: const [FastingType.mondayThursday],
+          daysUntil: offset,
+        ),
     ],
   );
+
+  late MockHomeBloc bloc;
 
   Future<void> pumpHome(
     WidgetTester tester, {
     required Brightness brightness,
     Locale locale = const Locale('en'),
   }) async {
-    final bloc = MockHomeBloc();
+    bloc = MockHomeBloc();
     when(() => bloc.state).thenReturn(state);
     await tester.pumpWidget(
       MaterialApp(
@@ -101,5 +105,31 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('اليوم 17 من 30'), findsOneWidget);
+  });
+
+  testWidgets('tapping a day in the week strip selects it', (tester) async {
+    await withClock(Clock.fixed(DateTime(2026, 10, 28, 10)), () async {
+      await pumpHome(tester, brightness: Brightness.light);
+    });
+
+    await tester.tap(find.text('22'));
+    verify(() => bloc.add(DaySelected(DateTime(2026, 11, 2)))).called(1);
+  });
+
+  testWidgets('the week strip stays pinned when the sky scrolls away', (
+    tester,
+  ) async {
+    await withClock(Clock.fixed(DateTime(2026, 10, 28, 10)), () async {
+      await pumpHome(tester, brightness: Brightness.light);
+    });
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
+    await tester.pumpAndSettle();
+
+    // The sky (and its date) has scrolled above the viewport.
+    final date = find.text('17 Jumada al-Ula 1448 AH', skipOffstage: false);
+    expect(tester.getBottomLeft(date).dy, lessThan(0));
+    expect(find.bySemanticsLabel('This week'), findsOneWidget);
+    expect(tester.getTopLeft(find.text('Thu')).dy, lessThan(120));
   });
 }

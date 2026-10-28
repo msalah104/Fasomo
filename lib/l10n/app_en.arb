@@ -178,5 +178,14 @@
   "weekStripTitle": "This week",
   "@weekStripTitle": {
     "description": "Screen-reader label for the seven-day strip on Home."
+  },
+  "fastingDaysFrom": "Fasting days from {date}",
+  "@fastingDaysFrom": {
+    "description": "Heading of the Home list when a day other than today is picked in the week strip.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
   }
 }

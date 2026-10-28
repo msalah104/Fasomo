@@ -18,6 +18,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }) : super(const HomeState()) {
     on<LoadHomeData>(_onLoadHomeData);
     on<RefreshHomeData>(_onRefreshHomeData);
+    on<DaySelected>(_onDaySelected);
   }
 
   final GetCurrentHijriDate getCurrentHijriDate;
@@ -31,9 +32,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   void _onRefreshHomeData(RefreshHomeData event, Emitter<HomeState> emit) =>
       _load(emit);
 
+  void _onDaySelected(DaySelected event, Emitter<HomeState> emit) {
+    switch (getUpcomingFastingDays(UpcomingFrom(event.date))) {
+      case Ok(value: final days):
+        emit(
+          state.copyWith(selectedDate: event.date, upcomingFastingDays: days),
+        );
+      case Err(:final failure):
+        emit(state.copyWith(status: HomeStatus.error, failure: failure));
+    }
+  }
+
+  /// Loads today and resets the selection to it, since "today" may have
+  /// moved on since the last load.
   void _load(Emitter<HomeState> emit) {
     final today = getCurrentHijriDate(const NoParams());
-    final upcoming = getUpcomingFastingDays(const NoParams());
+    final upcoming = getUpcomingFastingDays(const UpcomingFrom());
 
     switch ((today, upcoming)) {
       case (Ok(value: final date), Ok(value: final days)):
@@ -42,6 +56,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             status: HomeStatus.success,
             currentDate: date,
             upcomingFastingDays: days,
+            selectedDate: date.gregorianDate,
           ),
         );
       case (Err(:final failure), _) || (_, Err(:final failure)):

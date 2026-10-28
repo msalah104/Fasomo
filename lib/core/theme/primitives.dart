@@ -8,6 +8,7 @@ import 'package:flutter/painting.dart';
 /// slots on `AppColors`.
 abstract final class Primitives {
   // Night blues: brand, dark surfaces.
+  static const indigo12 = Color(0xFF0B1022);
   static const indigo16 = Color(0xFF0E1426);
   static const indigo22 = Color(0xFF18213A);
   static const indigo27 = Color(0xFF1E2A4A);
@@ -42,6 +43,9 @@ abstract final class Primitives {
   static const moon86 = Color(0xFFCDD3DF);
   static const moon91 = Color(0xFFDDE2EC);
   static const moon32 = Color(0xFF343C52);
+
+  // Daytime sky.
+  static const sky68 = Color(0xFF7FA7D6);
 
   // Errors.
   static const red45 = Color(0xFFB3261E);

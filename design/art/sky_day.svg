@@ -2,6 +2,7 @@
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#7FA7D6"/>
+      <stop offset="0.25" stop-color="#7FA7D6"/>
       <stop offset="1" stop-color="#CFE0EE"/>
     </linearGradient>
     <radialGradient id="glow">

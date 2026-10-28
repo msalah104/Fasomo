@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 enum SkyArt {
   day(
     image: 'assets/images/sky_day.png',
+    top: Primitives.sky68,
+    ground: Primitives.indigo27,
     logoInk: Primitives.indigo27,
     logoDot: Primitives.gold75,
     ink: Primitives.indigo27,
@@ -17,6 +19,8 @@ enum SkyArt {
   ),
   night(
     image: 'assets/images/sky_night.png',
+    top: Primitives.indigo12,
+    ground: Primitives.indigo16,
     logoInk: Primitives.gold80,
     logoDot: Primitives.ivory96,
     ink: Primitives.ivory96,
@@ -26,6 +30,8 @@ enum SkyArt {
 
   new({
     required this.image,
+    required this.top,
+    required this.ground,
     required this.logoInk,
     required this.logoDot,
     required this.ink,
@@ -35,6 +41,12 @@ enum SkyArt {
 
   /// The sky picture, 3:2, with the ground band in its bottom 30%.
   final String image;
+
+  /// The colour at the top of the sky, used behind the status bar.
+  final Color top;
+
+  /// The colour of the ground band, continued below the picture.
+  final Color ground;
 
   /// The ف letter of the logo mark, in a colour that reads on this sky.
   final Color logoInk;

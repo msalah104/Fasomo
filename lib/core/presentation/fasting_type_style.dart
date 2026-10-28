@@ -34,12 +34,16 @@ extension FastingTypeStyle on FastingType {
       ? colors.fastWhiteDaysFill
       : colors.tint(color(colors));
 
+  /// Outlined icons matching the Hilal concept: crescent for Ramadan, a peak
+  /// for the special days, a sparkle for Shawwal, the full moon for the White
+  /// Days and a calendar page for Monday and Thursday.
   IconData get icon => switch (this) {
-    FastingType.ramadan => Icons.mosque,
-    FastingType.arafah => Icons.terrain,
-    FastingType.ashura || FastingType.tasua => Icons.favorite,
-    FastingType.shawwal => Icons.star,
-    FastingType.whiteDays => Icons.brightness_3,
-    FastingType.mondayThursday => Icons.calendar_view_week,
+    FastingType.ramadan => Icons.dark_mode_outlined,
+    FastingType.arafah ||
+    FastingType.ashura ||
+    FastingType.tasua => Icons.landscape_outlined,
+    FastingType.shawwal => Icons.auto_awesome_outlined,
+    FastingType.whiteDays => Icons.circle_outlined,
+    FastingType.mondayThursday => Icons.calendar_month_outlined,
   };
 }

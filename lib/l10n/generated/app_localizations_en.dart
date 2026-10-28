@@ -351,4 +351,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get weekStripTitle => 'This week';
+
+  @override
+  String fastingDaysFrom(String date) {
+    return 'Fasting days from $date';
+  }
 }

@@ -44,12 +44,14 @@ class FastingRepositoryImpl implements FastingRepository {
   @override
   Result<List<FastingDay>, CalendarFailure> getUpcomingFastingDays({
     int limit = 5,
+    DateTime? from,
   }) {
     final today = CalendarDays.dateOnly(clock.now());
-    if (!calendar.converter.supportsGregorian(today)) return Err(_outOfRange());
+    final start = from == null ? today : CalendarDays.dateOnly(from);
+    if (!calendar.converter.supportsGregorian(start)) return Err(_outOfRange());
 
     final days = calendar
-        .fastingDaysFrom(today, days: horizonDays)
+        .fastingDaysFrom(start, days: horizonDays)
         .take(limit)
         .map(
           (info) => FastingDay(

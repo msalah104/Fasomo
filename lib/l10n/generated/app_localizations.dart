@@ -691,6 +691,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This week'**
   String get weekStripTitle;
+
+  /// Heading of the Home list when a day other than today is picked in the week strip.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasting days from {date}'**
+  String fastingDaysFrom(String date);
 }
 
 class _AppLocalizationsDelegate

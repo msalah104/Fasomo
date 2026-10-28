@@ -6,7 +6,7 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 
 ### 🏠 Home
 - **Sky header**: a full-width sky with the ف logo mark, showing a daytime scene from 06:00 to 18:00 and a night scene otherwise. Today's Hijri date and the short Gregorian date sit on the ground band. The scenes are static artwork for now; the live sun and moon are on the roadmap.
-- **This week**: today and the next six days with their Hijri day numbers, and a dot under each fasting day.
+- **This week**: today and the next six days with their Hijri day numbers, and a dot under each fasting day. The strip stays pinned at the top when the sky scrolls away. Tap a day to list the fasting days from that day on; today keeps an outline.
 - **Month bar**: where today falls in the Hijri month, with the White Days marked.
 - **Upcoming fasting days**: the next five fasting days in the coming 30 days, including next month's White Days. A day that is several kinds at once (say, a White Day on a Monday) is listed once with all of them.
 - **One-tap reminders**: turn on a reminder for a fasting type straight from its card.
@@ -19,6 +19,7 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
   - Violet: Ramadan
   - Teal: Six Days of Shawwal
   - Clay red: special days (Arafah, Ashura, Tasua)
+  - Each type also has its own outlined icon: crescent (Ramadan), peak (special days), sparkle (Shawwal), full moon (White Days) and calendar (Monday & Thursday).
 - **Day details**: tap a day to see both dates and what each fasting type means.
 
 ### 🔔 Reminders

@@ -74,6 +74,21 @@ void main() {
     expect(white.first.types, contains(FastingType.mondayThursday));
   });
 
+  test('starts from a picked day but counts daysUntil from today', () {
+    final repository = repositoryAt(DateTime(2026, 10, 28, 9));
+    final result = repository.getUpcomingFastingDays(
+      from: DateTime(2026, 10, 30),
+    );
+    switch (result) {
+      case Ok(:final value):
+        // Saturday 31 Oct is skipped; Monday 2 Nov is the first fasting day.
+        expect(value.first.gregorianDate, DateTime(2026, 11, 2));
+        expect(value.first.daysUntil, 5);
+      case Err():
+        fail('expected days');
+    }
+  });
+
   test('respects the limit', () {
     expect(
       upcoming(repositoryAt(DateTime(2026, 10, 28)), limit: 2),
