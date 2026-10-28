@@ -7,27 +7,39 @@ class ReminderState extends Equatable {
     this.status = ReminderStatus.initial,
     this.reminders = const [],
     this.failure,
+    this.permissionDenied = false,
   });
 
   final ReminderStatus status;
   final List<Reminder> reminders;
-  final StorageFailure? failure;
+
+  /// The failure from the latest operation, if any. With
+  /// [ReminderStatus.error] the reminders could not be loaded at all;
+  /// otherwise it is a one-off problem shown as a message.
+  final Failure? failure;
+
+  /// The user declined notification permission for an enabled reminder.
+  final bool permissionDenied;
 
   bool isEnabledFor(FastingType type) =>
       reminders.any((r) => r.fastingType == type && r.isEnabled);
 
+  /// [failure] and [permissionDenied] describe one emission only, so they
+  /// reset unless passed again.
   ReminderState copyWith({
     ReminderStatus? status,
     List<Reminder>? reminders,
-    StorageFailure? failure,
+    Failure? failure,
+    bool permissionDenied = false,
   }) {
     return ReminderState(
       status: status ?? this.status,
       reminders: reminders ?? this.reminders,
-      failure: status == ReminderStatus.error ? failure ?? this.failure : null,
+      failure: failure,
+      permissionDenied: permissionDenied,
     );
   }
 
   @override
-  List<Object?> get props => [status, reminders, failure];
+  List<Object?> get props => [status, reminders, failure, permissionDenied];
 }

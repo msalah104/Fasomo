@@ -5,6 +5,7 @@ import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/widgets/reminder_edit_dialog.dart';
+import 'package:fasomo/features/reminders/presentation/widgets/reminder_timing_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,10 +49,7 @@ class ReminderCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _getReminderTimeText(
-                          reminder.reminderTime,
-                          localization,
-                        ),
+                        reminderTimingText(context, reminder),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.secondary,
                         ),
@@ -132,20 +130,6 @@ class ReminderCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _getReminderTimeText(
-    ReminderTime time,
-    AppLocalizations localization,
-  ) {
-    switch (time) {
-      case ReminderTime.dayBefore:
-        return localization.dayBefore;
-      case ReminderTime.morningOfDay:
-        return localization.morningOfDay;
-      case ReminderTime.custom:
-        return localization.customTime;
-    }
   }
 
   void _showDeleteConfirmation(BuildContext context, Reminder reminder) {

@@ -1,3 +1,4 @@
+import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/widgets/reminder_card.dart';
@@ -11,7 +12,24 @@ class ReminderSettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
 
-    return BlocBuilder<ReminderBloc, ReminderState>(
+    return BlocConsumer<ReminderBloc, ReminderState>(
+      listenWhen: (previous, current) =>
+          current.status != ReminderStatus.error &&
+          (current.failure != null || current.permissionDenied) &&
+          current != previous,
+      listener: (context, state) {
+        final message = state.permissionDenied
+            ? localization.notificationsDenied
+            : switch (state.failure) {
+                NotificationFailure() => localization.reminderSyncFailed,
+                StorageFailure() ||
+                CalendarFailure() ||
+                null => localization.reminderSaveFailed,
+              };
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      },
       builder: (context, state) {
         if (state.status == ReminderStatus.loading && state.reminders.isEmpty) {
           return const Center(child: CircularProgressIndicator());

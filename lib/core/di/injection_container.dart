@@ -1,7 +1,9 @@
 import 'package:clock/clock.dart';
 import 'package:fasomo/core/calendar/fasting_calendar.dart';
 import 'package:fasomo/core/calendar/hijri_converter.dart';
-import 'package:fasomo/core/utils/notification_helper.dart';
+import 'package:fasomo/core/notifications/notification_gateway.dart';
+import 'package:fasomo/core/notifications/notification_reconciler.dart';
+import 'package:fasomo/core/services/notifications/fln_notification_gateway.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
 import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_current_hijri_month.dart';
@@ -18,8 +20,8 @@ import 'package:fasomo/features/reminders/domain/repositories/reminder_repositor
 import 'package:fasomo/features/reminders/domain/usecases/delete_reminder.dart';
 import 'package:fasomo/features/reminders/domain/usecases/get_reminders.dart';
 import 'package:fasomo/features/reminders/domain/usecases/save_reminder.dart';
+import 'package:fasomo/features/reminders/domain/usecases/sync_reminder_notifications.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,7 +56,15 @@ Future<void> init() async {
         getReminders: sl(),
         saveReminder: sl(),
         deleteReminder: sl(),
-        notificationPlugin: sl(),
+        syncNotifications: sl(),
+        notificationPermission: sl(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => SyncReminderNotifications(
+        repository: sl(),
+        calendar: sl(),
+        reconciler: sl(),
         clock: sl(),
       ),
     )
@@ -77,7 +87,10 @@ Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
 
-  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
-  sl.registerLazySingleton(() => flutterLocalNotificationsPlugin);
+  final notifications = FlnNotificationGateway();
+  await notifications.initialize();
+  sl
+    ..registerLazySingleton<NotificationGateway>(() => notifications)
+    ..registerLazySingleton<NotificationPermission>(() => notifications)
+    ..registerLazySingleton(() => NotificationReconciler(sl()));
 }

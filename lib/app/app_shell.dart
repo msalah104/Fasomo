@@ -4,6 +4,7 @@ import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
+import 'package:fasomo/features/reminders/presentation/localized_reminder_copy.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,6 +20,33 @@ class AppShell extends StatefulWidget {
 
 class _AppShellState extends State<AppShell> {
   int _selectedIndex = 0;
+
+  /// The foreground sync is the reliability backbone for reminders: it
+  /// refills the rolling window and repairs anything the OS dropped.
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(
+      onResume: () => context.read<ReminderBloc>().add(const SyncRequested()),
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Runs on the first build and whenever the language changes.
+    context.read<ReminderBloc>().add(
+      ReminderCopyChanged(LocalizedReminderCopy(AppLocalizations.of(context))),
+    );
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

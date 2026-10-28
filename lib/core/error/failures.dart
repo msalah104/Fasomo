@@ -47,3 +47,19 @@ final class StorageWriteFailed extends StorageFailure {
   @override
   String get code => 'storage.write_failed';
 }
+
+/// Failures from the OS notification scheduler.
+sealed class NotificationFailure extends Failure {
+  const new();
+}
+
+/// The platform rejected a schedule, cancel or query call.
+final class NotificationPlatformFailed extends NotificationFailure {
+  const new(this.operation);
+
+  /// `schedule`, `cancel`, `cancelAll` or `getPending`.
+  final String operation;
+
+  @override
+  String get code => 'notification.platform_failed';
+}

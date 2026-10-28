@@ -14,6 +14,15 @@ class AppLocalizations {
   static final Map<String, Map<String, String>> _localizedValues = {
     'en': {
       'app_name': 'Fasomo',
+      'reminder_title_today': 'Today: {type}',
+      'reminder_title_tomorrow': 'Tomorrow: {type}',
+      'reminder_title_in_days': 'In {count} days: {type}',
+      'same_day': 'Same day',
+      'at_time': 'at {time}',
+      'pick_time': 'Pick a time',
+      'notifications_denied': 'Notifications are turned off for Fasomo. Enable them in system settings to get reminders.',
+      'reminder_sync_failed': 'Could not update scheduled reminders',
+      'reminder_save_failed': 'Could not save the reminder',
       'retry': 'Retry',
       'close': 'Close',
       'no_specific_fasting_day': 'No specific fasting day',
@@ -77,6 +86,15 @@ class AppLocalizations {
     },
     'ar': {
       'app_name': 'فاصومو',
+      'reminder_title_today': 'اليوم: {type}',
+      'reminder_title_tomorrow': 'غداً: {type}',
+      'reminder_title_in_days': 'بعد {count} أيام: {type}',
+      'same_day': 'في نفس اليوم',
+      'at_time': 'الساعة {time}',
+      'pick_time': 'اختر الوقت',
+      'notifications_denied': 'الإشعارات معطلة لتطبيق فاصومو. فعّلها من إعدادات النظام لتصلك التذكيرات.',
+      'reminder_sync_failed': 'تعذر تحديث التذكيرات المجدولة',
+      'reminder_save_failed': 'تعذر حفظ التذكير',
       'retry': 'إعادة المحاولة',
       'close': 'إغلاق',
       'no_specific_fasting_day': 'لا توجد أيام صيام محددة',
@@ -151,6 +169,23 @@ class AppLocalizations {
     1 => tomorrow,
     _ => translate('days_left_plural').replaceAll('{count}', '$days'),
   };
+
+  String get sameDay => translate('same_day');
+  String get pickTime => translate('pick_time');
+  String get notificationsDenied => translate('notifications_denied');
+  String get reminderSyncFailed => translate('reminder_sync_failed');
+  String get reminderSaveFailed => translate('reminder_save_failed');
+
+  String atTime(String time) => translate('at_time').replaceAll('{time}', time);
+
+  String reminderTitle(String type, {required int daysBefore}) =>
+      switch (daysBefore) {
+        0 => translate('reminder_title_today'),
+        1 => translate('reminder_title_tomorrow'),
+        _ => translate(
+          'reminder_title_in_days',
+        ).replaceAll('{count}', '$daysBefore'),
+      }.replaceAll('{type}', type);
 
   String translate(String key) {
     return _localizedValues[locale.languageCode]?[key] ?? key;
