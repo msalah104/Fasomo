@@ -11,10 +11,6 @@ final class LoadHomeData extends HomeEvent {
   const new();
 }
 
-final class ToggleLanguage extends HomeEvent {
-  const new();
-}
-
 final class RefreshHomeData extends HomeEvent {
   const new();
 }

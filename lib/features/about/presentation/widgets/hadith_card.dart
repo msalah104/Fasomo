@@ -18,7 +18,7 @@ class HadithCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsetsDirectional.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -57,12 +57,9 @@ class HadithCard extends StatelessWidget {
                 color: theme.colorScheme.surfaceContainerHighest.withValues(
                   alpha: 0.3,
                 ),
-                borderRadius: BorderRadius.circular(8),
-                border: Border(
-                  left: BorderSide(
-                    color: color,
-                    width: 3,
-                  ),
+                // Non-uniform borders cannot take a borderRadius.
+                border: BorderDirectional(
+                  start: BorderSide(color: color, width: 3),
                 ),
               ),
               child: Text(

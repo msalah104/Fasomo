@@ -1,7 +1,7 @@
 import 'package:fasomo/core/error/failures.dart';
-import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/widgets/reminder_card.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,7 +48,7 @@ class ReminderSettingsPage extends StatelessWidget {
                   onPressed: () {
                     context.read<ReminderBloc>().add(const LoadReminders());
                   },
-                  child: const Text('Retry'),
+                  child: Text(localization.retry),
                 ),
               ],
             ),
@@ -81,7 +81,7 @@ class ReminderSettingsPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Manage your fasting day reminders',
+                              localization.manageReminders,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
@@ -93,7 +93,7 @@ class ReminderSettingsPage extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'Active Reminders',
+                localization.activeReminders,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 16),
@@ -111,12 +111,12 @@ class ReminderSettingsPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No reminders set yet',
+                            localization.noRemindersYet,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Add reminders from the Home page',
+                            localization.addRemindersFromHome,
                             style: Theme.of(context).textTheme.bodyMedium,
                             textAlign: TextAlign.center,
                           ),

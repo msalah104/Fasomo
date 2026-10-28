@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:fasomo/core/notifications/reminder_timing.dart';
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
-import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/widgets/reminder_timing_text.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -63,7 +63,7 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
     final theme = Theme.of(context);
 
     return AlertDialog(
-      title: const Text('Edit Reminder'),
+      title: Text(localization.editReminder),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -127,9 +127,9 @@ class _ReminderEditDialogState extends State<ReminderEditDialog> {
             const SizedBox(height: 12),
             TextField(
               controller: _messageController,
-              decoration: const InputDecoration(
-                hintText: 'Enter custom notification message',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: localization.customMessageHint,
+                border: const OutlineInputBorder(),
               ),
               maxLines: 3,
             ),

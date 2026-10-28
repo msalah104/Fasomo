@@ -1,7 +1,7 @@
 import 'package:fasomo/core/presentation/fasting_type_style.dart';
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
-import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class FastingDayCard extends StatelessWidget {

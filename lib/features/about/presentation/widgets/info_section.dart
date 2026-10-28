@@ -16,7 +16,7 @@ class InfoSection extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsetsDirectional.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(

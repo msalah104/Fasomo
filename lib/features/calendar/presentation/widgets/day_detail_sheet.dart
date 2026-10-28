@@ -2,8 +2,8 @@ import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/presentation/date_formatter.dart';
 import 'package:fasomo/core/presentation/fasting_type_style.dart';
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
-import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class DayDetailSheet extends StatelessWidget {
@@ -14,7 +14,6 @@ class DayDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
-    final languageCode = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
 
     return SafeArea(
@@ -25,12 +24,12 @@ class DayDetailSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              DateFormatter.hijri(day.hijriDate, languageCode),
+              localization.formatHijri(day.hijriDate),
               style: theme.textTheme.headlineMedium,
             ),
             const SizedBox(height: 8),
             Text(
-              DateFormatter.gregorian(day.gregorianDate, languageCode),
+              localization.formatGregorian(day.gregorianDate),
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.secondary,
               ),

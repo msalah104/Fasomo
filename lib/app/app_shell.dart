@@ -1,11 +1,11 @@
-import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/about/presentation/pages/about_page.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
-import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/localized_reminder_copy.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
+import 'package:fasomo/features/settings/presentation/widgets/language_menu_button.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -61,13 +61,8 @@ class _AppShellState extends State<AppShell> {
     return Scaffold(
       appBar: AppBar(
         title: Text(titles[_selectedIndex]),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.language),
-            tooltip: localization.toggleLanguage,
-            onPressed: () =>
-                context.read<HomeBloc>().add(const ToggleLanguage()),
-          ),
+        actions: const [
+          LanguageMenuButton(),
         ],
       ),
       body: IndexedStack(

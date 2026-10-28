@@ -1,5 +1,6 @@
 import 'package:fasomo/core/calendar/hijri_date.dart';
-import 'package:fasomo/core/constants/app_constants.dart';
+import 'package:fasomo/core/presentation/date_formatter.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class CalendarHeader extends StatelessWidget {
@@ -16,10 +17,7 @@ class CalendarHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final languageCode = Localizations.localeOf(context).languageCode;
-    final monthNames = languageCode == 'ar'
-        ? AppConstants.arabicMonthNames
-        : AppConstants.englishMonthNames;
+    final localization = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     return Card(
@@ -31,19 +29,20 @@ class CalendarHeader extends StatelessWidget {
             // chevron_left/right mirror automatically in RTL.
             IconButton(
               icon: const Icon(Icons.chevron_left),
+              tooltip: localization.previousMonth,
               onPressed: onPreviousMonth,
             ),
             Column(
               children: [
                 Text(
-                  monthNames[month.month - 1],
+                  localization.hijriMonthName(month.month),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${month.year} ${languageCode == 'ar' ? 'هـ' : 'AH'}',
+                  localization.hijriYear('${month.year}'),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.secondary,
                   ),
@@ -52,6 +51,7 @@ class CalendarHeader extends StatelessWidget {
             ),
             IconButton(
               icon: const Icon(Icons.chevron_right),
+              tooltip: localization.nextMonth,
               onPressed: onNextMonth,
             ),
           ],

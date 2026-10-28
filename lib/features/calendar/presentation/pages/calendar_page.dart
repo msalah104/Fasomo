@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/presentation/fasting_type_style.dart';
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
-import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/calendar_grid.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/calendar_header.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/day_detail_sheet.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

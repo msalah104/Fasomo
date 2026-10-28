@@ -1,5 +1,5 @@
 import 'package:fasomo/core/calendar/fasting_type.dart';
-import 'package:fasomo/core/utils/app_localizations.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 
 /// Localized title and description for each [FastingType].
 extension FastingTypeText on AppLocalizations {

@@ -22,6 +22,11 @@ import 'package:fasomo/features/reminders/domain/usecases/get_reminders.dart';
 import 'package:fasomo/features/reminders/domain/usecases/save_reminder.dart';
 import 'package:fasomo/features/reminders/domain/usecases/sync_reminder_notifications.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
+import 'package:fasomo/features/settings/data/repositories/settings_repository_impl.dart';
+import 'package:fasomo/features/settings/domain/repositories/settings_repository.dart';
+import 'package:fasomo/features/settings/domain/usecases/get_language.dart';
+import 'package:fasomo/features/settings/domain/usecases/save_language.dart';
+import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -76,6 +81,13 @@ Future<void> init() async {
     )
     ..registerLazySingleton<ReminderLocalDataSource>(
       () => ReminderLocalDataSourceImpl(sharedPreferences: sl()),
+    )
+    // --- Settings ---
+    ..registerFactory(() => LanguageBloc(getLanguage: sl(), saveLanguage: sl()))
+    ..registerLazySingleton(() => GetLanguage(sl()))
+    ..registerLazySingleton(() => SaveLanguage(sl()))
+    ..registerLazySingleton<SettingsRepository>(
+      () => SettingsRepositoryImpl(sharedPreferences: sl()),
     )
     // ============ Core ============
     ..registerLazySingleton<Clock>(() => const Clock())

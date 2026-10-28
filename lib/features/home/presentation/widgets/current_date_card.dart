@@ -1,6 +1,6 @@
 import 'package:fasomo/core/presentation/date_formatter.dart';
-import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class CurrentDateCard extends StatelessWidget {
@@ -11,7 +11,6 @@ class CurrentDateCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
-    final languageCode = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
     final onPrimary = theme.colorScheme.onPrimary;
 
@@ -42,7 +41,7 @@ class CurrentDateCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              DateFormatter.hijri(dateInfo.hijriDate, languageCode),
+              localization.formatHijri(dateInfo.hijriDate),
               style: theme.textTheme.displaySmall?.copyWith(
                 color: onPrimary,
                 fontWeight: FontWeight.bold,
@@ -58,7 +57,7 @@ class CurrentDateCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  DateFormatter.gregorian(dateInfo.gregorianDate, languageCode),
+                  localization.formatGregorian(dateInfo.gregorianDate),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: onPrimary.withValues(alpha: 0.85),
                   ),

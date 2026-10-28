@@ -1,8 +1,8 @@
 import 'package:fasomo/core/calendar/fasting_type.dart';
-import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/widgets/current_date_card.dart';
 import 'package:fasomo/features/home/presentation/widgets/fasting_day_card.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

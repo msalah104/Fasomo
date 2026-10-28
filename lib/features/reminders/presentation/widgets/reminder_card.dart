@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
-import 'package:fasomo/core/utils/app_localizations.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/widgets/reminder_edit_dialog.dart';
 import 'package:fasomo/features/reminders/presentation/widgets/reminder_timing_text.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,7 +22,7 @@ class ReminderCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsetsDirectional.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -112,14 +112,14 @@ class ReminderCard extends StatelessWidget {
                     );
                   },
                   icon: const Icon(Icons.edit, size: 18),
-                  label: const Text('Edit'),
+                  label: Text(localization.edit),
                 ),
                 TextButton.icon(
                   onPressed: () {
                     _showDeleteConfirmation(context, reminder);
                   },
                   icon: const Icon(Icons.delete, size: 18),
-                  label: Text(localization.cancel),
+                  label: Text(localization.delete),
                   style: TextButton.styleFrom(
                     foregroundColor: theme.colorScheme.error,
                   ),
@@ -139,8 +139,8 @@ class ReminderCard extends StatelessWidget {
       showDialog<void>(
         context: context,
         builder: (dialogContext) => AlertDialog(
-          title: const Text('Delete Reminder'),
-          content: const Text('Are you sure you want to delete this reminder?'),
+          title: Text(localization.deleteReminderTitle),
+          content: Text(localization.deleteReminderConfirm),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
@@ -156,7 +156,7 @@ class ReminderCard extends StatelessWidget {
               style: TextButton.styleFrom(
                 foregroundColor: Theme.of(context).colorScheme.error,
               ),
-              child: const Text('Delete'),
+              child: Text(localization.delete),
             ),
           ],
         ),

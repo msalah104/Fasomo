@@ -6,7 +6,6 @@ import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
 import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
 import 'package:fasomo/features/home/domain/usecases/get_current_hijri_date.dart';
 import 'package:fasomo/features/home/domain/usecases/get_upcoming_fasting_days.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'home_event.dart';
@@ -18,7 +17,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required this.getUpcomingFastingDays,
   }) : super(const HomeState()) {
     on<LoadHomeData>(_onLoadHomeData);
-    on<ToggleLanguage>(_onToggleLanguage);
     on<RefreshHomeData>(_onRefreshHomeData);
   }
 
@@ -32,13 +30,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _onRefreshHomeData(RefreshHomeData event, Emitter<HomeState> emit) =>
       _load(emit);
-
-  void _onToggleLanguage(ToggleLanguage event, Emitter<HomeState> emit) {
-    final newLocale = state.locale.languageCode == 'en'
-        ? const Locale('ar', 'SA')
-        : const Locale('en', 'US');
-    emit(state.copyWith(locale: newLocale));
-  }
 
   void _load(Emitter<HomeState> emit) {
     final today = getCurrentHijriDate(const NoParams());
