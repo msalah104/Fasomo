@@ -59,12 +59,13 @@ class _AppShellState extends State<AppShell> {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(titles[_selectedIndex]),
-        actions: const [
-          LanguageMenuButton(),
-        ],
-      ),
+      // Home draws its own sky header in place of the app bar.
+      appBar: _selectedIndex == 0
+          ? null
+          : AppBar(
+              title: Text(titles[_selectedIndex]),
+              actions: const [LanguageMenuButton()],
+            ),
       body: IndexedStack(
         index: _selectedIndex,
         children: const [
@@ -116,6 +117,7 @@ class _HomeTab extends StatelessWidget {
       isReminderOn: reminders.isEnabledFor,
       onToggleReminder: (type) =>
           context.read<ReminderBloc>().add(ToggleReminder(type)),
+      headerActionBuilder: (color) => LanguageMenuButton(color: color),
     );
   }
 }

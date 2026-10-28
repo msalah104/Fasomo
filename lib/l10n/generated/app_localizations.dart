@@ -679,6 +679,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'© Fasomo. All rights reserved.'**
   String get copyright;
+
+  /// Where today falls in the Hijri month, e.g. Day 17 of 30.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of {total}'**
+  String monthProgress(int day, int total);
+
+  /// Screen-reader label for the seven-day strip on Home.
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get weekStripTitle;
 }
 
 class _AppLocalizationsDelegate

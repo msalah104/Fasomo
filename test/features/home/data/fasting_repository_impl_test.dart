@@ -35,6 +35,25 @@ void main() {
     }
   });
 
+  test('today carries the month length and the next seven days', () {
+    // Wednesday 28 Oct 2026, late evening.
+    final result = repositoryAt(
+      DateTime(2026, 10, 28, 22),
+    ).getCurrentHijriDate();
+    switch (result) {
+      case Ok(:final value):
+        expect(value.daysInMonth, anyOf(29, 30));
+        expect(value.week, hasLength(7));
+        expect(value.week.first.gregorianDate, DateTime(2026, 10, 28));
+        expect(value.week.first.hijriDate, value.hijriDate);
+        expect(value.week[1].types, contains(FastingType.mondayThursday));
+        expect(value.week[5].types, contains(FastingType.mondayThursday));
+        expect(value.week[2].isFastingDay, isFalse);
+      case Err():
+        fail('expected today');
+    }
+  });
+
   test('daysUntil counts calendar days even late in the evening', () {
     // Wednesday 23:30: Thursday is 1 day away, Monday 5.
     final days = upcoming(repositoryAt(DateTime(2026, 10, 28, 23, 30)));

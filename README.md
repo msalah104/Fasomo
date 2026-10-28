@@ -5,7 +5,9 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 ## Features
 
 ### 🏠 Home
-- **Today in both calendars**: the current Hijri (Umm al-Qura) date with the Gregorian date.
+- **Sky header**: a full-width sky with the ف logo mark, showing a daytime scene from 06:00 to 18:00 and a night scene otherwise. Today's Hijri date and the short Gregorian date sit on the ground band. The scenes are static artwork for now; the live sun and moon are on the roadmap.
+- **This week**: today and the next six days with their Hijri day numbers, and a dot under each fasting day.
+- **Month bar**: where today falls in the Hijri month, with the White Days marked.
 - **Upcoming fasting days**: the next five fasting days in the coming 30 days, including next month's White Days. A day that is several kinds at once (say, a White Day on a Monday) is listed once with all of them.
 - **One-tap reminders**: turn on a reminder for a fasting type straight from its card.
 
@@ -175,6 +177,8 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 ### Home sky header (P1)
 
 A live sky at the top of Home: the sun by day and the moon by night, placed where they really are for the user's time and location, with the moon drawn in its real phase. It shows sunrise and sunset times and a countdown to the next one.
+
+- **Status:** the layout ships with two static scenes (day and night PNGs from `design/art/`), switched at fixed hours. What's left is drawing the scene live.
 
 - **Why:** it makes the app feel alive every time it opens, and it links the Hijri date to the moon it comes from.
 - **How:** a `CustomPainter` fed by a pure `SkyPosition` calculation (sun/moon altitude, azimuth and lit fraction from `dart_suncalc`, read through the injected clock). A `SkyBloc` loads the location (saved city, or device location if granted) and refreshes every minute while Home is visible. Respects reduced motion.

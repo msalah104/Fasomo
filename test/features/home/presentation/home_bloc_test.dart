@@ -23,6 +23,8 @@ void main() {
   final today = HijriDateInfo(
     hijriDate: const HijriDate(1448, 5, 17),
     gregorianDate: DateTime(2026, 10, 28),
+    daysInMonth: 30,
+    week: const [],
   );
   final upcoming = [
     FastingDay(

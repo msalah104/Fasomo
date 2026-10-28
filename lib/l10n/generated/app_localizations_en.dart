@@ -343,4 +343,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get copyright => '© Fasomo. All rights reserved.';
+
+  @override
+  String monthProgress(int day, int total) {
+    return 'Day $day of $total';
+  }
+
+  @override
+  String get weekStripTitle => 'This week';
 }

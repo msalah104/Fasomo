@@ -5,6 +5,7 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
 import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
+import 'package:fasomo/features/home/domain/entities/week_day.dart';
 import 'package:fasomo/features/home/domain/repositories/fasting_repository.dart';
 
 class FastingRepositoryImpl implements FastingRepository {
@@ -21,7 +22,23 @@ class FastingRepositoryImpl implements FastingRepository {
   Result<HijriDateInfo, CalendarFailure> getCurrentHijriDate() {
     final today = calendar.dayInfo(clock.now());
     if (today == null) return Err(_outOfRange());
-    return Ok(HijriDateInfo(hijriDate: today.hijri, gregorianDate: today.date));
+    return Ok(
+      HijriDateInfo(
+        hijriDate: today.hijri,
+        gregorianDate: today.date,
+        daysInMonth: calendar.converter.daysInMonth(today.hijri.hijriMonth),
+        week: [
+          for (var offset = 0; offset < 7; offset++)
+            if (calendar.dayInfo(CalendarDays.addDays(today.date, offset))
+                case final day?)
+              WeekDay(
+                hijriDate: day.hijri,
+                gregorianDate: day.date,
+                types: day.types,
+              ),
+        ],
+      ),
+    );
   }
 
   @override

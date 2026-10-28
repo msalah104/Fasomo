@@ -162,5 +162,21 @@
   "sourceCode": "Source code",
   "credits": "Credits",
   "creditsText": "This app was developed to help Muslims track recommended fasting days according to the Sunnah of Prophet Muhammad (PBUH).",
-  "copyright": "© Fasomo. All rights reserved."
+  "copyright": "© Fasomo. All rights reserved.",
+  "monthProgress": "Day {day} of {total}",
+  "@monthProgress": {
+    "description": "Where today falls in the Hijri month, e.g. Day 17 of 30.",
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "weekStripTitle": "This week",
+  "@weekStripTitle": {
+    "description": "Screen-reader label for the seven-day strip on Home."
+  }
 }

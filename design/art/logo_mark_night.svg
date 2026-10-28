@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" viewBox="0 0 128 128">
+  <defs><mask id="m"><rect width="128" height="128" fill="#fff"/><circle cx="99" cy="29" r="12" fill="#000"/></mask></defs>
+  <path d="M26 62Q26 90 54 90H100Q108 90 106 78" fill="none" stroke="#1E2A4A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="94" cy="68" r="11" fill="none" stroke="#1E2A4A" stroke-width="10"/>
+  <circle cx="92" cy="34" r="14" fill="#D9A441" mask="url(#m)"/>
+</svg>

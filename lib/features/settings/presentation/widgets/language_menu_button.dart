@@ -6,7 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// App-bar menu to pick the app language; the choice is saved.
 class LanguageMenuButton extends StatelessWidget {
-  const new({super.key});
+  const new({super.key, this.color});
+
+  /// Icon colour; defaults to the surrounding app bar's.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +19,7 @@ class LanguageMenuButton extends StatelessWidget {
     );
 
     return PopupMenuButton<AppLanguage>(
-      icon: const Icon(Icons.language),
+      icon: Icon(Icons.language, color: color),
       tooltip: localization.language,
       initialValue: current,
       onSelected: (language) =>

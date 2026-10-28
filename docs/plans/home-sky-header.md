@@ -263,6 +263,12 @@ decision D2.
 
 ## 6. Delivery steps (one commit each)
 
+0. **Done: static header.** `SkyHero` shows `assets/images/sky_day.png` from
+   06:00 to 17:59 and `sky_night.png` otherwise (`skyArtAt`), with the week
+   strip and month bar below. The SVG sources are in `design/art/`. Step 5
+   replaces the `Image.asset` with `SkyPainter` and `skyArtAt` with the real
+   sun altitude; the overlays, layout and tests stay.
+
 1. **Spike: verify `dart_suncalc`.**
    - Add `dart_suncalc: ^0.2.1`.
    - Confirm field names and units: suncalc returns altitude and azimuth in

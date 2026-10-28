@@ -339,4 +339,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get copyright => '© فاصومو. جميع الحقوق محفوظة.';
+
+  @override
+  String monthProgress(int day, int total) {
+    return 'اليوم $day من $total';
+  }
+
+  @override
+  String get weekStripTitle => 'هذا الأسبوع';
 }
