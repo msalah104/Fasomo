@@ -299,14 +299,12 @@ void main() {
       final during = stats.summarize(FastLog.empty, gregorian(1447, 9, 10));
       expect(during.qada.daysUntilRamadan, isNull);
       expect(during.qada.latestOwableYear, 1447);
-      expect(during.canMakeUpToday, isFalse);
 
       final after = stats.summarize(FastLog.empty, gregorian(1447, 10, 5));
       expect(
         after.qada.daysUntilRamadan,
         CalendarDays.between(gregorian(1447, 10, 5), gregorian(1448, 9, 1)),
       );
-      expect(after.canMakeUpToday, isTrue);
     });
   });
 }

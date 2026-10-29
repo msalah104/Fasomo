@@ -4,6 +4,7 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/usecases/can_make_up_on.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_extra_qada_owed.dart';
@@ -21,6 +22,7 @@ class TrackerBloc extends Bloc<TrackerEvent, TrackerState> {
     required this.setRamadanDayMissed,
     required this.setMakeUpFast,
     required this.setExtraQadaOwed,
+    required this.canMakeUpOnDay,
   }) : super(const TrackerState()) {
     // One handler, processed in order, so quick double taps never interleave.
     on<TrackerEvent>(_onEvent, transformer: sequential());
@@ -31,6 +33,11 @@ class TrackerBloc extends Bloc<TrackerEvent, TrackerState> {
   final SetRamadanDayMissed setRamadanDayMissed;
   final SetMakeUpFast setMakeUpFast;
   final SetExtraQadaOwed setExtraQadaOwed;
+  final CanMakeUpOn canMakeUpOnDay;
+
+  /// Whether [date] may be logged as a make-up fast. A synchronous query for
+  /// the day picker's predicate; it changes no state.
+  bool canMakeUpOn(DateTime date) => canMakeUpOnDay(date);
 
   Future<void> _onEvent(TrackerEvent event, Emitter<TrackerState> emit) async {
     switch (event) {

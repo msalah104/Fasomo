@@ -776,12 +776,6 @@ abstract class AppLocalizations {
   /// **'No fasting days so far.'**
   String get noFastingDaysYet;
 
-  /// No description provided for @streakExplanation.
-  ///
-  /// In en, this message translates to:
-  /// **'Streaks count fasting days only: White Days, Monday & Thursday, Ramadan and the special days. Missing one before today resets the current streak. Other days never break it, and today counts once you mark it.'**
-  String get streakExplanation;
-
   /// No description provided for @fastLogSaveFailed.
   ///
   /// In en, this message translates to:
@@ -902,12 +896,6 @@ abstract class AppLocalizations {
   /// **'Counts toward the days you owe'**
   String get makeUpFastHint;
 
-  /// No description provided for @makeUpFastToday.
-  ///
-  /// In en, this message translates to:
-  /// **'I made up a fast today'**
-  String get makeUpFastToday;
-
   /// No description provided for @qadaExplanation.
   ///
   /// In en, this message translates to:
@@ -919,6 +907,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not save. A make-up fast can\'t be in Ramadan, on an Eid or in the future.'**
   String get qadaSaveFailed;
+
+  /// No description provided for @logMakeUpFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Log a make-up fast'**
+  String get logMakeUpFast;
+
+  /// No description provided for @pickMakeUpDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day of the make-up fast'**
+  String get pickMakeUpDay;
+
+  /// No description provided for @recentMakeUps.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent make-up fasts'**
+  String get recentMakeUps;
+
+  /// No description provided for @removeMakeUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this make-up fast'**
+  String get removeMakeUp;
+
+  /// No description provided for @noMakeUpDayAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'There\'s no day to log yet: make-up fasts can\'t be in Ramadan or on an Eid.'**
+  String get noMakeUpDayAvailable;
 }
 
 class _AppLocalizationsDelegate

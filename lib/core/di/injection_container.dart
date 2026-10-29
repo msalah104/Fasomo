@@ -30,6 +30,7 @@ import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:fasomo/features/tracker/data/datasources/fast_log_local_data_source.dart';
 import 'package:fasomo/features/tracker/data/repositories/fast_log_repository_impl.dart';
 import 'package:fasomo/features/tracker/domain/repositories/fast_log_repository.dart';
+import 'package:fasomo/features/tracker/domain/usecases/can_make_up_on.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_extra_qada_owed.dart';
@@ -99,8 +100,10 @@ Future<void> init() async {
         setRamadanDayMissed: sl(),
         setMakeUpFast: sl(),
         setExtraQadaOwed: sl(),
+        canMakeUpOnDay: sl(),
       ),
     )
+    ..registerLazySingleton(() => CanMakeUpOn(sl()))
     ..registerLazySingleton(() => GetFastLogSummary(sl()))
     ..registerLazySingleton(() => SetDayFasted(sl()))
     ..registerLazySingleton(() => SetRamadanDayMissed(sl()))

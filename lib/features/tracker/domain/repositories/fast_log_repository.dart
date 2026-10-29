@@ -25,6 +25,10 @@ abstract interface class FastLogRepository {
     required bool missed,
   });
 
+  /// Whether [date] may be a make-up fast today: a day up to today, outside
+  /// Ramadan and not an Eid or a day of Tashreeq.
+  bool canMakeUpOn(DateTime date);
+
   /// Marks [date] as a make-up fast, which also marks it fasted, or clears
   /// the make-up flag and leaves it fasted.
   ///

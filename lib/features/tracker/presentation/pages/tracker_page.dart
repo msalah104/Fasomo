@@ -4,12 +4,12 @@ import 'package:fasomo/core/theme/app_colors.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/qada_section.dart';
-import 'package:fasomo/features/tracker/presentation/widgets/streak_stat.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Streaks and this month's and this year's totals per fasting type.
+/// The make-up (Qada) balance, then this month's and this year's totals per
+/// fasting type. The streaks live on the Home card.
 class TrackerPage extends StatelessWidget {
   const new({super.key});
 
@@ -41,47 +41,15 @@ class _TrackerContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-    final colors = AppColors.of(context);
 
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Card(
-          margin: EdgeInsets.zero,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: StreakStat(
-                    value: summary.currentStreak,
-                    label: localization.currentStreak,
-                  ),
-                ),
-                Expanded(
-                  child: StreakStat(
-                    value: summary.longestStreak,
-                    label: localization.longestStreak,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          localization.streakExplanation,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: colors.onSurfaceMuted,
-          ),
-        ),
+        QadaSection(summary: summary),
         const SizedBox(height: 24),
         _PeriodSection(title: localization.thisMonth, totals: summary.month),
         const SizedBox(height: 24),
         _PeriodSection(title: localization.thisYear, totals: summary.year),
-        const SizedBox(height: 24),
-        QadaSection(summary: summary),
       ],
     );
   }

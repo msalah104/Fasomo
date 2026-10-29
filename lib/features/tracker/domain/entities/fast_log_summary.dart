@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
+import 'package:fasomo/core/calendar/hijri_date.dart';
 
 /// What the log says about one day.
 enum DayMark { fasted, makeUp, missed }
@@ -41,6 +42,18 @@ class PeriodTotals extends Equatable {
   List<Object> get props => [fastedDays, dueDays, byType];
 }
 
+/// A logged day in both calendars.
+class LoggedDay extends Equatable {
+  const new({required this.date, required this.hijri});
+
+  /// Local midnight of the Gregorian day.
+  final DateTime date;
+  final HijriDate hijri;
+
+  @override
+  List<Object> get props => [date, hijri];
+}
+
 /// Make-up fasts owed and made up for one Ramadan.
 class QadaYear extends Equatable {
   const new({
@@ -75,6 +88,7 @@ class QadaSummary extends Equatable {
     required this.byYear,
     required this.latestOwableYear,
     this.daysUntilRamadan,
+    this.makeUps = const [],
   });
 
   static const empty = QadaSummary(
@@ -100,6 +114,9 @@ class QadaSummary extends Equatable {
   /// past the supported calendar range.
   final int? daysUntilRamadan;
 
+  /// Every make-up fast logged, newest first.
+  final List<LoggedDay> makeUps;
+
   int get remaining => owed > madeUp ? owed - madeUp : 0;
 
   /// The days entered for [hijriYear] rather than marked day by day.
@@ -113,6 +130,7 @@ class QadaSummary extends Equatable {
     byYear,
     latestOwableYear,
     daysUntilRamadan,
+    makeUps,
   ];
 }
 
@@ -128,7 +146,6 @@ class FastLogSummary extends Equatable {
     this.makeUpDays = const {},
     this.missedRamadanDays = const {},
     this.qada = QadaSummary.empty,
-    this.canMakeUpToday = false,
   });
 
   static const empty = FastLogSummary(
@@ -161,9 +178,6 @@ class FastLogSummary extends Equatable {
 
   final QadaSummary qada;
 
-  /// Whether today may be a make-up fast (it isn't in Ramadan or an Eid).
-  final bool canMakeUpToday;
-
   bool get isEmpty => fastedDays.isEmpty;
 
   bool isFasted(DateTime date) =>
@@ -193,6 +207,5 @@ class FastLogSummary extends Equatable {
     makeUpDays,
     missedRamadanDays,
     qada,
-    canMakeUpToday,
   ];
 }

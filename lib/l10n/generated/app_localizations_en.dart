@@ -401,10 +401,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noFastingDaysYet => 'No fasting days so far.';
 
   @override
-  String get streakExplanation =>
-      'Streaks count fasting days only: White Days, Monday & Thursday, Ramadan and the special days. Missing one before today resets the current streak. Other days never break it, and today counts once you mark it.';
-
-  @override
   String get fastLogSaveFailed => 'Could not save your fasting log';
 
   @override
@@ -474,13 +470,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get makeUpFastHint => 'Counts toward the days you owe';
 
   @override
-  String get makeUpFastToday => 'I made up a fast today';
-
-  @override
   String get qadaExplanation =>
       'Mark the Ramadan days you missed in the calendar, or add days owed from earlier years. Each make-up fast pays off the oldest Ramadan first, and still counts toward your streak and totals.';
 
   @override
   String get qadaSaveFailed =>
       'Could not save. A make-up fast can\'t be in Ramadan, on an Eid or in the future.';
+
+  @override
+  String get logMakeUpFast => 'Log a make-up fast';
+
+  @override
+  String get pickMakeUpDay => 'Day of the make-up fast';
+
+  @override
+  String get recentMakeUps => 'Recent make-up fasts';
+
+  @override
+  String get removeMakeUp => 'Remove this make-up fast';
+
+  @override
+  String get noMakeUpDayAvailable =>
+      'There\'s no day to log yet: make-up fasts can\'t be in Ramadan or on an Eid.';
 }

@@ -53,6 +53,7 @@ void main() {
     when(() => bloc.state).thenReturn(
       state ?? TrackerState(status: TrackerStatus.success, summary: summary),
     );
+    when(() => bloc.canMakeUpOn(any())).thenReturn(true);
     await withClock(Clock.fixed(DateTime(2026, 10, 28, 10)), () async {
       await tester.pumpWidget(
         BlocProvider<TrackerBloc>.value(
@@ -101,6 +102,9 @@ void main() {
       expect(find.byType(TrackerPage), findsOneWidget);
       expect(find.text('White Days'), findsOneWidget);
       expect(find.text('1 of 3'), findsOneWidget);
+      // Qada leads the page; the streaks stay on the Home card.
+      expect(find.text('Make-up fasts (Qada)'), findsOneWidget);
+      expect(find.text('Current streak'), findsNothing);
     });
 
     testWidgets('lays out in Arabic without overflow', (tester) async {
@@ -253,7 +257,6 @@ void main() {
         latestOwableYear: 1447,
         daysUntilRamadan: 103,
       ),
-      canMakeUpToday: true,
     );
 
     testWidgets('shows the balance, each Ramadan and the countdown', (
@@ -269,9 +272,68 @@ void main() {
       expect(find.text('Ramadan 1446 AH'), findsOneWidget);
       expect(find.text('2 of 2 made up'), findsOneWidget);
       expect(find.text('0 of 4 made up'), findsOneWidget);
+    });
 
-      await tester.tap(find.text('I made up a fast today'));
-      verify(() => bloc.add(ToggleMakeUp(today))).called(1);
+    testWidgets('logs a make-up fast on a day picked here', (tester) async {
+      await pump(
+        tester,
+        SingleChildScrollView(child: QadaSection(summary: owing)),
+      );
+
+      await withClock(Clock.fixed(DateTime(2026, 10, 28, 10)), () async {
+        await tester.tap(find.text('Log a make-up fast'));
+        await tester.pumpAndSettle();
+      });
+      expect(find.text('Day of the make-up fast'), findsOneWidget);
+      await tester.tap(find.text('27'));
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      verify(() => bloc.add(ToggleMakeUp(DateTime(2026, 10, 27)))).called(1);
+    });
+
+    testWidgets('explains when no day can be logged', (tester) async {
+      await pump(
+        tester,
+        Scaffold(body: QadaSection(summary: owing)),
+      );
+      when(() => bloc.canMakeUpOn(any())).thenReturn(false);
+
+      await withClock(Clock.fixed(DateTime(2026, 10, 28, 10)), () async {
+        await tester.tap(find.text('Log a make-up fast'));
+        await tester.pump();
+      });
+
+      expect(find.textContaining("There's no day to log yet"), findsOneWidget);
+    });
+
+    testWidgets('lists recent make-up fasts and removes one', (tester) async {
+      final day = DateTime(2026, 10, 27);
+      await pump(
+        tester,
+        SingleChildScrollView(
+          child: QadaSection(
+            summary: summary.withQada(
+              QadaSummary(
+                owed: 2,
+                madeUp: 1,
+                byYear: const [
+                  QadaYear(hijriYear: 1447, owed: 2, madeUp: 1, extraOwed: 2),
+                ],
+                latestOwableYear: 1447,
+                makeUps: [
+                  LoggedDay(date: day, hijri: const HijriDate(1448, 5, 16)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Recent make-up fasts'), findsOneWidget);
+      expect(find.text('16 Jumada al-Ula 1448 AH'), findsOneWidget);
+      await tester.tap(find.byTooltip('Remove this make-up fast'));
+      verify(() => bloc.add(ToggleDayFasted(day))).called(1);
     });
 
     testWidgets('says nothing is owed when the balance is clear', (
@@ -326,14 +388,12 @@ void main() {
 }
 
 extension on FastLogSummary {
-  FastLogSummary withQada(QadaSummary qada, {bool canMakeUpToday = false}) =>
-      FastLogSummary(
-        fastedDays: fastedDays,
-        currentStreak: currentStreak,
-        longestStreak: longestStreak,
-        month: month,
-        year: year,
-        qada: qada,
-        canMakeUpToday: canMakeUpToday,
-      );
+  FastLogSummary withQada(QadaSummary qada) => FastLogSummary(
+    fastedDays: fastedDays,
+    currentStreak: currentStreak,
+    longestStreak: longestStreak,
+    month: month,
+    year: year,
+    qada: qada,
+  );
 }

@@ -19,13 +19,13 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 ### ✅ Fasting tracker
 - **Mark any day up to today** as fasted, from Home or from a day in the calendar. Future days and the forbidden days (the Eids and Tashreeq) can't be marked.
 - **Streaks** count fasting days only: a fasted fasting day extends the streak, a missed one before today resets it, and ordinary days never break it. Today counts once you mark it and never breaks the streak before then. A day with several types counts once.
-- **Progress page**: current and longest streak, plus this Hijri month's and this Hijri year's totals per fasting type so far (e.g. "White Days · 9 of 12").
+- **Progress page**: the make-up (Qada) balance first, then this Hijri month's and this Hijri year's totals per fasting type so far (e.g. "White Days · 9 of 12"). The streaks are on the Home card.
 - Streaks and totals are worked out from the log every time, never stored. The log is kept on the device.
 
 ### ↺ Make-up fasts (Qada)
 - **Days owed per Ramadan**: mark the Ramadan days you missed in the calendar (a Ramadan day is either *Fasted* or *Missed*), or enter how many days you owe from an earlier Ramadan.
-- **Make-up fasts**: switch on *Make-up fast* for any past day outside Ramadan, or tap *I made up a fast today* on the progress page. A make-up fast is also a fasted day, so one on a Monday counts toward the Monday & Thursday totals and the streak.
-- **Balance**: the progress page shows the days left, each Ramadan's "made up of owed" (make-up fasts pay off the oldest Ramadan first) and, while days are owed, the days until the next Ramadan. Home shows the days left too.
+- **Make-up fasts**: tap *Log a make-up fast* on the progress page and pick the day, or switch on *Make-up fast* for a day in the calendar. Ramadan, Eid and Tashreeq days can't be picked. A make-up fast is also a fasted day, so one on a Monday counts toward the Monday & Thursday totals and the streak.
+- **Balance**: the progress page shows the days left, each Ramadan's "made up of owed" (make-up fasts pay off the oldest Ramadan first) and, while days are owed, the days until the next Ramadan. The latest five make-up fasts are listed there, each with a button to remove it. Home shows the days left too.
 - Missed days carry a ✗ badge in the calendar and make-up fasts a ↺ badge.
 
 ### 📅 Calendar

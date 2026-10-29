@@ -84,6 +84,17 @@ class FastLogRepositoryImpl implements FastLogRepository {
   }
 
   @override
+  bool canMakeUpOn(DateTime date) {
+    final info = calendar.dayInfo(date);
+    return info != null &&
+        FastLogRules.canMakeUp(
+          date: info.date,
+          hijri: info.hijri,
+          today: CalendarDays.dateOnly(clock.now()),
+        );
+  }
+
+  @override
   Future<Result<void, Failure>> setMakeUp(
     DateTime date, {
     required bool makeUp,

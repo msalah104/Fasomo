@@ -5,7 +5,6 @@ import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/calendar/hijri_date.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
-import 'package:fasomo/features/tracker/domain/fast_log_rules.dart';
 
 /// Derives streaks and totals from the set of fasted days. Pure: "today" is
 /// passed in by the caller, which reads it from an injected clock.
@@ -26,9 +25,6 @@ class TrackerStats {
       makeUpDays: Set.unmodifiable(log.makeUpDays),
       missedRamadanDays: Set.unmodifiable(log.missedRamadanDays),
       qada: _qada(log, todayInfo?.hijri, day),
-      canMakeUpToday:
-          todayInfo != null &&
-          FastLogRules.canMakeUp(date: day, hijri: todayInfo.hijri, today: day),
       currentStreak: current,
       longestStreak: longest,
       month: todayInfo == null
@@ -113,6 +109,12 @@ class TrackerStats {
           ? today.year
           : today.year - 1,
       daysUntilRamadan: today == null ? null : _daysUntilRamadan(today, day),
+      makeUps: [
+        for (final date
+            in log.makeUpDays.toList()..sort((a, b) => b.compareTo(a)))
+          if (_calendar.dayInfo(date) case final info?)
+            LoggedDay(date: info.date, hijri: info.hijri),
+      ],
     );
   }
 

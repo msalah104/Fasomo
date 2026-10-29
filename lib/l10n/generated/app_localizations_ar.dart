@@ -397,10 +397,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noFastingDaysYet => 'لا توجد أيام صيام حتى الآن.';
 
   @override
-  String get streakExplanation =>
-      'تُحسب السلسلة على أيام الصيام فقط: الأيام البيض والاثنين والخميس ورمضان والأيام الخاصة. تفويت أحدها قبل اليوم يعيد السلسلة الحالية إلى الصفر، ولا تقطعها الأيام الأخرى أبدًا، ويُحتسب اليوم عند تسجيله.';
-
-  @override
   String get fastLogSaveFailed => 'تعذّر حفظ سجل الصيام';
 
   @override
@@ -470,13 +466,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get makeUpFastHint => 'يُحتسب من الأيام المستحقة عليك';
 
   @override
-  String get makeUpFastToday => 'قضيت يومًا اليوم';
-
-  @override
   String get qadaExplanation =>
       'سجّل أيام رمضان التي أفطرتها في التقويم، أو أضف أيامًا مستحقة من أعوام سابقة. كل يوم قضاء يسدّ أقدم رمضان أولًا، ويُحتسب أيضًا في سلسلتك ومجاميعك.';
 
   @override
   String get qadaSaveFailed =>
       'تعذّر الحفظ. لا يكون صيام القضاء في رمضان ولا في العيد ولا في يوم لم يأتِ بعد.';
+
+  @override
+  String get logMakeUpFast => 'تسجيل يوم قضاء';
+
+  @override
+  String get pickMakeUpDay => 'يوم صيام القضاء';
+
+  @override
+  String get recentMakeUps => 'آخر أيام القضاء';
+
+  @override
+  String get removeMakeUp => 'حذف يوم القضاء هذا';
+
+  @override
+  String get noMakeUpDayAvailable =>
+      'لا يوجد يوم يمكن تسجيله بعد: لا يكون القضاء في رمضان ولا في العيد.';
 }

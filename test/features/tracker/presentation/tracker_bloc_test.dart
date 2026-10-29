@@ -4,6 +4,7 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/usecases/can_make_up_on.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_extra_qada_owed.dart';
@@ -23,12 +24,15 @@ class MockSetMakeUpFast extends Mock implements SetMakeUpFast;
 
 class MockSetExtraQadaOwed extends Mock implements SetExtraQadaOwed;
 
+class MockCanMakeUpOn extends Mock implements CanMakeUpOn;
+
 void main() {
   late MockGetFastLogSummary getSummary;
   late MockSetDayFasted setDayFasted;
   late MockSetRamadanDayMissed setRamadanDayMissed;
   late MockSetMakeUpFast setMakeUpFast;
   late MockSetExtraQadaOwed setExtraQadaOwed;
+  late MockCanMakeUpOn canMakeUpOn;
 
   final monday = DateTime(2026, 10, 26);
   final withMonday = FastLogSummary(
@@ -58,6 +62,7 @@ void main() {
     setRamadanDayMissed = MockSetRamadanDayMissed();
     setMakeUpFast = MockSetMakeUpFast();
     setExtraQadaOwed = MockSetExtraQadaOwed();
+    canMakeUpOn = MockCanMakeUpOn();
     when(() => setDayFasted(any())).thenAnswer((_) async => const Ok(null));
     when(
       () => setRamadanDayMissed(any()),
@@ -72,6 +77,7 @@ void main() {
     setRamadanDayMissed: setRamadanDayMissed,
     setMakeUpFast: setMakeUpFast,
     setExtraQadaOwed: setExtraQadaOwed,
+    canMakeUpOnDay: canMakeUpOn,
   );
 
   test('starts in the initial state', () {
@@ -206,4 +212,14 @@ void main() {
       ),
     ],
   );
+
+  test('answers whether a day can be a make-up fast', () {
+    when(() => canMakeUpOn(monday)).thenReturn(true);
+    when(() => canMakeUpOn(DateTime(2026, 3))).thenReturn(false);
+
+    final bloc = build();
+
+    expect(bloc.canMakeUpOn(monday), isTrue);
+    expect(bloc.canMakeUpOn(DateTime(2026, 3)), isFalse);
+  });
 }
