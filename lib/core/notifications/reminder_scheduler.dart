@@ -2,7 +2,7 @@ import 'package:fasomo/core/notifications/deterministic_id.dart';
 import 'package:fasomo/core/notifications/reminder_timing.dart';
 import 'package:fasomo/core/notifications/scheduled_notification.dart';
 
-/// One reminder for one fasting day, with its localized text.
+/// One notification for one day, with its localized text.
 class ReminderRequest {
   const new({
     required this.reminderId,
@@ -14,11 +14,22 @@ class ReminderRequest {
 
   final String reminderId;
 
-  /// Local midnight of the fasting day.
+  /// Local midnight of the day the reminder is about.
   final DateTime fastingDate;
   final ReminderTiming timing;
   final String title;
   final String body;
+
+  /// The local moment the notification fires.
+  DateTime get fireAt => timing.fireTimeFor(fastingDate);
+
+  ReminderRequest withBody(String body) => ReminderRequest(
+    reminderId: reminderId,
+    fastingDate: fastingDate,
+    timing: timing,
+    title: title,
+    body: body,
+  );
 }
 
 /// Pure scheduling math: turns reminder requests into the notifications the

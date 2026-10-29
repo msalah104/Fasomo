@@ -1,6 +1,7 @@
-# Qada reminders — plan (draft)
+# Qada reminders — plan
 
-**Status:** draft, not built. Open questions are in section 6.
+**Status:** weekly, monthly and before-Ramadan reminders are built. Suggested
+pace is on the roadmap (P3). The decisions are in section 6.
 
 Help the user pay off their make-up (Qada) days before the next Ramadan by
 letting them switch on one or more kinds of reminder. Every Qada reminder
@@ -14,7 +15,7 @@ The user can turn on any combination of these.
 
 | Kind | What it does | Example notification |
 |---|---|---|
-| **Weekly** | On the chosen weekdays, defaulting to **Monday and Thursday**. A make-up fast on those days also counts as the Sunnah fast, so it counts twice. | "Tomorrow is Thursday: a good day to make up a fast. 4 days left." |
+| **Weekly** | On the chosen weekdays, defaulting to **Saturday**. On a Monday or Thursday it merges with that day's Sunnah reminder. | "Tomorrow: a day for a make-up fast. Make-up days left: 4" |
 | **Monthly** | Once a Hijri month, either on the **White Days** (13–15, again counting for both) or on a **Hijri day** the user picks. | "The White Days start tomorrow. Make up a fast? 4 days left." |
 | **Before Ramadan** | A countdown at chosen points before Ramadan, e.g. **60, 30, 14 and 7 days** before (multi-select). | "Ramadan starts in 30 days and you still owe 4 make-up fasts." |
 | **Suggested pace** *(later)* | Works out a weekly pace from the balance and the weeks left, e.g. 6 days owed and 20 weeks left gives "1 a week", and schedules that. Re-planned on every sync. | "To finish before Ramadan, fast 1 make-up day a week. This week's: Thursday?" |
@@ -139,14 +140,24 @@ the home-screen widget or a background fetch could address it later.
 
 ---
 
-## 6. Open questions
+## 6. Decisions
 
-1. **Weekly default**: Monday and Thursday, or let the user pick with no
-   default?
-2. **Same-day merge**: merge into one notification (proposed), or always let
-   the Qada text win?
-3. **Before-Ramadan offsets**: a fixed set (60/30/14/7), or any number of
-   days?
-4. **Suggested pace**: worth doing in the first version, or later?
-5. **Where to set it up**: both the progress page and the Reminders tab
-   (proposed), or only one of them?
+1. **Weekly default**: Saturday.
+2. **Same-day reminders**: merged into one notification. A countdown on a day
+   that already has a notification is added to its text.
+3. **Before-Ramadan offsets**: any number of days, 1 to 354 (30 and 7 by
+   default).
+4. **Suggested pace**: later.
+5. **Where to set it up**: both the progress page and the Reminders tab.
+6. **Everything on by default**: every fasting-type reminder and every
+   make-up reminder kind starts on. Notification permission is asked once,
+   when the app first opens, instead of the first time a reminder is turned
+   on. A fasting reminder can't be deleted any more, only switched off.
+
+### As built
+
+- The monthly reminder is one Hijri day, defaulting to the 13th (the first
+  White Day). The "White Days or a Hijri day" choice is a single day picker
+  where the 13th is labelled White Days.
+- The make-up reminder timing is the evening before (20:00) or the morning of
+  (07:00). There's no custom time or message yet.

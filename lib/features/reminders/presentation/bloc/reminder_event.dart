@@ -16,10 +16,16 @@ final class LoadReminders extends ReminderEvent {
 final class ReminderCopyChanged extends ReminderEvent {
   const new(this.copy);
 
-  final ReminderCopy copy;
+  final NotificationCopy copy;
 
   @override
   List<Object> get props => [copy];
+}
+
+/// The app is showing for the first time: ask for notification permission,
+/// since every reminder starts out on. Does nothing on later launches.
+final class PermissionPromptRequested extends ReminderEvent {
+  const new();
 }
 
 /// Re-runs the notification sync, e.g. when the app returns to the
@@ -53,13 +59,4 @@ final class UpdateReminderSettings extends ReminderEvent {
 
   @override
   List<Object> get props => [reminder];
-}
-
-final class DeleteReminderEvent extends ReminderEvent {
-  const new(this.fastingType);
-
-  final FastingType fastingType;
-
-  @override
-  List<Object> get props => [fastingType];
 }

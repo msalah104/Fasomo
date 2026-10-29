@@ -6,9 +6,12 @@ import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/calendar_day_cell.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/entities/qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/pages/tracker_page.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/fasted_toggle.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/qada_reminder_sheet.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/qada_reminder_tile.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/qada_section.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/tracker_day_actions.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/tracker_day_badge.dart';
@@ -383,6 +386,94 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(find.text('صيام القضاء'), findsOneWidget);
+    });
+  });
+  group('make-up reminders', () {
+    testWidgets('the tile summarises the defaults and notes the idle state', (
+      tester,
+    ) async {
+      await pump(tester, const QadaReminderTile());
+
+      expect(find.text('Make-up reminders'), findsOneWidget);
+      expect(find.textContaining('Weekly: Sat'), findsOneWidget);
+      expect(find.textContaining('Monthly: day 13'), findsOneWidget);
+      expect(
+        find.textContaining('Before Ramadan: 30 days, 7 days'),
+        findsOneWidget,
+      );
+      expect(find.textContaining('They start when you owe'), findsOneWidget);
+    });
+
+    testWidgets('the sheet changes a weekday and the time', (tester) async {
+      await pump(tester, const QadaReminderTile());
+      await tester.tap(find.byType(QadaReminderTile));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(QadaReminderSheet), findsOneWidget);
+      await tester.tap(find.widgetWithText(FilterChip, 'Mon'));
+      verify(
+        () => bloc.add(
+          UpdateQadaReminders(
+            QadaReminderSettings.defaults.copyWith(
+              weekdays: {DateTime.saturday, DateTime.monday},
+            ),
+          ),
+        ),
+      ).called(1);
+
+      await tester.tap(find.text('Morning of the Day'));
+      verify(
+        () => bloc.add(
+          UpdateQadaReminders(
+            QadaReminderSettings.defaults.copyWith(
+              time: QadaReminderTime.morningOf,
+            ),
+          ),
+        ),
+      ).called(1);
+    });
+
+    testWidgets('adds any number of days before Ramadan', (tester) async {
+      await pump(tester, const QadaReminderTile());
+      await tester.tap(find.byType(QadaReminderTile));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Add'));
+      await tester.tap(find.text('Add'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), '400');
+      await tester.tap(find.text('Save'));
+      await tester.pump();
+      expect(find.text('Enter a number from 1 to 354'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), '45');
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
+
+      verify(
+        () => bloc.add(
+          UpdateQadaReminders(
+            QadaReminderSettings.defaults.copyWith(
+              daysBeforeRamadan: {30, 7, 45},
+            ),
+          ),
+        ),
+      ).called(1);
+    });
+
+    testWidgets('the sheet lays out in Arabic without overflow', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const QadaReminderTile(),
+        locale: const Locale('ar'),
+      );
+      await tester.tap(find.byType(QadaReminderTile));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('تذكيرات القضاء'), findsWidgets);
     });
   });
 }

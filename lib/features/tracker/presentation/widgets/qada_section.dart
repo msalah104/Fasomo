@@ -5,6 +5,7 @@ import 'package:fasomo/core/theme/app_colors.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/owed_days_dialog.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/qada_reminder_tile.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/streak_stat.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -74,6 +75,8 @@ class QadaSection extends StatelessWidget {
                     icon: const Icon(Icons.add),
                     label: Text(localization.qadaAddOwed),
                   ),
+                const Divider(height: 24),
+                const QadaReminderTile(),
                 if (qada.makeUps.isNotEmpty) ...[
                   const Divider(height: 24),
                   Text(

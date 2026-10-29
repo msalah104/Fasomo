@@ -135,23 +135,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editReminder => 'Edit Reminder';
 
   @override
-  String get deleteReminderTitle => 'Delete Reminder';
-
-  @override
-  String get deleteReminderConfirm =>
-      'Are you sure you want to delete this reminder?';
-
-  @override
   String get manageReminders => 'Manage your fasting day reminders';
 
   @override
-  String get activeReminders => 'Active Reminders';
-
-  @override
-  String get noRemindersYet => 'No reminders set yet';
-
-  @override
-  String get addRemindersFromHome => 'Add reminders from the Home page';
+  String get activeReminders => 'Fasting reminders';
 
   @override
   String get notificationsDenied =>
@@ -492,4 +479,124 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noMakeUpDayAvailable =>
       'There\'s no day to log yet: make-up fasts can\'t be in Ramadan or on an Eid.';
+
+  @override
+  String qadaReminderTitle(int daysBefore) {
+    String _temp0 = intl.Intl.pluralLogic(
+      daysBefore,
+      locale: localeName,
+      other: 'In $daysBefore days: a day for a make-up fast',
+      one: 'Tomorrow: a day for a make-up fast',
+      zero: 'Today: a day for a make-up fast',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String qadaReminderBody(int remaining) {
+    return 'Make-up days left: $remaining';
+  }
+
+  @override
+  String mergedReminderTitle(int daysBefore, String type) {
+    String _temp0 = intl.Intl.pluralLogic(
+      daysBefore,
+      locale: localeName,
+      other: 'In $daysBefore days: $type + make-up',
+      one: 'Tomorrow: $type + make-up',
+      zero: 'Today: $type + make-up',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mergedReminderBody(String type, int remaining) {
+    return 'Fast it as a make-up and it counts for $type too. Make-up days left: $remaining';
+  }
+
+  @override
+  String ramadanCountdownTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ramadan in $count days',
+      one: 'Ramadan is tomorrow',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ramadanCountdownBody(int remaining) {
+    return 'Make-up days still owed before Ramadan: $remaining';
+  }
+
+  @override
+  String get qadaReminders => 'Make-up reminders';
+
+  @override
+  String get qadaRemindersOff => 'Off';
+
+  @override
+  String get qadaRemindersIdle => 'On. They start when you owe make-up days.';
+
+  @override
+  String get weeklyReminder => 'Weekly';
+
+  @override
+  String get monthlyReminder => 'Monthly';
+
+  @override
+  String get beforeRamadanReminder => 'Before Ramadan';
+
+  @override
+  String hijriDayOption(String day) {
+    return 'Day $day of the Hijri month';
+  }
+
+  @override
+  String get whiteDaysOption => 'White Days (13th)';
+
+  @override
+  String daysBeforeOption(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addDaysBefore => 'Add';
+
+  @override
+  String get daysBeforeDialogTitle => 'Days before Ramadan';
+
+  @override
+  String daysBeforeInvalid(int max) {
+    return 'Enter a number from 1 to $max';
+  }
+
+  @override
+  String get reminderTimeLabel => 'Time';
+
+  @override
+  String weeklySummary(String days) {
+    return 'Weekly: $days';
+  }
+
+  @override
+  String monthlySummary(String day) {
+    return 'Monthly: day $day';
+  }
+
+  @override
+  String beforeRamadanSummary(String days) {
+    return 'Before Ramadan: $days';
+  }
+
+  @override
+  String get qadaRemindersFootnote =>
+      'Make-up reminders skip Ramadan, the Eids and days you\'ve already fasted, and stop once nothing is owed. On a Sunnah fasting day they\'re merged into that day\'s reminder.';
 }

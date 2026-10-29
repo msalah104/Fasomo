@@ -58,3 +58,13 @@ final class SetExtraOwed extends TrackerEvent {
   @override
   List<Object> get props => [hijriYear, days];
 }
+
+/// Replaces the make-up reminder settings.
+final class UpdateQadaReminders extends TrackerEvent {
+  const new(this.settings);
+
+  final QadaReminderSettings settings;
+
+  @override
+  List<Object> get props => [settings];
+}

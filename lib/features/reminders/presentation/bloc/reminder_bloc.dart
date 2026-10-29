@@ -3,14 +3,14 @@ import 'package:equatable/equatable.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
+import 'package:fasomo/core/notifications/notification_copy.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
+import 'package:fasomo/core/notifications/sync_notifications.dart';
 import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
-import 'package:fasomo/features/reminders/domain/entities/reminder_copy.dart';
-import 'package:fasomo/features/reminders/domain/usecases/delete_reminder.dart';
 import 'package:fasomo/features/reminders/domain/usecases/get_reminders.dart';
+import 'package:fasomo/features/reminders/domain/usecases/prompt_notification_permission_once.dart';
 import 'package:fasomo/features/reminders/domain/usecases/save_reminder.dart';
-import 'package:fasomo/features/reminders/domain/usecases/sync_reminder_notifications.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'reminder_event.dart';
@@ -20,9 +20,9 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
   new({
     required this.getReminders,
     required this.saveReminder,
-    required this.deleteReminder,
     required this.syncNotifications,
     required this.notificationPermission,
+    required this.promptPermissionOnce,
   }) : super(const ReminderState()) {
     // One handler, processed in order, so mutations never interleave.
     on<ReminderEvent>(_onEvent, transformer: sequential());
@@ -30,13 +30,15 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
 
   final GetReminders getReminders;
   final SaveReminder saveReminder;
-  final DeleteReminder deleteReminder;
-  final SyncReminderNotifications syncNotifications;
+
+  /// The app-wide sync; it also schedules the make-up (Qada) reminders.
+  final SyncNotifications syncNotifications;
   final NotificationPermission notificationPermission;
+  final PromptNotificationPermissionOnce promptPermissionOnce;
 
   /// Text for the current language; set by [ReminderCopyChanged]. No sync
   /// runs until it is known.
-  ReminderCopy? _copy;
+  NotificationCopy? _copy;
 
   Future<void> _onEvent(
     ReminderEvent event,
@@ -53,14 +55,16 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
         await _sync(emit);
       case SyncRequested():
         await _sync(emit);
+      case PermissionPromptRequested():
+        if (await promptPermissionOnce(const NoParams()) == false) {
+          emit(state.copyWith(permissionDenied: true));
+        }
       case AddFastingDayReminder(:final fastingType):
         await _save(Reminder(fastingType: fastingType, isEnabled: true), emit);
       case ToggleReminder(:final fastingType):
         await _save(_toggled(fastingType), emit);
       case UpdateReminderSettings(:final reminder):
         await _save(reminder, emit);
-      case DeleteReminderEvent(:final fastingType):
-        await _apply(deleteReminder(fastingType.name), emit);
     }
   }
 

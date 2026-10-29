@@ -4,8 +4,11 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/entities/qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/can_make_up_on.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/usecases/get_qada_reminder_settings.dart';
+import 'package:fasomo/features/tracker/domain/usecases/save_qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_extra_qada_owed.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_make_up_fast.dart';
@@ -23,6 +26,8 @@ class TrackerBloc extends Bloc<TrackerEvent, TrackerState> {
     required this.setMakeUpFast,
     required this.setExtraQadaOwed,
     required this.canMakeUpOnDay,
+    required this.getQadaReminders,
+    required this.saveQadaReminders,
   }) : super(const TrackerState()) {
     // One handler, processed in order, so quick double taps never interleave.
     on<TrackerEvent>(_onEvent, transformer: sequential());
@@ -34,6 +39,8 @@ class TrackerBloc extends Bloc<TrackerEvent, TrackerState> {
   final SetMakeUpFast setMakeUpFast;
   final SetExtraQadaOwed setExtraQadaOwed;
   final CanMakeUpOn canMakeUpOnDay;
+  final GetQadaReminderSettings getQadaReminders;
+  final SaveQadaReminderSettings saveQadaReminders;
 
   /// Whether [date] may be logged as a make-up fast. A synchronous query for
   /// the day picker's predicate; it changes no state.
@@ -73,6 +80,8 @@ class TrackerBloc extends Bloc<TrackerEvent, TrackerState> {
           ),
           emit,
         );
+      case UpdateQadaReminders(:final settings):
+        await _change(saveQadaReminders(settings), emit);
       case SetExtraOwed(:final hijriYear, :final days):
         await _change(
           setExtraQadaOwed(
@@ -97,10 +106,19 @@ class TrackerBloc extends Bloc<TrackerEvent, TrackerState> {
   }
 
   void _load(Emitter<TrackerState> emit) {
-    switch (getSummary(const NoParams())) {
-      case Ok(value: final summary):
-        emit(state.copyWith(status: TrackerStatus.success, summary: summary));
-      case Err(:final failure):
+    switch ((
+      getSummary(const NoParams()),
+      getQadaReminders(const NoParams()),
+    )) {
+      case (Ok(value: final summary), Ok(value: final reminders)):
+        emit(
+          state.copyWith(
+            status: TrackerStatus.success,
+            summary: summary,
+            qadaReminders: reminders,
+          ),
+        );
+      case (Err(:final failure), _) || (_, Err(:final failure)):
         emit(state.copyWith(status: TrackerStatus.error, failure: failure));
     }
   }

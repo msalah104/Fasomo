@@ -1,14 +1,15 @@
 import 'package:clock/clock.dart';
 import 'package:fasomo/core/error/failures.dart';
+import 'package:fasomo/core/presentation/localized_notification_copy.dart';
 import 'package:fasomo/features/about/presentation/pages/about_page.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
-import 'package:fasomo/features/reminders/presentation/localized_reminder_copy.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/language_menu_button.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/fasted_toggle.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/qada_reminder_tile.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/tracker_day_actions.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/tracker_day_badge.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/tracker_summary_card.dart';
@@ -42,6 +43,13 @@ class _AppShellState extends State<AppShell> {
         context.read<TrackerBloc>().add(const RefreshTracker());
       },
     );
+    // Every reminder starts out on, so permission is asked once the app is
+    // showing, on the first launch only.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ReminderBloc>().add(const PermissionPromptRequested());
+      }
+    });
   }
 
   @override
@@ -49,7 +57,9 @@ class _AppShellState extends State<AppShell> {
     super.didChangeDependencies();
     // Runs on the first build and whenever the language changes.
     context.read<ReminderBloc>().add(
-      ReminderCopyChanged(LocalizedReminderCopy(AppLocalizations.of(context))),
+      ReminderCopyChanged(
+        LocalizedNotificationCopy(AppLocalizations.of(context)),
+      ),
     );
   }
 
@@ -69,21 +79,36 @@ class _AppShellState extends State<AppShell> {
       localization.about,
     ];
 
-    return BlocListener<TrackerBloc, TrackerState>(
-      listenWhen: (previous, current) =>
-          current.failure != null && current != previous,
-      listener: (context, state) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            switch (state.failure) {
-              _ when state.status == TrackerStatus.error =>
-                localization.fastLogLoadFailed,
-              TrackerFailure() => localization.qadaSaveFailed,
-              _ => localization.fastLogSaveFailed,
-            },
-          ),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<TrackerBloc, TrackerState>(
+          listenWhen: (previous, current) =>
+              current.failure != null && current != previous,
+          listener: (context, state) =>
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    switch (state.failure) {
+                      _ when state.status == TrackerStatus.error =>
+                        localization.fastLogLoadFailed,
+                      TrackerFailure() => localization.qadaSaveFailed,
+                      _ => localization.fastLogSaveFailed,
+                    },
+                  ),
+                ),
+              ),
         ),
-      ),
+        // The make-up reminders follow the balance and their settings, so
+        // any change to either reschedules the notifications.
+        BlocListener<TrackerBloc, TrackerState>(
+          listenWhen: (previous, current) =>
+              current.status == TrackerStatus.success &&
+              (previous.summary != current.summary ||
+                  previous.qadaReminders != current.qadaReminders),
+          listener: (context, _) =>
+              context.read<ReminderBloc>().add(const SyncRequested()),
+        ),
+      ],
       child: Scaffold(
         // Home draws its own sky header in place of the app bar.
         appBar: _selectedIndex == 0
@@ -97,7 +122,7 @@ class _AppShellState extends State<AppShell> {
           children: const [
             _HomeTab(),
             _CalendarTab(),
-            ReminderSettingsPage(),
+            ReminderSettingsPage(extraSection: QadaReminderCard()),
             AboutPage(),
           ],
         ),

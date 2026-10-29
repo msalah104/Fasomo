@@ -3,6 +3,7 @@ import 'package:fasomo/core/calendar/fasting_calendar.dart';
 import 'package:fasomo/core/calendar/hijri_converter.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
+import 'package:fasomo/core/notifications/sync_notifications.dart';
 import 'package:fasomo/core/services/notifications/fln_notification_gateway.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
 import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
@@ -16,11 +17,11 @@ import 'package:fasomo/features/home/domain/usecases/get_upcoming_fasting_days.d
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fasomo/features/reminders/data/repositories/reminder_repository_impl.dart';
+import 'package:fasomo/features/reminders/domain/fasting_reminder_source.dart';
 import 'package:fasomo/features/reminders/domain/repositories/reminder_repository.dart';
-import 'package:fasomo/features/reminders/domain/usecases/delete_reminder.dart';
 import 'package:fasomo/features/reminders/domain/usecases/get_reminders.dart';
+import 'package:fasomo/features/reminders/domain/usecases/prompt_notification_permission_once.dart';
 import 'package:fasomo/features/reminders/domain/usecases/save_reminder.dart';
-import 'package:fasomo/features/reminders/domain/usecases/sync_reminder_notifications.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:fasomo/features/settings/domain/repositories/settings_repository.dart';
@@ -28,10 +29,17 @@ import 'package:fasomo/features/settings/domain/usecases/get_language.dart';
 import 'package:fasomo/features/settings/domain/usecases/save_language.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:fasomo/features/tracker/data/datasources/fast_log_local_data_source.dart';
+import 'package:fasomo/features/tracker/data/datasources/qada_reminder_local_data_source.dart';
 import 'package:fasomo/features/tracker/data/repositories/fast_log_repository_impl.dart';
+import 'package:fasomo/features/tracker/data/repositories/qada_reminder_repository_impl.dart';
+import 'package:fasomo/features/tracker/domain/qada_reminder_planner.dart';
+import 'package:fasomo/features/tracker/domain/qada_reminder_source.dart';
 import 'package:fasomo/features/tracker/domain/repositories/fast_log_repository.dart';
+import 'package:fasomo/features/tracker/domain/repositories/qada_reminder_repository.dart';
 import 'package:fasomo/features/tracker/domain/usecases/can_make_up_on.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/usecases/get_qada_reminder_settings.dart';
+import 'package:fasomo/features/tracker/domain/usecases/save_qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_extra_qada_owed.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_make_up_fast.dart';
@@ -70,22 +78,20 @@ Future<void> init() async {
       () => ReminderBloc(
         getReminders: sl(),
         saveReminder: sl(),
-        deleteReminder: sl(),
         syncNotifications: sl(),
         notificationPermission: sl(),
+        promptPermissionOnce: sl(),
       ),
     )
     ..registerLazySingleton(
-      () => SyncReminderNotifications(
-        repository: sl(),
-        calendar: sl(),
-        reconciler: sl(),
-        clock: sl(),
-      ),
+      () => FastingReminderSource(repository: sl(), calendar: sl()),
     )
     ..registerLazySingleton(() => GetReminders(sl()))
     ..registerLazySingleton(() => SaveReminder(sl()))
-    ..registerLazySingleton(() => DeleteReminder(sl()))
+    ..registerLazySingleton(
+      () =>
+          PromptNotificationPermissionOnce(repository: sl(), permission: sl()),
+    )
     ..registerLazySingleton<ReminderRepository>(
       () => ReminderRepositoryImpl(localDataSource: sl()),
     )
@@ -101,7 +107,21 @@ Future<void> init() async {
         setMakeUpFast: sl(),
         setExtraQadaOwed: sl(),
         canMakeUpOnDay: sl(),
+        getQadaReminders: sl(),
+        saveQadaReminders: sl(),
       ),
+    )
+    ..registerLazySingleton(
+      () => QadaReminderSource(settings: sl(), fastLog: sl(), planner: sl()),
+    )
+    ..registerLazySingleton(() => QadaReminderPlanner(sl()))
+    ..registerLazySingleton(() => GetQadaReminderSettings(sl()))
+    ..registerLazySingleton(() => SaveQadaReminderSettings(sl()))
+    ..registerLazySingleton<QadaReminderRepository>(
+      () => QadaReminderRepositoryImpl(localDataSource: sl()),
+    )
+    ..registerLazySingleton<QadaReminderLocalDataSource>(
+      () => QadaReminderLocalDataSourceImpl(sharedPreferences: sl()),
     )
     ..registerLazySingleton(() => CanMakeUpOn(sl()))
     ..registerLazySingleton(() => GetFastLogSummary(sl()))
@@ -141,5 +161,14 @@ Future<void> init() async {
   sl
     ..registerLazySingleton<NotificationGateway>(() => notifications)
     ..registerLazySingleton<NotificationPermission>(() => notifications)
-    ..registerLazySingleton(() => NotificationReconciler(sl()));
+    ..registerLazySingleton(() => NotificationReconciler(sl()))
+    // Every feature that schedules notifications is a source of the one sync,
+    // because the reconciler owns the whole OS pending set.
+    ..registerLazySingleton(
+      () => SyncNotifications(
+        sources: [sl<FastingReminderSource>(), sl<QadaReminderSource>()],
+        reconciler: sl(),
+        clock: sl(),
+      ),
+    );
 }

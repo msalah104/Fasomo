@@ -5,8 +5,15 @@ import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Every fasting-type reminder, each on until the user switches it off.
+///
+/// [extraSection] comes from the app shell (the make-up reminders), so this
+/// feature doesn't depend on the tracker.
 class ReminderSettingsPage extends StatelessWidget {
-  const new({super.key});
+  const new({this.extraSection, super.key});
+
+  /// Shown under the fasting reminders.
+  final Widget? extraSection;
 
   @override
   Widget build(BuildContext context) {
@@ -102,38 +109,13 @@ class ReminderSettingsPage extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 16),
-              if (state.reminders.isEmpty)
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(32),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.notifications_off_outlined,
-                            size: 64,
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            localization.noRemindersYet,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            localization.addRemindersFromHome,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              else
-                ...state.reminders.map(
-                  (reminder) => ReminderCard(reminder: reminder),
-                ),
+              ...state.reminders.map(
+                (reminder) => ReminderCard(reminder: reminder),
+              ),
+              if (extraSection case final section?) ...[
+                const SizedBox(height: 24),
+                section,
+              ],
             ],
           ),
         );

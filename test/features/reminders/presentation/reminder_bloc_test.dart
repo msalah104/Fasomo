@@ -3,12 +3,12 @@ import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
+import 'package:fasomo/core/notifications/sync_notifications.dart';
 import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
-import 'package:fasomo/features/reminders/domain/usecases/delete_reminder.dart';
 import 'package:fasomo/features/reminders/domain/usecases/get_reminders.dart';
+import 'package:fasomo/features/reminders/domain/usecases/prompt_notification_permission_once.dart';
 import 'package:fasomo/features/reminders/domain/usecases/save_reminder.dart';
-import 'package:fasomo/features/reminders/domain/usecases/sync_reminder_notifications.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -19,21 +19,21 @@ class MockGetReminders extends Mock implements GetReminders;
 
 class MockSaveReminder extends Mock implements SaveReminder;
 
-class MockDeleteReminder extends Mock implements DeleteReminder;
+class MockSyncNotifications extends Mock implements SyncNotifications;
 
-class MockSyncReminderNotifications extends Mock
-    implements SyncReminderNotifications;
+class MockPromptPermissionOnce extends Mock
+    implements PromptNotificationPermissionOnce;
 
 class MockNotificationPermission extends Mock implements NotificationPermission;
 
 void main() {
   late MockGetReminders getReminders;
   late MockSaveReminder saveReminder;
-  late MockDeleteReminder deleteReminder;
-  late MockSyncReminderNotifications sync;
+  late MockSyncNotifications sync;
   late MockNotificationPermission permission;
+  late MockPromptPermissionOnce promptOnce;
 
-  /// What storage holds; saveReminder/deleteReminder mutate it.
+  /// What storage holds; saveReminder mutates it.
   late List<Reminder> stored;
 
   const whiteDays = Reminder(
@@ -52,9 +52,9 @@ void main() {
     stored = [];
     getReminders = MockGetReminders();
     saveReminder = MockSaveReminder();
-    deleteReminder = MockDeleteReminder();
-    sync = MockSyncReminderNotifications();
+    sync = MockSyncNotifications();
     permission = MockNotificationPermission();
+    promptOnce = MockPromptPermissionOnce();
 
     when(() => getReminders(any())).thenAnswer((_) => Ok(List.of(stored)));
     when(() => saveReminder(any())).thenAnswer((invocation) async {
@@ -66,14 +66,7 @@ void main() {
       ];
       return const Ok(null);
     });
-    when(() => deleteReminder(any())).thenAnswer((invocation) async {
-      final id = invocation.positionalArguments.first as String;
-      stored = [
-        for (final r in stored)
-          if (r.id != id) r,
-      ];
-      return const Ok(null);
-    });
+    when(() => promptOnce(any())).thenAnswer((_) async => true);
     when(() => sync(any())).thenAnswer((_) async => const Ok(null));
     when(() => permission.request()).thenAnswer((_) async => true);
   });
@@ -81,9 +74,9 @@ void main() {
   ReminderBloc build() => ReminderBloc(
     getReminders: getReminders,
     saveReminder: saveReminder,
-    deleteReminder: deleteReminder,
     syncNotifications: sync,
     notificationPermission: permission,
+    promptPermissionOnce: promptOnce,
   );
 
   ReminderState loaded(List<Reminder> reminders) =>
@@ -178,20 +171,6 @@ void main() {
   );
 
   blocTest<ReminderBloc, ReminderState>(
-    'DeleteReminderEvent removes the reminder and syncs',
-    setUp: () => stored = [whiteDays],
-    build: build,
-    act: (bloc) => bloc
-      ..add(const ReminderCopyChanged(TestCopy()))
-      ..add(const DeleteReminderEvent(FastingType.whiteDays)),
-    expect: () => [loaded(const [])],
-    verify: (_) {
-      verify(() => deleteReminder('whiteDays')).called(1);
-      verify(() => sync(any())).called(2);
-    },
-  );
-
-  blocTest<ReminderBloc, ReminderState>(
     'a failed save reports the failure and keeps the list',
     setUp: () => when(
       () => saveReminder(any()),
@@ -241,4 +220,27 @@ void main() {
     expect(state.isEnabledFor(FastingType.shawwal), isFalse);
     expect(state.isEnabledFor(FastingType.arafah), isFalse);
   });
+
+  blocTest<ReminderBloc, ReminderState>(
+    'the first-launch prompt reports a refusal',
+    setUp: () => when(() => promptOnce(any())).thenAnswer((_) async => false),
+    build: build,
+    seed: () => loaded(const [whiteDays]),
+    act: (bloc) => bloc.add(const PermissionPromptRequested()),
+    expect: () => [
+      const ReminderState(
+        status: ReminderStatus.success,
+        reminders: [whiteDays],
+        permissionDenied: true,
+      ),
+    ],
+  );
+
+  blocTest<ReminderBloc, ReminderState>(
+    'the prompt is silent on later launches',
+    setUp: () => when(() => promptOnce(any())).thenAnswer((_) async => null),
+    build: build,
+    act: (bloc) => bloc.add(const PermissionPromptRequested()),
+    expect: () => const <ReminderState>[],
+  );
 }

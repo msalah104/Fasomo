@@ -6,10 +6,12 @@ class AppConstants {
   // Storage Keys
   static const String languageKey = 'language';
   static const String remindersKey = 'reminders';
+  static const String permissionAskedKey = 'notification_permission_asked';
   static const String fastLogKey = 'fast_log';
   static const String makeUpDaysKey = 'qada_made_up';
   static const String missedRamadanKey = 'qada_missed';
   static const String extraOwedKey = 'qada_extra_owed';
+  static const String qadaRemindersKey = 'qada_reminders';
 
   // Notification
   static const String notificationChannelId = 'fasomo_fasting_reminders';

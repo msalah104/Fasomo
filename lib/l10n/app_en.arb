@@ -48,12 +48,8 @@
   "delete": "Delete",
   "retry": "Retry",
   "editReminder": "Edit Reminder",
-  "deleteReminderTitle": "Delete Reminder",
-  "deleteReminderConfirm": "Are you sure you want to delete this reminder?",
   "manageReminders": "Manage your fasting day reminders",
-  "activeReminders": "Active Reminders",
-  "noRemindersYet": "No reminders set yet",
-  "addRemindersFromHome": "Add reminders from the Home page",
+  "activeReminders": "Fasting reminders",
   "notificationsDenied": "Notifications are turned off for Fasomo. Enable them in system settings to get reminders.",
   "reminderSyncFailed": "Could not update scheduled reminders",
   "reminderSaveFailed": "Could not save the reminder",
@@ -284,5 +280,132 @@
   "pickMakeUpDay": "Day of the make-up fast",
   "recentMakeUps": "Recent make-up fasts",
   "removeMakeUp": "Remove this make-up fast",
-  "noMakeUpDayAvailable": "There's no day to log yet: make-up fasts can't be in Ramadan or on an Eid."
+  "noMakeUpDayAvailable": "There's no day to log yet: make-up fasts can't be in Ramadan or on an Eid.",
+  "qadaReminderTitle": "{daysBefore, plural, =0{Today: a day for a make-up fast} =1{Tomorrow: a day for a make-up fast} other{In {daysBefore} days: a day for a make-up fast}}",
+  "@qadaReminderTitle": {
+    "description": "Notification title suggesting a make-up (Qada) fast.",
+    "placeholders": {
+      "daysBefore": {
+        "type": "int"
+      }
+    }
+  },
+  "qadaReminderBody": "Make-up days left: {remaining}",
+  "@qadaReminderBody": {
+    "description": "Notification body with the Qada balance.",
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "mergedReminderTitle": "{daysBefore, plural, =0{Today: {type} + make-up} =1{Tomorrow: {type} + make-up} other{In {daysBefore} days: {type} + make-up}}",
+  "@mergedReminderTitle": {
+    "description": "Notification title for a fasting day that is also a suggested make-up day.",
+    "placeholders": {
+      "daysBefore": {
+        "type": "int"
+      },
+      "type": {
+        "type": "String",
+        "example": "White Days"
+      }
+    }
+  },
+  "mergedReminderBody": "Fast it as a make-up and it counts for {type} too. Make-up days left: {remaining}",
+  "@mergedReminderBody": {
+    "description": "Body for a merged fasting and make-up reminder.",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "White Days"
+      },
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "ramadanCountdownTitle": "{count, plural, =1{Ramadan is tomorrow} other{Ramadan in {count} days}}",
+  "@ramadanCountdownTitle": {
+    "description": "Countdown notification title.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "ramadanCountdownBody": "Make-up days still owed before Ramadan: {remaining}",
+  "@ramadanCountdownBody": {
+    "description": "Countdown notification body.",
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "qadaReminders": "Make-up reminders",
+  "qadaRemindersOff": "Off",
+  "qadaRemindersIdle": "On. They start when you owe make-up days.",
+  "weeklyReminder": "Weekly",
+  "monthlyReminder": "Monthly",
+  "beforeRamadanReminder": "Before Ramadan",
+  "hijriDayOption": "Day {day} of the Hijri month",
+  "@hijriDayOption": {
+    "description": "A Hijri day-of-month choice.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "whiteDaysOption": "White Days (13th)",
+  "daysBeforeOption": "{count, plural, =1{1 day} other{{count} days}}",
+  "@daysBeforeOption": {
+    "description": "A countdown offset before Ramadan.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addDaysBefore": "Add",
+  "daysBeforeDialogTitle": "Days before Ramadan",
+  "daysBeforeInvalid": "Enter a number from 1 to {max}",
+  "@daysBeforeInvalid": {
+    "description": "Validation for the countdown offset.",
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "reminderTimeLabel": "Time",
+  "weeklySummary": "Weekly: {days}",
+  "@weeklySummary": {
+    "description": "Weekly part of the make-up reminder summary.",
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlySummary": "Monthly: day {day}",
+  "@monthlySummary": {
+    "description": "Monthly part of the make-up reminder summary.",
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "beforeRamadanSummary": "Before Ramadan: {days}",
+  "@beforeRamadanSummary": {
+    "description": "Countdown part of the make-up reminder summary.",
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "qadaRemindersFootnote": "Make-up reminders skip Ramadan, the Eids and days you've already fasted, and stop once nothing is owed. On a Sunnah fasting day they're merged into that day's reminder."
 }

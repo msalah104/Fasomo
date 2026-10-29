@@ -12,7 +12,7 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - **This week**: today and the next six days with their Hijri day numbers, and a dot under each fasting day. The strip stays pinned at the top when the sky scrolls away. Tap a day to list the fasting days from that day on; today keeps an outline.
 - **Month bar**: where today falls in the Hijri month, with the White Days marked.
 - **Upcoming fasting days**: the next five fasting days in the coming 30 days, including next month's White Days. A day that is several kinds at once (say, a White Day on a Monday) is listed once with all of them.
-- **One-tap reminders**: turn on a reminder for a fasting type straight from its card.
+- **One-tap reminders**: every reminder is on from the start; switch one off (or back on) straight from its card.
 - **I fasted today**: today's fasting-day card has a button to mark it as fasted.
 - **Your fasting**: a card with the current and longest streak and this month's count ("3 of 5 fasting days"). Tap it for the progress page.
 
@@ -41,14 +41,20 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - **Logged days** carry a badge: ✓ fasted, ↺ make-up fast, ✗ missed in Ramadan.
 
 ### 🔔 Reminders
+- **On by default**: every fasting type has a reminder, on until you switch it off, and so are the make-up reminders. Each card can be switched off or edited.
 - **Real fire times**, worked out from each actual fasting date:
   - **Day before**: 8:00 PM the evening before
   - **Morning of the day**: 7:00 AM on the fasting day
   - **Custom**: any time, on the day itself or the day before
 - **Custom messages** in place of the default text.
-- **One notification per day**: if a day matches several reminders, only the most important type fires.
+- **One notification per day**: if a day matches several reminders, only the most important type fires. A Sunnah fasting day that is also a suggested make-up day gets one merged notification ("Monday & Thursday + make-up").
+- **Make-up (Qada) reminders**, set up from the progress page or the Reminders tab, all on by default:
+  - **Weekly** on the days you pick (Saturday by default).
+  - **Monthly** on a Hijri day you pick (the 13th, first of the White Days, by default).
+  - **Before Ramadan**: a countdown any number of days before it (30 and 7 by default). On a day that already has a notification, the countdown is added to its text.
+  - At 8:00 PM the evening before or 7:00 AM on the day. They skip Ramadan, the Eids, Tashreeq and days already fasted, and stop once nothing is owed.
 - **Reliable scheduling**: reminders are re-synced whenever the app opens or returns to the foreground, after every change and when the language changes. Up to 50 upcoming reminders (60 days ahead) are kept scheduled, which stays under the iOS limit of 64.
-- Permission is requested when you first turn a reminder on, not at launch.
+- Since reminders start on, notification permission is asked once, when the app first opens. Turning a reminder back on asks again if it was refused.
 
 ### 🌐 Language
 - Arabic and English, with full right-to-left layout in Arabic.
@@ -144,7 +150,7 @@ lib/
 
 - **Typed errors**: repositories return `Result<T, Failure>` and never throw for expected failures. Blocs switch on the result exhaustively.
 - **Injected clock**: domain and data code read "now" from `package:clock`, so date logic is tested with fixed times.
-- **Notifications** follow one path: the stored reminders and the real fasting dates produce the desired set, which is reconciled against the OS pending set. Ids are deterministic, so an unchanged sync does nothing and an edit reschedules. Only `fln_notification_gateway.dart` imports the plugin.
+- **Notifications** follow one path: one core sync asks every reminder source (the fasting reminders and the make-up reminders) for its occurrences, composes them into notifications (merging same-day ones) and reconciles that desired set against the OS pending set. Ids are deterministic, so an unchanged sync does nothing and an edit reschedules. Only `fln_notification_gateway.dart` imports the plugin.
 
 ## Tech Stack
 
@@ -180,7 +186,7 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 |---|---|---|---|
 | P1 | [Home sky header](#home-sky-header-p1) | `dart_suncalc`, `geolocator` (optional) | No |
 | P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | `adhan`, `geolocator` | No |
-| P2 | [Qada reminders](#qada-reminders-p2) | — | No |
+| P3 | [Qada suggested pace](#qada-suggested-pace-p3) | — | No |
 | P2 | [Hijri date adjustment](#hijri-date-adjustment-p2) | — | No |
 | P2 | [Theme switch](#theme-switch-p2) | — | No |
 | P2 | [Hilal fonts](#hilal-fonts-p2) | — (bundled font files) | No |
@@ -211,14 +217,6 @@ During Ramadan (and optionally on any fasting day), Home switches to a Ramadan v
 - **Reminders:** new reminder timings relative to prayer times, e.g. "30 minutes before Fajr" for suhoor and "at Maghrib" for iftar, instead of fixed clock times.
 - **How:** the `adhan` package computes prayer times offline from coordinates and a calculation method (Umm al-Qura, Egyptian, MWL, ISNA, …, chosen in settings, with a sensible default per country). Location comes from `geolocator` or a manually picked city, so the app still works with location permission denied. Prayer-time math stays pure and clock-injected; the reminder scheduler gains a "relative to prayer" timing.
 
-### Qada reminders (P2)
-
-Reminders that help pay off make-up days before the next Ramadan, and stop by themselves once nothing is owed.
-
-- **Kinds** (any combination): **weekly** on chosen weekdays (Monday and Thursday by default, so the fast counts twice), **monthly** on the White Days or a chosen Hijri day, a **before-Ramadan** countdown (e.g. 60, 30, 14 and 7 days before), and later a **suggested pace** worked out from the balance and the weeks left.
-- **How:** the notification sync becomes one core sync that collects requests from every source (fasting reminders and Qada reminders), because the reconciler owns the whole pending set.
-- **Plan:** a draft with open questions is in [`docs/plans/qada-reminders.md`](docs/plans/qada-reminders.md).
-
 ### Hijri date adjustment (P2)
 
 A setting to shift the Hijri calendar by −2 to +2 days.
@@ -247,6 +245,10 @@ A setting to shift the Hijri calendar by −2 to +2 days.
 ### Onboarding (P2)
 
 A short first-run flow: choose language, choose which fasting types interest you, set a default reminder time, and only then ask for notification permission (and location, if Ramadan mode or the sky header needs it), with a sentence explaining why.
+
+### Qada suggested pace (P3)
+
+A make-up reminder that plans the pace for you: from the days owed and the weeks left before Ramadan it works out something like "1 a week" and schedules those days. See [`docs/plans/qada-reminders.md`](docs/plans/qada-reminders.md).
 
 ### Calendar extras (P3)
 

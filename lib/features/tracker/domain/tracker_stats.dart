@@ -5,6 +5,7 @@ import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/calendar/hijri_date.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/ramadan_dates.dart';
 
 /// Derives streaks and totals from the set of fasted days. Pure: "today" is
 /// passed in by the caller, which reads it from an injected clock.
@@ -120,15 +121,8 @@ class TrackerStats {
 
   int? _daysUntilRamadan(HijriDate today, DateTime day) {
     if (today.month == FastingRules.ramadan) return null;
-    final year = today.month < FastingRules.ramadan
-        ? today.year
-        : today.year + 1;
-    final ramadan = HijriMonth(year, FastingRules.ramadan);
-    if (!_calendar.converter.supportsMonth(ramadan)) return null;
-    final start = _calendar.converter.toGregorian(
-      HijriDate(year, FastingRules.ramadan, 1),
-    );
-    return CalendarDays.between(day, start);
+    final start = nextRamadanStart(_calendar, today);
+    return start == null ? null : CalendarDays.between(day, start);
   }
 
   PeriodTotals _totals(

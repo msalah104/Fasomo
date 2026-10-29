@@ -1,3 +1,4 @@
+import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
@@ -18,7 +19,15 @@ class ReminderRepositoryImpl implements ReminderRepository {
   @override
   Result<List<Reminder>, StorageFailure> getReminders() {
     try {
-      return Ok(localDataSource.getReminders());
+      final stored = {
+        for (final reminder in localDataSource.getReminders())
+          reminder.fastingType: reminder,
+      };
+      // Every reminder is on until the user changes it.
+      return Ok([
+        for (final type in FastingType.values)
+          stored[type] ?? Reminder(fastingType: type, isEnabled: true),
+      ]);
     } on FormatException catch (e, st) {
       AppLog.error('reminders.read', e, st);
       return const Err(StorageReadFailed(_key));
@@ -36,12 +45,21 @@ class ReminderRepositoryImpl implements ReminderRepository {
       );
 
   @override
-  Future<Result<void, StorageFailure>> deleteReminder(String id) => _update(
-    (reminders) => [
-      for (final r in reminders)
-        if (r.id != id) r,
-    ],
-  );
+  bool wasPermissionAsked() => localDataSource.getPermissionAsked();
+
+  @override
+  Future<Result<void, StorageFailure>> markPermissionAsked() async {
+    try {
+      await localDataSource.setPermissionAsked();
+      return const Ok(null);
+    } on StorageWriteException catch (e, st) {
+      AppLog.error('reminders.permission_asked', e, st);
+      return const Err(StorageWriteFailed(AppConstants.permissionAskedKey));
+    } on PlatformException catch (e, st) {
+      AppLog.error('reminders.permission_asked', e, st);
+      return const Err(StorageWriteFailed(AppConstants.permissionAskedKey));
+    }
+  }
 
   Future<Result<void, StorageFailure>> _update(
     List<Reminder> Function(List<Reminder> current) change,

@@ -332,18 +332,6 @@ abstract class AppLocalizations {
   /// **'Edit Reminder'**
   String get editReminder;
 
-  /// No description provided for @deleteReminderTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete Reminder'**
-  String get deleteReminderTitle;
-
-  /// No description provided for @deleteReminderConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to delete this reminder?'**
-  String get deleteReminderConfirm;
-
   /// No description provided for @manageReminders.
   ///
   /// In en, this message translates to:
@@ -353,20 +341,8 @@ abstract class AppLocalizations {
   /// No description provided for @activeReminders.
   ///
   /// In en, this message translates to:
-  /// **'Active Reminders'**
+  /// **'Fasting reminders'**
   String get activeReminders;
-
-  /// No description provided for @noRemindersYet.
-  ///
-  /// In en, this message translates to:
-  /// **'No reminders set yet'**
-  String get noRemindersYet;
-
-  /// No description provided for @addRemindersFromHome.
-  ///
-  /// In en, this message translates to:
-  /// **'Add reminders from the Home page'**
-  String get addRemindersFromHome;
 
   /// No description provided for @notificationsDenied.
   ///
@@ -937,6 +913,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'There\'s no day to log yet: make-up fasts can\'t be in Ramadan or on an Eid.'**
   String get noMakeUpDayAvailable;
+
+  /// Notification title suggesting a make-up (Qada) fast.
+  ///
+  /// In en, this message translates to:
+  /// **'{daysBefore, plural, =0{Today: a day for a make-up fast} =1{Tomorrow: a day for a make-up fast} other{In {daysBefore} days: a day for a make-up fast}}'**
+  String qadaReminderTitle(int daysBefore);
+
+  /// Notification body with the Qada balance.
+  ///
+  /// In en, this message translates to:
+  /// **'Make-up days left: {remaining}'**
+  String qadaReminderBody(int remaining);
+
+  /// Notification title for a fasting day that is also a suggested make-up day.
+  ///
+  /// In en, this message translates to:
+  /// **'{daysBefore, plural, =0{Today: {type} + make-up} =1{Tomorrow: {type} + make-up} other{In {daysBefore} days: {type} + make-up}}'**
+  String mergedReminderTitle(int daysBefore, String type);
+
+  /// Body for a merged fasting and make-up reminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast it as a make-up and it counts for {type} too. Make-up days left: {remaining}'**
+  String mergedReminderBody(String type, int remaining);
+
+  /// Countdown notification title.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Ramadan is tomorrow} other{Ramadan in {count} days}}'**
+  String ramadanCountdownTitle(int count);
+
+  /// Countdown notification body.
+  ///
+  /// In en, this message translates to:
+  /// **'Make-up days still owed before Ramadan: {remaining}'**
+  String ramadanCountdownBody(int remaining);
+
+  /// No description provided for @qadaReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Make-up reminders'**
+  String get qadaReminders;
+
+  /// No description provided for @qadaRemindersOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get qadaRemindersOff;
+
+  /// No description provided for @qadaRemindersIdle.
+  ///
+  /// In en, this message translates to:
+  /// **'On. They start when you owe make-up days.'**
+  String get qadaRemindersIdle;
+
+  /// No description provided for @weeklyReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weeklyReminder;
+
+  /// No description provided for @monthlyReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthlyReminder;
+
+  /// No description provided for @beforeRamadanReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Before Ramadan'**
+  String get beforeRamadanReminder;
+
+  /// A Hijri day-of-month choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of the Hijri month'**
+  String hijriDayOption(String day);
+
+  /// No description provided for @whiteDaysOption.
+  ///
+  /// In en, this message translates to:
+  /// **'White Days (13th)'**
+  String get whiteDaysOption;
+
+  /// A countdown offset before Ramadan.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String daysBeforeOption(int count);
+
+  /// No description provided for @addDaysBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addDaysBefore;
+
+  /// No description provided for @daysBeforeDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Days before Ramadan'**
+  String get daysBeforeDialogTitle;
+
+  /// Validation for the countdown offset.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number from 1 to {max}'**
+  String daysBeforeInvalid(int max);
+
+  /// No description provided for @reminderTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get reminderTimeLabel;
+
+  /// Weekly part of the make-up reminder summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly: {days}'**
+  String weeklySummary(String days);
+
+  /// Monthly part of the make-up reminder summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly: day {day}'**
+  String monthlySummary(String day);
+
+  /// Countdown part of the make-up reminder summary.
+  ///
+  /// In en, this message translates to:
+  /// **'Before Ramadan: {days}'**
+  String beforeRamadanSummary(String days);
+
+  /// No description provided for @qadaRemindersFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'Make-up reminders skip Ramadan, the Eids and days you\'ve already fasted, and stop once nothing is owed. On a Sunnah fasting day they\'re merged into that day\'s reminder.'**
+  String get qadaRemindersFootnote;
 }
 
 class _AppLocalizationsDelegate

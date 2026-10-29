@@ -25,11 +25,18 @@ void main() {
         Err() => fail('expected stored reminders'),
       };
 
-  test('starts empty', () async {
-    expect(stored(await repositoryWith({})), isEmpty);
+  test('every type starts on, in priority order', () async {
+    final reminders = stored(await repositoryWith({}));
+
+    expect(reminders.map((r) => r.fastingType), FastingType.values);
+    expect(reminders.every((r) => r.isEnabled), isTrue);
+    expect(
+      reminders.every((r) => r.reminderTime == ReminderTime.dayBefore),
+      isTrue,
+    );
   });
 
-  test('save inserts, then replaces the reminder with the same type', () async {
+  test('a saved change replaces that type and keeps the others', () async {
     final repository = await repositoryWith({});
     const reminder = Reminder(
       fastingType: FastingType.whiteDays,
@@ -39,21 +46,31 @@ void main() {
     await repository.saveReminder(reminder);
     await repository.saveReminder(reminder.copyWith(isEnabled: false));
 
-    expect(stored(repository), [reminder.copyWith(isEnabled: false)]);
+    final reminders = stored(repository);
+    expect(reminders, hasLength(FastingType.values.length));
+    expect(
+      reminders.firstWhere((r) => r.fastingType == FastingType.whiteDays),
+      reminder.copyWith(isEnabled: false),
+    );
+    expect(
+      reminders.where((r) => r.fastingType != FastingType.whiteDays),
+      everyElement(isA<Reminder>().having((r) => r.isEnabled, 'on', isTrue)),
+    );
   });
 
-  test('delete removes only that reminder', () async {
+  test('remembers that permission was asked for', () async {
     final repository = await repositoryWith({});
-    await repository.saveReminder(
-      const Reminder(fastingType: FastingType.whiteDays, isEnabled: true),
-    );
-    await repository.saveReminder(
-      const Reminder(fastingType: FastingType.shawwal, isEnabled: true),
-    );
+    expect(repository.wasPermissionAsked(), isFalse);
 
-    await repository.deleteReminder('whiteDays');
+    await repository.markPermissionAsked();
 
-    expect(stored(repository).map((r) => r.fastingType), [FastingType.shawwal]);
+    expect(repository.wasPermissionAsked(), isTrue);
+    expect(
+      (await repositoryWith({
+        AppConstants.permissionAskedKey: true,
+      })).wasPermissionAsked(),
+      isTrue,
+    );
   });
 
   test('corrupt storage is a typed read failure, not an exception', () async {

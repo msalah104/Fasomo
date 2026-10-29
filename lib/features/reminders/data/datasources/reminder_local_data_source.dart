@@ -11,8 +11,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// when the platform refuses a write; the repository converts both into
 /// typed failures.
 abstract interface class ReminderLocalDataSource {
+  /// The reminders the user has changed; types never touched are absent.
   List<Reminder> getReminders();
   Future<void> saveReminders(List<Reminder> reminders);
+
+  bool getPermissionAsked();
+  Future<void> setPermissionAsked();
 }
 
 class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
@@ -40,5 +44,20 @@ class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
       [for (final reminder in reminders) jsonEncode(reminder.toJson())],
     );
     if (!saved) throw const StorageWriteException(AppConstants.remindersKey);
+  }
+
+  @override
+  bool getPermissionAsked() =>
+      sharedPreferences.getBool(AppConstants.permissionAskedKey) ?? false;
+
+  @override
+  Future<void> setPermissionAsked() async {
+    final saved = await sharedPreferences.setBool(
+      AppConstants.permissionAskedKey,
+      true,
+    );
+    if (!saved) {
+      throw const StorageWriteException(AppConstants.permissionAskedKey);
+    }
   }
 }

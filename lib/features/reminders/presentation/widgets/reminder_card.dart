@@ -115,49 +115,7 @@ class ReminderCard extends StatelessWidget {
                   icon: const Icon(Icons.edit, size: 18),
                   label: Text(localization.edit),
                 ),
-                TextButton.icon(
-                  onPressed: () {
-                    _showDeleteConfirmation(context, reminder);
-                  },
-                  icon: const Icon(Icons.delete, size: 18),
-                  label: Text(localization.delete),
-                  style: TextButton.styleFrom(
-                    foregroundColor: theme.colorScheme.error,
-                  ),
-                ),
               ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showDeleteConfirmation(BuildContext context, Reminder reminder) {
-    final localization = AppLocalizations.of(context);
-
-    unawaited(
-      showDialog<void>(
-        context: context,
-        builder: (dialogContext) => AlertDialog(
-          title: Text(localization.deleteReminderTitle),
-          content: Text(localization.deleteReminderConfirm),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(localization.cancel),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<ReminderBloc>().add(
-                  DeleteReminderEvent(reminder.fastingType),
-                );
-                Navigator.pop(dialogContext);
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).colorScheme.error,
-              ),
-              child: Text(localization.delete),
             ),
           ],
         ),

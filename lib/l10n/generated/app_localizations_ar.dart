@@ -132,22 +132,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get editReminder => 'تعديل التذكير';
 
   @override
-  String get deleteReminderTitle => 'حذف التذكير';
-
-  @override
-  String get deleteReminderConfirm => 'هل أنت متأكد من حذف هذا التذكير؟';
-
-  @override
   String get manageReminders => 'إدارة تذكيرات أيام الصيام';
 
   @override
-  String get activeReminders => 'التذكيرات الحالية';
-
-  @override
-  String get noRemindersYet => 'لا توجد تذكيرات بعد';
-
-  @override
-  String get addRemindersFromHome => 'أضف التذكيرات من الصفحة الرئيسية';
+  String get activeReminders => 'تذكيرات أيام الصيام';
 
   @override
   String get notificationsDenied =>
@@ -488,4 +476,132 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get noMakeUpDayAvailable =>
       'لا يوجد يوم يمكن تسجيله بعد: لا يكون القضاء في رمضان ولا في العيد.';
+
+  @override
+  String qadaReminderTitle(int daysBefore) {
+    String _temp0 = intl.Intl.pluralLogic(
+      daysBefore,
+      locale: localeName,
+      other: 'بعد $daysBefore يوماً: يوم مناسب للقضاء',
+      few: 'بعد $daysBefore أيام: يوم مناسب للقضاء',
+      two: 'بعد يومين: يوم مناسب للقضاء',
+      one: 'غداً: يوم مناسب للقضاء',
+      zero: 'اليوم: يوم مناسب للقضاء',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String qadaReminderBody(int remaining) {
+    return 'أيام القضاء المتبقية: $remaining';
+  }
+
+  @override
+  String mergedReminderTitle(int daysBefore, String type) {
+    String _temp0 = intl.Intl.pluralLogic(
+      daysBefore,
+      locale: localeName,
+      other: 'بعد $daysBefore يوماً: $type + قضاء',
+      few: 'بعد $daysBefore أيام: $type + قضاء',
+      two: 'بعد يومين: $type + قضاء',
+      one: 'غداً: $type + قضاء',
+      zero: 'اليوم: $type + قضاء',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mergedReminderBody(String type, int remaining) {
+    return 'صُمه بنية القضاء فيُحتسب لـ$type أيضًا. أيام القضاء المتبقية: $remaining';
+  }
+
+  @override
+  String ramadanCountdownTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'رمضان بعد $count يوماً',
+      few: 'رمضان بعد $count أيام',
+      two: 'رمضان بعد يومين',
+      one: 'رمضان غداً',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ramadanCountdownBody(int remaining) {
+    return 'أيام القضاء المتبقية قبل رمضان: $remaining';
+  }
+
+  @override
+  String get qadaReminders => 'تذكيرات القضاء';
+
+  @override
+  String get qadaRemindersOff => 'متوقفة';
+
+  @override
+  String get qadaRemindersIdle => 'مفعّلة. تبدأ عندما تكون عليك أيام قضاء.';
+
+  @override
+  String get weeklyReminder => 'أسبوعيًا';
+
+  @override
+  String get monthlyReminder => 'شهريًا';
+
+  @override
+  String get beforeRamadanReminder => 'قبل رمضان';
+
+  @override
+  String hijriDayOption(String day) {
+    return 'اليوم $day من الشهر الهجري';
+  }
+
+  @override
+  String get whiteDaysOption => 'الأيام البيض (13)';
+
+  @override
+  String daysBeforeOption(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count يومًا',
+      few: '$count أيام',
+      two: 'يومان',
+      one: 'يوم واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addDaysBefore => 'إضافة';
+
+  @override
+  String get daysBeforeDialogTitle => 'عدد الأيام قبل رمضان';
+
+  @override
+  String daysBeforeInvalid(int max) {
+    return 'أدخل رقمًا من 1 إلى $max';
+  }
+
+  @override
+  String get reminderTimeLabel => 'الوقت';
+
+  @override
+  String weeklySummary(String days) {
+    return 'أسبوعيًا: $days';
+  }
+
+  @override
+  String monthlySummary(String day) {
+    return 'شهريًا: اليوم $day';
+  }
+
+  @override
+  String beforeRamadanSummary(String days) {
+    return 'قبل رمضان: $days';
+  }
+
+  @override
+  String get qadaRemindersFootnote =>
+      'تتجاوز تذكيرات القضاء رمضان والعيدين والأيام التي صمتها، وتتوقف عندما لا يبقى عليك قضاء. وفي أيام صيام السنة تُدمج مع تذكير ذلك اليوم.';
 }
