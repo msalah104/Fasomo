@@ -1,0 +1,7 @@
+# Copy to android/key.properties (gitignored) and fill in.
+# storeFile is relative to the android/ folder; keep the keystore outside the
+# repository and back it up, e.g. storeFile=../../fasomo-upload.jks
+storeFile=../../fasomo-upload.jks
+storePassword=
+keyAlias=upload
+keyPassword=
