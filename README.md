@@ -213,10 +213,11 @@ During Ramadan (and optionally on any fasting day), Home switches to a Ramadan v
 
 ### Qada reminders (P2)
 
-Gentle reminders for make-up fasts while days are still owed.
+Reminders that help pay off make-up days before the next Ramadan, and stop by themselves once nothing is owed.
 
-- **What it does:** an optional nudge (e.g. every Monday and Thursday) until the Qada balance reaches zero, and a warning a few weeks before Ramadan if days are still owed.
-- **How:** a new reminder kind in the scheduler that reads the balance from the fasting log, so it stops by itself once everything is made up.
+- **Kinds** (any combination): **weekly** on chosen weekdays (Monday and Thursday by default, so the fast counts twice), **monthly** on the White Days or a chosen Hijri day, a **before-Ramadan** countdown (e.g. 60, 30, 14 and 7 days before), and later a **suggested pace** worked out from the balance and the weeks left.
+- **How:** the notification sync becomes one core sync that collects requests from every source (fasting reminders and Qada reminders), because the reconciler owns the whole pending set.
+- **Plan:** a draft with open questions is in [`docs/plans/qada-reminders.md`](docs/plans/qada-reminders.md).
 
 ### Hijri date adjustment (P2)
 
