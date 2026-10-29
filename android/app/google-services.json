@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "332072744837",
+    "project_id": "fasomo-7b6c7",
+    "storage_bucket": "fasomo-7b6c7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332072744837:android:f4fd016f6cee8bf60236ec",
+        "android_client_info": {
+          "package_name": "app.fasomo.fasomo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAybKIwcfVFw4-0MgWjIIOi3rGmM8-baec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

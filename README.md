@@ -56,6 +56,12 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - **Reliable scheduling**: reminders are re-synced whenever the app opens or returns to the foreground, after every change and when the language changes. Up to 50 upcoming reminders (60 days ahead) are kept scheduled, which stays under the iOS limit of 64.
 - Since reminders start on, notification permission is asked once, when the app first opens. Turning a reminder back on asks again if it was refused.
 
+### 📣 Announcements
+- **Push announcements** such as "Ramadan confirmed to start tomorrow", sent from the Firebase console with Firebase Cloud Messaging.
+- **In your language**: the app joins the `announcements_en` or `announcements_ar` topic, following the language it is shown in, and switches topic when you change language. Send each announcement to both topics, one per language.
+- Shown by the system while the app is in the background, and as a local notification on the Announcements channel while it is open.
+- No account: the app only joins a topic. Firebase still issues the device a push token and an installation ID.
+
 ### 🌐 Language
 - Arabic and English, with full right-to-left layout in Arabic.
 - Choose **System default**, **English** or **العربية** from the language menu. The choice is saved.
@@ -151,6 +157,7 @@ lib/
 - **Typed errors**: repositories return `Result<T, Failure>` and never throw for expected failures. Blocs switch on the result exhaustively.
 - **Injected clock**: domain and data code read "now" from `package:clock`, so date logic is tested with fixed times.
 - **Notifications** follow one path: one core sync asks every reminder source (the fasting reminders and the make-up reminders) for its occurrences, composes them into notifications (merging same-day ones) and reconciles that desired set against the OS pending set. Ids are deterministic, so an unchanged sync does nothing and an edit reschedules. Only `fln_notification_gateway.dart` imports the plugin.
+- **Push** goes through the `PushMessaging` port in `core/push/`; only `fcm_push_messaging.dart` imports `firebase_messaging`. `SyncAnnouncementTopic` keeps the device on one language topic.
 
 ## Tech Stack
 
@@ -159,6 +166,7 @@ lib/
 - **Dependency injection**: get_it
 - **Hijri calendar**: hijri (Umm al-Qura table)
 - **Notifications**: flutter_local_notifications, timezone, flutter_timezone
+- **Push**: firebase_core, firebase_messaging (Firebase Cloud Messaging)
 - **Storage**: shared_preferences
 - **Localization**: flutter_localizations, intl, gen-l10n (ARB)
 - **Testing**: flutter_test, bloc_test, mocktail
@@ -169,6 +177,7 @@ lib/
 ### Android
 - `POST_NOTIFICATIONS`: show reminders (Android 13+, requested when you enable a reminder)
 - `RECEIVE_BOOT_COMPLETED`: restore scheduled reminders after a restart
+- `INTERNET`, `ACCESS_NETWORK_STATE`, `WAKE_LOCK`, `com.google.android.c2dm.permission.RECEIVE`: added by `firebase_messaging` to receive push announcements.
 - `SCHEDULE_EXACT_ALARM`: optional. If granted, reminders fire at the exact minute; otherwise they use inexact alarms that may arrive a few minutes late. `USE_EXACT_ALARM` is deliberately not declared, because Google Play restricts it to alarm-clock apps.
 
 ### iOS
@@ -276,7 +285,6 @@ These need a server or an account, so they come only after the offline features 
 - **Sync across devices** with an account (Firebase Auth + Firestore, or Supabase).
 - **Family or group challenges**: fast together and see each other's progress.
 - **Remote content and moon-sighting updates**: update hadith text, or the per-country Hijri offset, without an app release (e.g. Firebase Remote Config).
-- **Announcement push notifications**, e.g. "Ramadan confirmed to start tomorrow" (Firebase Cloud Messaging).
 - **Crash reporting and analytics** (Crashlytics), opt-in and declared in the store privacy forms.
 
 ## Contributing

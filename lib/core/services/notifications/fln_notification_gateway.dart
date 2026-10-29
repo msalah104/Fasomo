@@ -4,13 +4,17 @@ import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/logging/app_log.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/notifications/scheduled_notification.dart';
+import 'package:fasomo/core/push/push_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 /// The only file that imports `flutter_local_notifications`.
 class FlnNotificationGateway
-    implements NotificationGateway, NotificationPermission {
+    implements
+        NotificationGateway,
+        NotificationPermission,
+        AnnouncementPresenter {
   /// [plugin] is injectable for tests; production uses the default.
   new([FlutterLocalNotificationsPlugin? plugin])
     : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
@@ -22,6 +26,26 @@ class FlnNotificationGateway
       AppConstants.notificationChannelId,
       AppConstants.notificationChannelName,
       channelDescription: AppConstants.notificationChannelDescription,
+      importance: Importance.high,
+      priority: Priority.high,
+      icon: '@mipmap/ic_launcher',
+    ),
+    iOS: DarwinNotificationDetails(),
+  );
+
+  static const AndroidNotificationChannel _announcementChannel =
+      AndroidNotificationChannel(
+        AppConstants.announcementChannelId,
+        AppConstants.announcementChannelName,
+        description: AppConstants.announcementChannelDescription,
+        importance: Importance.high,
+      );
+
+  static const NotificationDetails _announcementDetails = NotificationDetails(
+    android: AndroidNotificationDetails(
+      AppConstants.announcementChannelId,
+      AppConstants.announcementChannelName,
+      channelDescription: AppConstants.announcementChannelDescription,
       importance: Importance.high,
       priority: Priority.high,
       icon: '@mipmap/ic_launcher',
@@ -47,7 +71,22 @@ class FlnNotificationGateway
         ),
       ),
     );
+    // Created up front: push messages that arrive in the background are
+    // posted by the OS to this channel before any Dart code runs.
+    await _android?.createNotificationChannel(_announcementChannel);
   }
+
+  @override
+  Future<void> showAnnouncement({
+    required int id,
+    required String title,
+    required String body,
+  }) => _plugin.show(
+    id: id,
+    title: title,
+    body: body,
+    notificationDetails: _announcementDetails,
+  );
 
   @override
   Future<bool> request() async {

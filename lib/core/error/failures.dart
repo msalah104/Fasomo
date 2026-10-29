@@ -100,3 +100,19 @@ final class NotificationPlatformFailed extends NotificationFailure {
   @override
   String get code => 'notification.platform_failed';
 }
+
+/// Failures from the remote push service.
+sealed class PushFailure extends Failure {
+  const new();
+}
+
+/// The push service rejected or could not complete a topic change, e.g.
+/// while offline or before iOS has issued an APNs token.
+final class PushTopicFailed extends PushFailure {
+  const new(this.topic);
+
+  final String topic;
+
+  @override
+  String get code => 'push.topic_failed';
+}

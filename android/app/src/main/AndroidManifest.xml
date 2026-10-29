@@ -42,6 +42,15 @@
             </intent-filter>
         </receiver>
 
+        <!-- Background push messages: channel created by FlnNotificationGateway
+             (AppConstants.announcementChannelId). -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="fasomo_announcements" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher" />
+
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

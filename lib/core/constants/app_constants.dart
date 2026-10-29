@@ -19,6 +19,13 @@ class AppConstants {
   static const String notificationChannelDescription =
       'Notifications for upcoming fasting days';
 
+  // Must match default_notification_channel_id in AndroidManifest.xml, so
+  // background push messages land on the same channel.
+  static const String announcementChannelId = 'fasomo_announcements';
+  static const String announcementChannelName = 'Announcements';
+  static const String announcementChannelDescription =
+      'News such as the confirmed start of Ramadan or Eid';
+
   // Contact
   static const String supportEmail = 'support@fasomo.app';
   static const String website = 'www.fasomo.app';

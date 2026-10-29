@@ -1,3 +1,4 @@
+import 'package:fasomo/app/announcement_topic_sync.dart';
 import 'package:fasomo/app/app_shell.dart';
 import 'package:fasomo/core/di/injection_container.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
@@ -41,7 +42,10 @@ class FasomoApp extends StatelessWidget {
             locale: locale,
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
-            home: const _LaunchGate(),
+            home: AnnouncementTopicSync(
+              sync: sl(),
+              child: const _LaunchGate(),
+            ),
           );
         },
       ),

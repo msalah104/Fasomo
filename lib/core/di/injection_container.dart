@@ -4,7 +4,10 @@ import 'package:fasomo/core/calendar/hijri_converter.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
 import 'package:fasomo/core/notifications/sync_notifications.dart';
+import 'package:fasomo/core/push/push_messaging.dart';
+import 'package:fasomo/core/push/sync_announcement_topic.dart';
 import 'package:fasomo/core/services/notifications/fln_notification_gateway.dart';
+import 'package:fasomo/core/services/push/fcm_push_messaging.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
 import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_current_hijri_month.dart';
@@ -171,4 +174,11 @@ Future<void> init() async {
         clock: sl(),
       ),
     );
+
+  // Requires Firebase.initializeApp to have run (see main.dart).
+  final push = FcmPushMessaging(presenter: notifications);
+  await push.initialize();
+  sl
+    ..registerLazySingleton<PushMessaging>(() => push)
+    ..registerLazySingleton(() => SyncAnnouncementTopic(sl()));
 }
