@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:fasomo/core/presentation/logo_mark.dart';
-import 'package:fasomo/core/theme/sky_art.dart';
 import 'package:fasomo/core/theme/sky_cycle.dart';
 import 'package:fasomo/features/splash/presentation/splash_timeline.dart';
 import 'package:fasomo/features/splash/presentation/widgets/sky_cycle_painter.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// The launch animation: day turns to night, the new moon becomes the dot
 /// of the ف, and the app name is typed out. Calls [onFinished] once, when
@@ -80,8 +80,8 @@ class _SplashPageState extends State<SplashPage>
                 final t = _controller.value;
                 return AnnotatedRegion(
                   value: t < SplashTimeline.darkSkyFrom
-                      ? SkyArt.day.overlayStyle
-                      : SkyArt.night.overlayStyle,
+                      ? SystemUiOverlayStyle.dark
+                      : SystemUiOverlayStyle.light,
                   child: Stack(
                     children: [
                       Positioned.fill(

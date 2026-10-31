@@ -8,7 +8,7 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - **Animated splash**: the sun sets behind the dome, the sky turns through dusk to night and the stars come out. The new moon rises and settles as the dot of the ف logo, the letter draws itself around it, and the app name is typed out. Tap to skip; with reduced motion the finished scene shows briefly instead.
 
 ### 🏠 Home
-- **Sky header**: a full-width sky with the ف logo mark, showing a daytime scene from 06:00 to 18:00 and a night scene otherwise. Today's Hijri date and the short Gregorian date sit on the ground band. The scenes are static artwork for now; the live sun and moon are on the roadmap.
+- **Live sky header**: a full-width sky with the ف logo mark. The sun by day and the moon by night travel a dotted arc from where they rise to where they set, placed by their real rise and set times; the moon is drawn in its real phase. The sky colour follows the sun's altitude through dawn, day, dusk and night, and the stars come out after dusk. It updates every minute and whenever the app returns to the foreground. Today's Hijri date, the short Gregorian date and today's sunrise and sunset sit on the ground band. Screen readers hear a description such as "Night. Sunrise 6:04 AM · Sunset 5:12 PM. Waxing crescent moon, 23% lit". - **Your own sky**: until you share a location the sky is shown for Makkah, and a **Use my location** button sits on the sky. Tapping it asks for approximate location (never precise, never in the background), then saves the fix on the phone, rounded to about a kilometre; it is never sent anywhere. After that the fix is refreshed silently at most once a day, and only if permission is still granted. If location is refused or switched off, the sky keeps its last location and a message explains why, with a shortcut to Settings when only Settings can fix it.
 - **This week**: today and the next six days with their Hijri day numbers, and a dot under each fasting day. The strip stays pinned at the top when the sky scrolls away. Tap a day to list the fasting days from that day on; today keeps an outline.
 - **Month bar**: where today falls in the Hijri month, with the White Days marked.
 - **Upcoming fasting days**: the next five fasting days in the coming 30 days, including next month's White Days. A day that is several kinds at once (say, a White Day on a Monday) is listed once with all of them.
@@ -175,13 +175,15 @@ lib/
 ## Permissions
 
 ### Android
-- `POST_NOTIFICATIONS`: show reminders (Android 13+, requested when you enable a reminder)
+- `POST_NOTIFICATIONS`: show reminders (Android 13+, asked once when the app first opens, since reminders start on)
 - `RECEIVE_BOOT_COMPLETED`: restore scheduled reminders after a restart
 - `INTERNET`, `ACCESS_NETWORK_STATE`, `WAKE_LOCK`, `com.google.android.c2dm.permission.RECEIVE`: added by `firebase_messaging` to receive push announcements.
+- `ACCESS_COARSE_LOCATION`: approximate location for the Home sky, asked only when you tap **Use my location**. Precise and background location are not declared.
 - `SCHEDULE_EXACT_ALARM`: optional. If granted, reminders fire at the exact minute; otherwise they use inexact alarms that may arrive a few minutes late. `USE_EXACT_ALARM` is deliberately not declared, because Google Play restricts it to alarm-clock apps.
 
 ### iOS
-- Notification permission, requested when you enable a reminder.
+- Notification permission, asked once when the app first opens.
+- Location when in use (`NSLocationWhenInUseUsageDescription`), asked only when you tap **Use my location**, for the Home sky.
 
 ## Roadmap
 
@@ -193,7 +195,7 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 
 | Priority | Feature | New packages | Backend |
 |---|---|---|---|
-| P1 | [Home sky header](#home-sky-header-p1) | `dart_suncalc`, `geolocator` (optional) | No |
+| P2 | [Home sky header extras](#home-sky-header-p1) | — | No |
 | P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | `adhan`, `geolocator` | No |
 | P3 | [Qada suggested pace](#qada-suggested-pace-p3) | — | No |
 | P2 | [Hijri date adjustment](#hijri-date-adjustment-p2) | — | No |
@@ -212,7 +214,7 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 
 A live sky at the top of Home: the sun by day and the moon by night, placed where they really are for the user's time and location, with the moon drawn in its real phase. It shows sunrise and sunset times and a countdown to the next one.
 
-- **Status:** the layout ships with two static scenes (day and night PNGs from `design/art/`), switched at fixed hours. What's left is drawing the scene live.
+- **Status:** done: the live sky (`dart_suncalc` + a `CustomPainter`) over the user's approximate location (`geolocator`), with Makkah until one is shared. What's left: a manual city picker for people who refuse location, moonrise and moonset times, golden image tests, and the Arabic text of the iOS location prompt (it needs an `InfoPlist.strings` added in Xcode).
 
 - **Why:** it makes the app feel alive every time it opens, and it links the Hijri date to the moon it comes from.
 - **How:** a `CustomPainter` fed by a pure `SkyPosition` calculation (sun/moon altitude, azimuth and lit fraction from `dart_suncalc`, read through the injected clock). A `SkyBloc` loads the location (saved city, or device location if granted) and refreshes every minute while Home is visible. Respects reduced motion.

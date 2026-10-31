@@ -604,4 +604,76 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get qadaRemindersFootnote =>
       'تتجاوز تذكيرات القضاء رمضان والعيدين والأيام التي صمتها، وتتوقف عندما لا يبقى عليك قضاء. وفي أيام صيام السنة تُدمج مع تذكير ذلك اليوم.';
+
+  @override
+  String sunriseAt(String time) {
+    return 'الشروق $time';
+  }
+
+  @override
+  String sunsetAt(String time) {
+    return 'الغروب $time';
+  }
+
+  @override
+  String get skyDaytime => 'نهار';
+
+  @override
+  String get skyNight => 'ليل';
+
+  @override
+  String moonLit(String phase, int percent) {
+    return 'القمر: $phase، مضاء بنسبة $percent٪';
+  }
+
+  @override
+  String get moonNew => 'محاق';
+
+  @override
+  String get moonWaxingCrescent => 'هلال متزايد';
+
+  @override
+  String get moonFirstQuarter => 'تربيع أول';
+
+  @override
+  String get moonWaxingGibbous => 'أحدب متزايد';
+
+  @override
+  String get moonFull => 'بدر';
+
+  @override
+  String get moonWaningGibbous => 'أحدب متناقص';
+
+  @override
+  String get moonLastQuarter => 'تربيع ثانٍ';
+
+  @override
+  String get moonWaningCrescent => 'هلال متناقص';
+
+  @override
+  String get useMyLocation => 'استخدم موقعي';
+
+  @override
+  String get updateMyLocation => 'حدّث موقعي';
+
+  @override
+  String get skyOverMakkah => 'معروضة لمكة المكرمة';
+
+  @override
+  String get locationDenied =>
+      'لم يُسمح بالوصول إلى الموقع، لذلك ما زالت السماء لمكة المكرمة.';
+
+  @override
+  String get locationDeniedForever =>
+      'الموقع متوقف لتطبيق فاسومو، لذلك تظهر سماء مكة المكرمة. يمكنك السماح به من الإعدادات.';
+
+  @override
+  String get locationServiceOff => 'خدمات الموقع متوقفة. شغّلها لترى سماءك.';
+
+  @override
+  String get locationUnavailable =>
+      'تعذّر تحديد موقعك. حاول مرة أخرى بعد قليل.';
+
+  @override
+  String get openSettings => 'الإعدادات';
 }

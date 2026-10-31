@@ -5,6 +5,8 @@
     <!-- Opt-in only: the app falls back to inexact alarms when the user has not
          granted it. USE_EXACT_ALARM is deliberately absent (Play policy). -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <!-- Approximate location only, for the sun and moon in the Home sky. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:label="Fasomo"

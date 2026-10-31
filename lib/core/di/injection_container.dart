@@ -1,23 +1,35 @@
 import 'package:clock/clock.dart';
 import 'package:fasomo/core/calendar/fasting_calendar.dart';
 import 'package:fasomo/core/calendar/hijri_converter.dart';
+import 'package:fasomo/core/location/device_location_gateway.dart';
+import 'package:fasomo/core/location/location_repository.dart';
+import 'package:fasomo/core/location/location_repository_impl.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
 import 'package:fasomo/core/notifications/sync_notifications.dart';
 import 'package:fasomo/core/push/push_messaging.dart';
 import 'package:fasomo/core/push/sync_announcement_topic.dart';
+import 'package:fasomo/core/services/location/geolocator_location_gateway.dart';
 import 'package:fasomo/core/services/notifications/fln_notification_gateway.dart';
 import 'package:fasomo/core/services/push/fcm_push_messaging.dart';
+import 'package:fasomo/core/time/minute_ticker.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
 import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_current_hijri_month.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_hijri_month.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/home/data/repositories/fasting_repository_impl.dart';
+import 'package:fasomo/features/home/data/services/suncalc_sky_calculator.dart';
 import 'package:fasomo/features/home/domain/repositories/fasting_repository.dart';
+import 'package:fasomo/features/home/domain/services/sky_calculator.dart';
 import 'package:fasomo/features/home/domain/usecases/get_current_hijri_date.dart';
+import 'package:fasomo/features/home/domain/usecases/get_sky_scene.dart';
 import 'package:fasomo/features/home/domain/usecases/get_upcoming_fasting_days.dart';
+import 'package:fasomo/features/home/domain/usecases/open_location_settings.dart';
+import 'package:fasomo/features/home/domain/usecases/refresh_saved_location.dart';
+import 'package:fasomo/features/home/domain/usecases/use_device_location.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fasomo/features/reminders/data/repositories/reminder_repository_impl.dart';
 import 'package:fasomo/features/reminders/domain/fasting_reminder_source.dart';
@@ -67,6 +79,22 @@ Future<void> init() async {
     ..registerLazySingleton<FastingRepository>(
       () => FastingRepositoryImpl(calendar: sl(), clock: sl()),
     )
+    ..registerFactory(
+      () => SkyBloc(
+        getSkyScene: sl(),
+        ticker: sl(),
+        useDeviceLocation: sl(),
+        refreshSavedLocation: sl(),
+        openLocationSettings: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => UseDeviceLocation(sl()))
+    ..registerLazySingleton(() => RefreshSavedLocation(sl()))
+    ..registerLazySingleton(() => OpenLocationSettings(sl()))
+    ..registerLazySingleton(
+      () => GetSkyScene(location: sl(), calculator: sl(), clock: sl()),
+    )
+    ..registerLazySingleton<SkyCalculator>(() => const SuncalcSkyCalculator())
     // --- Calendar ---
     ..registerFactory(
       () => CalendarBloc(getCurrentHijriMonth: sl(), getHijriMonth: sl()),
@@ -154,7 +182,18 @@ Future<void> init() async {
     ..registerLazySingleton<HijriConverter>(
       () => const UmmAlQuraHijriConverter(),
     )
-    ..registerLazySingleton(() => FastingCalendar(sl()));
+    ..registerLazySingleton(() => FastingCalendar(sl()))
+    ..registerLazySingleton<MinuteTicker>(() => PeriodicMinuteTicker(sl()))
+    ..registerLazySingleton<LocationRepository>(
+      () => LocationRepositoryImpl(
+        sharedPreferences: sl(),
+        gateway: sl(),
+        clock: sl(),
+      ),
+    )
+    ..registerLazySingleton<DeviceLocationGateway>(
+      () => const GeolocatorLocationGateway(),
+    );
 
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);

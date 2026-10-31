@@ -263,6 +263,10 @@ decision D2.
 
 ## 6. Delivery steps (one commit each)
 
+**Status (31 Oct 2026):** steps 1–6 are done; step 7 is partly done (the
+sky strings, the moon phase names and the README). The
+open decisions use the defaults below (D1 Makkah, D2 reading direction).
+
 0. **Done: static header.** `SkyHero` shows `assets/images/sky_day.png` from
    06:00 to 17:59 and `sky_night.png` otherwise (`skyArtAt`), with the week
    strip and month bar below. The SVG sources are in `design/art/`. Step 5
@@ -313,6 +317,55 @@ Each step ends with the project's definition of done:
 `dart format --set-exit-if-changed . && flutter analyze --fatal-infos && flutter test`.
 
 ---
+
+### As built (steps 1–5)
+
+- **Spike:** `dart_suncalc` 0.2.1 resolves on Dart 3.13 and matches NOAA
+  within the ±0.5° budget (Makkah and Oslo solstices, Makkah equinox, the
+  Tromsø midnight sun, the 26 October 2026 full moon), so it is used as is.
+  Those values are now golden-vector tests.
+- **Location:** `LocationRepository.current()` is synchronous (shared
+  preferences are), returns the saved point or Makkah, and never fails.
+  Saving a device fix comes with step 6.
+- **Projection:** the arc is a fixed sine curve; real data only sets how far
+  along it a body is (from its rise and set), so the body always sits on the
+  dotted arc. Near the poles, without a rise or set, azimuth is used.
+- **Palette:** the existing `SkyCycle` tokens (day, dusk, night) blended by
+  sun altitude. Ink on the sky is picked by contrast rather than a fixed
+  switch-over, which keeps it at 3:1 or better at every altitude (tested
+  from −30° to 30°).
+- **Header:** `SkyHero` keeps its layout (now 250 dp tall, for the sun-times
+  row); the static PNGs, `SkyArt` and `skyArtAt` are removed. The skyline
+  path moved to `core/presentation/skyline.dart`, shared with the splash.
+- **Not yet:** golden image tests (the painter was checked by rendering it at
+  five moments: morning, noon, sunset, gibbous night and crescent night), the
+  location chip, and moonrise/moonset times.
+
+### As built (step 6)
+
+- `geolocator` 14 behind `DeviceLocationGateway` (`core/location/`), with the
+  adapter in `core/services/location/` as the only importer. Coarse
+  permission, when-in-use only; a last-known fix under 12 hours old is
+  reused. The request asks for **medium** (balanced) accuracy with a 30 s
+  limit: `low` maps to Android's low-power priority, which mostly waits for
+  another app's fix and failed in practice ("Couldn't get your location").
+  If no new fix comes, an older last-known fix is used before giving up.
+- `LocationRepository` gained `refreshFromDevice()` (asks, saves rounded to
+  2 decimals with a timestamp), `refreshIfGranted()` (silent, at most once a
+  day, only with permission already granted; run when the sky starts) and
+  `openSettingsFor(failure)`.
+- The chip is "Use my location" while the sky shows Makkah and an icon
+  ("Update my location") once located; it shows a spinner while locating
+  and ignores repeat taps. Failures are a snackbar, with a Settings action
+  for a permanent refusal (app settings) or services off (location
+  settings). The screen-reader description ends with "Shown for Makkah"
+  while approximate.
+- Android declares only `ACCESS_COARSE_LOCATION`. iOS has the English
+  `NSLocationWhenInUseUsageDescription`; the Arabic version needs an
+  `InfoPlist.strings` variant group added in Xcode (not hand-edited into the
+  project file).
+- Not checked on a device yet: the permission prompts, settings shortcuts and
+  a real fix.
 
 ## 7. Open decisions
 

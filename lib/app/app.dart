@@ -4,6 +4,7 @@ import 'package:fasomo/core/di/injection_container.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:fasomo/features/splash/presentation/pages/splash_page.dart';
@@ -21,6 +22,7 @@ class FasomoApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => sl<LanguageBloc>()),
         BlocProvider(create: (_) => sl<HomeBloc>()..add(const LoadHomeData())),
+        BlocProvider(create: (_) => sl<SkyBloc>()..add(const SkyStarted())),
         BlocProvider(
           create: (_) => sl<CalendarBloc>()..add(const LoadCalendar()),
         ),

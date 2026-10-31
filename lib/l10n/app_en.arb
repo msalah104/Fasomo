@@ -407,5 +407,53 @@
       }
     }
   },
-  "qadaRemindersFootnote": "Make-up reminders skip Ramadan, the Eids and days you've already fasted, and stop once nothing is owed. On a Sunnah fasting day they're merged into that day's reminder."
+  "qadaRemindersFootnote": "Make-up reminders skip Ramadan, the Eids and days you've already fasted, and stop once nothing is owed. On a Sunnah fasting day they're merged into that day's reminder.",
+  "sunriseAt": "Sunrise {time}",
+  "@sunriseAt": {
+    "description": "Today's sunrise on the sky header.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "sunsetAt": "Sunset {time}",
+  "@sunsetAt": {
+    "description": "Today's sunset on the sky header.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "skyDaytime": "Daytime",
+  "skyNight": "Night",
+  "moonLit": "{phase} moon, {percent}% lit",
+  "@moonLit": {
+    "description": "The moon for screen readers, e.g. \"Waxing crescent moon, 23% lit\".",
+    "placeholders": {
+      "phase": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "moonNew": "New",
+  "moonWaxingCrescent": "Waxing crescent",
+  "moonFirstQuarter": "First quarter",
+  "moonWaxingGibbous": "Waxing gibbous",
+  "moonFull": "Full",
+  "moonWaningGibbous": "Waning gibbous",
+  "moonLastQuarter": "Last quarter",
+  "moonWaningCrescent": "Waning crescent",
+  "useMyLocation": "Use my location",
+  "updateMyLocation": "Update my location",
+  "skyOverMakkah": "Shown for Makkah",
+  "locationDenied": "Location wasn't allowed, so the sky still shows Makkah.",
+  "locationDeniedForever": "Location is off for Fasomo, so the sky shows Makkah. You can allow it in Settings.",
+  "locationServiceOff": "Location services are off. Turn them on to see your own sky.",
+  "locationUnavailable": "Couldn't get your location. Try again in a moment.",
+  "openSettings": "Settings"
 }

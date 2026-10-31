@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:fasomo/core/presentation/logo_mark.dart';
+import 'package:fasomo/core/presentation/skyline.dart';
 import 'package:fasomo/core/theme/sky_cycle.dart';
 import 'package:fasomo/features/splash/presentation/splash_timeline.dart';
 import 'package:flutter/animation.dart';
@@ -13,27 +14,6 @@ class SkyCyclePainter extends CustomPainter {
   new({required this.progress}) : super(repaint: progress);
 
   final Animation<double> progress;
-
-  // The skyline from design/art/sky_*.svg: dome and minaret on a soft ridge.
-  static final Path _skyline = Path()
-    ..moveTo(0, 292)
-    ..quadraticBezierTo(90, 270, 180, 284)
-    ..quadraticBezierTo(270, 298, 340, 280)
-    ..lineTo(372, 280)
-    ..lineTo(372, 258)
-    ..arcToPoint(const Offset(406, 258), radius: const Radius.circular(17))
-    ..lineTo(406, 280)
-    ..lineTo(414, 280)
-    ..quadraticBezierTo(500, 270, 600, 290)
-    ..lineTo(600, 400)
-    ..lineTo(0, 400)
-    ..close()
-    ..addRect(const Rect.fromLTWH(424, 236, 7, 50))
-    ..addPolygon(const [
-      Offset(422, 238),
-      Offset(427.5, 226),
-      Offset(433, 238),
-    ], true);
 
   /// Star positions as fractions of the sky above the horizon, each with a
   /// radius and a twinkle phase. Seeded, so every launch shows the same sky.
@@ -128,7 +108,7 @@ class SkyCyclePainter extends CustomPainter {
       ..save()
       ..translate(layout.artLeft, layout.artTop)
       ..scale(layout.artScale)
-      ..drawPath(_skyline, Paint()..color = color)
+      ..drawPath(Skyline.path, Paint()..color = color)
       ..restore();
   }
 

@@ -599,4 +599,77 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get qadaRemindersFootnote =>
       'Make-up reminders skip Ramadan, the Eids and days you\'ve already fasted, and stop once nothing is owed. On a Sunnah fasting day they\'re merged into that day\'s reminder.';
+
+  @override
+  String sunriseAt(String time) {
+    return 'Sunrise $time';
+  }
+
+  @override
+  String sunsetAt(String time) {
+    return 'Sunset $time';
+  }
+
+  @override
+  String get skyDaytime => 'Daytime';
+
+  @override
+  String get skyNight => 'Night';
+
+  @override
+  String moonLit(String phase, int percent) {
+    return '$phase moon, $percent% lit';
+  }
+
+  @override
+  String get moonNew => 'New';
+
+  @override
+  String get moonWaxingCrescent => 'Waxing crescent';
+
+  @override
+  String get moonFirstQuarter => 'First quarter';
+
+  @override
+  String get moonWaxingGibbous => 'Waxing gibbous';
+
+  @override
+  String get moonFull => 'Full';
+
+  @override
+  String get moonWaningGibbous => 'Waning gibbous';
+
+  @override
+  String get moonLastQuarter => 'Last quarter';
+
+  @override
+  String get moonWaningCrescent => 'Waning crescent';
+
+  @override
+  String get useMyLocation => 'Use my location';
+
+  @override
+  String get updateMyLocation => 'Update my location';
+
+  @override
+  String get skyOverMakkah => 'Shown for Makkah';
+
+  @override
+  String get locationDenied =>
+      'Location wasn\'t allowed, so the sky still shows Makkah.';
+
+  @override
+  String get locationDeniedForever =>
+      'Location is off for Fasomo, so the sky shows Makkah. You can allow it in Settings.';
+
+  @override
+  String get locationServiceOff =>
+      'Location services are off. Turn them on to see your own sky.';
+
+  @override
+  String get locationUnavailable =>
+      'Couldn\'t get your location. Try again in a moment.';
+
+  @override
+  String get openSettings => 'Settings';
 }

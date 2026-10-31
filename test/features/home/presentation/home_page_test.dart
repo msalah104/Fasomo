@@ -2,11 +2,16 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:clock/clock.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/calendar/hijri_date.dart';
+import 'package:fasomo/core/error/failures.dart';
+import 'package:fasomo/core/location/geo_point.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
+import 'package:fasomo/features/home/data/services/suncalc_sky_calculator.dart';
 import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
 import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
+import 'package:fasomo/features/home/domain/entities/sky_scene.dart';
 import 'package:fasomo/features/home/domain/entities/week_day.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +20,24 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockHomeBloc extends MockBloc<HomeEvent, HomeState> implements HomeBloc;
+
+class MockSkyBloc extends MockBloc<SkyEvent, SkyState> implements SkyBloc;
+
+const _calculator = SuncalcSkyCalculator();
+
+/// The real sky over Makkah at [utc]; UTC so the test doesn't depend on the
+/// machine's time zone.
+SkyScene skyAt(DateTime utc) => SkyScene(
+  now: utc,
+  location: GeoPoint.makkah,
+  sun: _calculator.sun(utc, GeoPoint.makkah),
+  moon: _calculator.moon(utc, GeoPoint.makkah),
+  moonPhase: _calculator.moonPhase(utc),
+);
+
+/// Noon in Makkah, and 22:00 two nights after the full moon.
+final SkyScene noon = skyAt(DateTime.utc(2026, 10, 28, 9));
+final SkyScene night = skyAt(DateTime.utc(2026, 10, 28, 19));
 
 void main() {
   final week = [
@@ -46,15 +69,24 @@ void main() {
   );
 
   late MockHomeBloc bloc;
+  late MockSkyBloc sky;
 
   Future<void> pumpHome(
     WidgetTester tester, {
     required Brightness brightness,
     Locale locale = const Locale('en'),
     HomeState? homeState,
+    SkyScene? scene,
+    Stream<SkyState>? skyStates,
   }) async {
     bloc = MockHomeBloc();
     when(() => bloc.state).thenReturn(homeState ?? state);
+    sky = MockSkyBloc();
+    final initialSky = SkyState(scene: scene ?? night);
+    when(() => sky.state).thenReturn(initialSky);
+    if (skyStates != null) {
+      whenListen(sky, skyStates, initialState: initialSky);
+    }
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(brightness),
@@ -62,8 +94,11 @@ void main() {
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         home: Scaffold(
-          body: BlocProvider<HomeBloc>.value(
-            value: bloc,
+          body: MultiBlocProvider(
+            providers: [
+              BlocProvider<HomeBloc>.value(value: bloc),
+              BlocProvider<SkyBloc>.value(value: sky),
+            ],
             child: HomePage(
               isReminderOn: (_) => false,
               onToggleReminder: (_) {},
@@ -163,5 +198,80 @@ void main() {
     await tester.scrollUntilVisible(find.text('TODAY 28 17'), 200);
     expect(find.text('TODAY 28 17'), findsOneWidget);
     expect(find.textContaining('TODAY', skipOffstage: false), findsOneWidget);
+  });
+
+  testWidgets('describes the day sky with its sun times', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await pumpHome(tester, brightness: Brightness.light, scene: noon);
+
+    expect(noon.sun.isUp, isTrue);
+    expect(
+      find.bySemanticsLabel(RegExp(r'^Daytime\. Sunrise .* · Sunset ')),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Sunrise'), findsOneWidget);
+    semantics.dispose();
+  });
+
+  testWidgets('describes the night sky with the moon', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await pumpHome(tester, brightness: Brightness.dark, scene: night);
+
+    expect(night.moon.isUp, isTrue);
+    expect(
+      find.bySemanticsLabel(
+        RegExp(r'^Night\..*Waning gibbous moon, \d+% lit\. Shown for Makkah$'),
+      ),
+      findsOneWidget,
+    );
+    semantics.dispose();
+  });
+
+  testWidgets('the night sky lays out in Arabic without overflow', (
+    tester,
+  ) async {
+    await pumpHome(
+      tester,
+      brightness: Brightness.dark,
+      locale: const Locale('ar'),
+      scene: night,
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.textContaining('الشروق'), findsOneWidget);
+  });
+
+  testWidgets('offers to use the device location while showing Makkah', (
+    tester,
+  ) async {
+    await pumpHome(tester, brightness: Brightness.light, scene: noon);
+
+    expect(find.text('Use my location'), findsOneWidget);
+    await tester.tap(find.text('Use my location'));
+    verify(() => sky.add(const SkyLocationRequested())).called(1);
+  });
+
+  testWidgets('a permanently refused location offers Settings', (
+    tester,
+  ) async {
+    await pumpHome(
+      tester,
+      brightness: Brightness.light,
+      scene: noon,
+      skyStates: Stream.value(
+        SkyState(
+          scene: noon,
+          failure: const LocationPermissionDenied(permanently: true),
+        ),
+      ),
+    );
+
+    expect(find.textContaining('Location is off for Fasomo'), findsOneWidget);
+    await tester.tap(find.text('Settings'));
+    verify(
+      () => sky.add(
+        const SkySettingsRequested(LocationPermissionDenied(permanently: true)),
+      ),
+    ).called(1);
   });
 }

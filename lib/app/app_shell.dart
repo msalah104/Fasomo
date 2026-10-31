@@ -3,6 +3,7 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/presentation/localized_notification_copy.dart';
 import 'package:fasomo/features/about/presentation/pages/about_page.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
@@ -41,6 +42,7 @@ class _AppShellState extends State<AppShell> {
         context.read<ReminderBloc>().add(const SyncRequested());
         // "Today" may have moved on, which changes streaks and totals.
         context.read<TrackerBloc>().add(const RefreshTracker());
+        context.read<SkyBloc>().add(const SkyRefreshed());
       },
     );
     // Every reminder starts out on, so permission is asked once the app is

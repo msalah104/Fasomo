@@ -1051,6 +1051,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Make-up reminders skip Ramadan, the Eids and days you\'ve already fasted, and stop once nothing is owed. On a Sunnah fasting day they\'re merged into that day\'s reminder.'**
   String get qadaRemindersFootnote;
+
+  /// Today's sunrise on the sky header.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunrise {time}'**
+  String sunriseAt(String time);
+
+  /// Today's sunset on the sky header.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunset {time}'**
+  String sunsetAt(String time);
+
+  /// No description provided for @skyDaytime.
+  ///
+  /// In en, this message translates to:
+  /// **'Daytime'**
+  String get skyDaytime;
+
+  /// No description provided for @skyNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Night'**
+  String get skyNight;
+
+  /// The moon for screen readers, e.g. "Waxing crescent moon, 23% lit".
+  ///
+  /// In en, this message translates to:
+  /// **'{phase} moon, {percent}% lit'**
+  String moonLit(String phase, int percent);
+
+  /// No description provided for @moonNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get moonNew;
+
+  /// No description provided for @moonWaxingCrescent.
+  ///
+  /// In en, this message translates to:
+  /// **'Waxing crescent'**
+  String get moonWaxingCrescent;
+
+  /// No description provided for @moonFirstQuarter.
+  ///
+  /// In en, this message translates to:
+  /// **'First quarter'**
+  String get moonFirstQuarter;
+
+  /// No description provided for @moonWaxingGibbous.
+  ///
+  /// In en, this message translates to:
+  /// **'Waxing gibbous'**
+  String get moonWaxingGibbous;
+
+  /// No description provided for @moonFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get moonFull;
+
+  /// No description provided for @moonWaningGibbous.
+  ///
+  /// In en, this message translates to:
+  /// **'Waning gibbous'**
+  String get moonWaningGibbous;
+
+  /// No description provided for @moonLastQuarter.
+  ///
+  /// In en, this message translates to:
+  /// **'Last quarter'**
+  String get moonLastQuarter;
+
+  /// No description provided for @moonWaningCrescent.
+  ///
+  /// In en, this message translates to:
+  /// **'Waning crescent'**
+  String get moonWaningCrescent;
+
+  /// No description provided for @useMyLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my location'**
+  String get useMyLocation;
+
+  /// No description provided for @updateMyLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Update my location'**
+  String get updateMyLocation;
+
+  /// No description provided for @skyOverMakkah.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown for Makkah'**
+  String get skyOverMakkah;
+
+  /// No description provided for @locationDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location wasn\'t allowed, so the sky still shows Makkah.'**
+  String get locationDenied;
+
+  /// No description provided for @locationDeniedForever.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is off for Fasomo, so the sky shows Makkah. You can allow it in Settings.'**
+  String get locationDeniedForever;
+
+  /// No description provided for @locationServiceOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are off. Turn them on to see your own sky.'**
+  String get locationServiceOff;
+
+  /// No description provided for @locationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t get your location. Try again in a moment.'**
+  String get locationUnavailable;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get openSettings;
 }
 
 class _AppLocalizationsDelegate

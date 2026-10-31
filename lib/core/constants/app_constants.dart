@@ -5,6 +5,7 @@ class AppConstants {
 
   // Storage Keys
   static const String languageKey = 'language';
+  static const String locationKey = 'location';
   static const String remindersKey = 'reminders';
   static const String permissionAskedKey = 'notification_permission_asked';
   static const String fastLogKey = 'fast_log';

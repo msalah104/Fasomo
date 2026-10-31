@@ -4,8 +4,9 @@ import 'package:flutter/painting.dart';
 
 /// One moment of the sky as a vertical gradient, top to horizon.
 ///
-/// Like `SkyArt`, the sky follows the scene rather than the app theme, so
-/// these are fixed tokens rather than `AppColors` slots.
+/// The sky follows the scene (the splash, or the real sun on Home) rather
+/// than the app theme, so these are fixed tokens rather than `AppColors`
+/// slots.
 @immutable
 class SkyCycle {
   const new({

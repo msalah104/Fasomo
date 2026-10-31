@@ -1,10 +1,12 @@
-import 'package:clock/clock.dart';
 import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/calendar/hijri_date.dart';
+import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
-import 'package:fasomo/features/home/presentation/sky_period.dart';
+import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
+import 'package:fasomo/features/home/presentation/sky_palette.dart';
 import 'package:fasomo/features/home/presentation/widgets/fasting_day_card.dart';
+import 'package:fasomo/features/home/presentation/widgets/location_chip.dart';
 import 'package:fasomo/features/home/presentation/widgets/month_progress_bar.dart';
 import 'package:fasomo/features/home/presentation/widgets/sky_hero.dart';
 import 'package:fasomo/features/home/presentation/widgets/week_header_delegate.dart';
@@ -92,79 +94,133 @@ class _HomeContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentDate = state.currentDate;
     final selectedDate = state.selectedDate;
-    final art = skyArtAt(clock.now());
+    // The scene changes every minute, so the whole sky state is watched.
+    final sky = context.watch<SkyBloc>().state;
+    final scene = sky.scene;
+    // Before the first computation the day sky shows; it's replaced within a
+    // frame.
+    final palette = scene == null
+        ? SkyPalette.day
+        : SkyPalette.forSunAltitude(scene.sun.altitudeDegrees);
     final bloc = context.read<HomeBloc>();
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: art.overlayStyle,
-      child: Column(
-        children: [
-          // The status bar sits on the sky's top colour, so the sky reads as
-          // full-bleed and the pinned week strip has a band to sit under.
-          ColoredBox(
-            color: art.top,
-            child: SizedBox(
-              height: MediaQuery.paddingOf(context).top,
-              width: double.infinity,
+    return BlocListener<SkyBloc, SkyState>(
+      listenWhen: (previous, current) =>
+          current.failure != null && current.failure != previous.failure,
+      listener: (context, state) =>
+          _showLocationFailure(context, state.failure!),
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: palette.overlayStyle,
+        child: Column(
+          children: [
+            // The status bar sits on the sky's top colour, so the sky reads as
+            // full-bleed and the pinned week strip has a band to sit under.
+            ColoredBox(
+              color: palette.top,
+              child: SizedBox(
+                height: MediaQuery.paddingOf(context).top,
+                width: double.infinity,
+              ),
             ),
-          ),
-          Expanded(
-            child: MediaQuery.removePadding(
-              context: context,
-              removeTop: true,
-              child: RefreshIndicator(
-                onRefresh: () async => bloc.add(const RefreshHomeData()),
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: [
-                    if (currentDate != null && selectedDate != null) ...[
-                      SliverToBoxAdapter(
-                        child: SkyHero(
-                          dateInfo: currentDate,
-                          art: art,
-                          actionBuilder: headerActionBuilder,
-                        ),
-                      ),
-                      SliverPersistentHeader(
-                        pinned: true,
-                        delegate: WeekHeaderDelegate(
-                          week: currentDate.week,
-                          selectedDate: selectedDate,
-                          onDaySelected: (date) => bloc.add(DaySelected(date)),
-                          art: art,
-                          textScaler: MediaQuery.textScalerOf(context),
-                        ),
-                      ),
-                      SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverToBoxAdapter(
-                          child: MonthProgressBar(
-                            today: currentDate.hijriDate,
-                            daysInMonth: currentDate.daysInMonth,
+            Expanded(
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: RefreshIndicator(
+                  onRefresh: () async => bloc.add(const RefreshHomeData()),
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      if (currentDate != null && selectedDate != null) ...[
+                        SliverToBoxAdapter(
+                          child: SkyHero(
+                            dateInfo: currentDate,
+                            scene: scene,
+                            palette: palette,
+                            actionBuilder: headerActionBuilder,
+                            locationChip: LocationChip(
+                              isApproximate:
+                                  scene?.location.isApproximate ?? true,
+                              isLocating: sky.isLocating,
+                              onPressed: () => context.read<SkyBloc>().add(
+                                const SkyLocationRequested(),
+                              ),
+                              color: palette.ink,
+                            ),
                           ),
+                        ),
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: WeekHeaderDelegate(
+                            week: currentDate.week,
+                            selectedDate: selectedDate,
+                            onDaySelected: (date) =>
+                                bloc.add(DaySelected(date)),
+                            palette: palette,
+                            textScaler: MediaQuery.textScalerOf(context),
+                          ),
+                        ),
+                        SliverPadding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          sliver: SliverToBoxAdapter(
+                            child: MonthProgressBar(
+                              today: currentDate.hijriDate,
+                              daysInMonth: currentDate.daysInMonth,
+                            ),
+                          ),
+                        ),
+                      ],
+                      if (progressSection case final section?)
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
+                          sliver: SliverToBoxAdapter(child: section),
+                        ),
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+                        sliver: _UpcomingList(
+                          state: state,
+                          isReminderOn: isReminderOn,
+                          onToggleReminder: onToggleReminder,
+                          todayActionBuilder: todayActionBuilder,
                         ),
                       ),
                     ],
-                    if (progressSection case final section?)
-                      SliverPadding(
-                        padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),
-                        sliver: SliverToBoxAdapter(child: section),
-                      ),
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-                      sliver: _UpcomingList(
-                        state: state,
-                        isReminderOn: isReminderOn,
-                        onToggleReminder: onToggleReminder,
-                        todayActionBuilder: todayActionBuilder,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Says why the sky still shows the old location, with a way into Settings
+  /// when only Settings can fix it.
+  void _showLocationFailure(BuildContext context, LocationFailure failure) {
+    final localization = AppLocalizations.of(context);
+    final (message, fixable) = switch (failure) {
+      LocationPermissionDenied(permanently: false) => (
+        localization.locationDenied,
+        false,
+      ),
+      LocationPermissionDenied(permanently: true) => (
+        localization.locationDeniedForever,
+        true,
+      ),
+      LocationServiceDisabled() => (localization.locationServiceOff, true),
+      LocationUnavailable() => (localization.locationUnavailable, false),
+    };
+    final sky = context.read<SkyBloc>();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        action: fixable
+            ? SnackBarAction(
+                label: localization.openSettings,
+                onPressed: () => sky.add(SkySettingsRequested(failure)),
+              )
+            : null,
       ),
     );
   }

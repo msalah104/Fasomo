@@ -85,6 +85,39 @@ final class NotARamadanDay extends TrackerFailure {
   String get code => 'tracker.not_ramadan';
 }
 
+/// Failures getting the device's location. None is fatal: the sky keeps
+/// its last known location.
+sealed class LocationFailure extends Failure {
+  const new();
+}
+
+/// The user refused location permission. When [permanently], the system no
+/// longer asks and only Settings can grant it.
+final class LocationPermissionDenied extends LocationFailure {
+  const new({required this.permanently});
+
+  final bool permanently;
+
+  @override
+  String get code => 'location.permission_denied';
+}
+
+/// Location services are switched off on the device.
+final class LocationServiceDisabled extends LocationFailure {
+  const new();
+
+  @override
+  String get code => 'location.service_disabled';
+}
+
+/// No fix in time, or the platform failed.
+final class LocationUnavailable extends LocationFailure {
+  const new();
+
+  @override
+  String get code => 'location.unavailable';
+}
+
 /// Failures from the OS notification scheduler.
 sealed class NotificationFailure extends Failure {
   const new();

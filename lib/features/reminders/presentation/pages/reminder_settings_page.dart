@@ -33,6 +33,7 @@ class ReminderSettingsPage extends StatelessWidget {
                 CalendarFailure() ||
                 TrackerFailure() ||
                 PushFailure() ||
+                LocationFailure() ||
                 null => localization.reminderSaveFailed,
               };
         ScaffoldMessenger.of(context).showSnackBar(

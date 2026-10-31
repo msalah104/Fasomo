@@ -1,52 +1,80 @@
 import 'package:fasomo/core/presentation/date_formatter.dart';
 import 'package:fasomo/core/presentation/logo_mark.dart';
-import 'package:fasomo/core/theme/sky_art.dart';
 import 'package:fasomo/features/home/domain/entities/hijri_date_info.dart';
+import 'package:fasomo/features/home/domain/entities/sky_scene.dart';
+import 'package:fasomo/features/home/presentation/sky_palette.dart';
+import 'package:fasomo/features/home/presentation/sky_text.dart';
+import 'package:fasomo/features/home/presentation/widgets/location_chip.dart';
+import 'package:fasomo/features/home/presentation/widgets/sky_painter.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
-/// The full-bleed sky at the top of Home, below the status bar: the static
-/// [art] for the time of day, the logo mark, an optional action, and today's
-/// date on the ground band. It scrolls away; the week strip stays.
+/// The full-bleed live sky at the top of Home, below the status bar: the sun
+/// or moon where they really are over the user, the logo mark, an optional
+/// action, and today's date and sun times on the ground band. It scrolls
+/// away; the week strip stays.
 class SkyHero extends StatelessWidget {
   const new({
     required this.dateInfo,
-    required this.art,
+    required this.scene,
+    required this.palette,
     this.actionBuilder,
+    this.locationChip,
     super.key,
   });
 
   /// Height of the sky below the status bar.
-  static const double skyHeight = 230;
+  static const double skyHeight = 250;
 
   final HijriDateInfo dateInfo;
-  final SkyArt art;
+
+  /// `null` until the sky is first computed; the plain sky shows meanwhile.
+  final SkyScene? scene;
+  final SkyPalette palette;
 
   /// Builds a trailing action (the language menu) in the colour that reads on
-  /// [art].
+  /// the sky.
   final Widget Function(Color color)? actionBuilder;
+
+  /// Shown before the action, e.g. a [LocationChip].
+  final Widget? locationChip;
 
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context);
     final actionBuilder = this.actionBuilder;
+    final scene = this.scene;
+    final sunTimes = scene == null ? null : localization.sunTimes(scene);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: art.overlayStyle,
+      value: palette.overlayStyle,
       child: SizedBox(
         height: skyHeight,
         child: Stack(
           fit: StackFit.expand,
           children: [
-            ExcludeSemantics(
-              child: Image.asset(
-                art.image,
-                fit: BoxFit.cover,
-                alignment: Alignment.bottomCenter,
+            if (scene == null)
+              ColoredBox(color: palette.top)
+            else
+              // The painting is described in words by a sibling, so it
+              // doesn't need to be read itself.
+              Semantics(
+                label: localization.skyDescription(scene),
+                image: true,
+                child: ExcludeSemantics(
+                  child: RepaintBoundary(
+                    child: CustomPaint(
+                      painter: SkyPainter(
+                        scene: scene,
+                        palette: palette,
+                        textDirection: Directionality.of(context),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-            ),
             PositionedDirectional(
               top: 8,
               start: 16,
@@ -54,12 +82,13 @@ class SkyHero extends StatelessWidget {
               child: Row(
                 children: [
                   LogoMark(
-                    color: art.logoInk,
-                    dotColor: art.logoDot,
+                    color: palette.logoInk,
+                    dotColor: palette.logoDot,
                     semanticLabel: localization.appName,
                   ),
                   const Spacer(),
-                  if (actionBuilder != null) actionBuilder(art.ink),
+                  ?locationChip,
+                  if (actionBuilder != null) actionBuilder(palette.ink),
                 ],
               ),
             ),
@@ -67,7 +96,21 @@ class SkyHero extends StatelessWidget {
               start: 16,
               end: 16,
               bottom: 12,
-              child: _DateRow(dateInfo: dateInfo, color: art.groundInk),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _DateRow(dateInfo: dateInfo, color: palette.groundInk),
+                  if (sunTimes != null)
+                    ExcludeSemantics(
+                      child: Text(
+                        sunTimes,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: palette.groundInk,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ],
         ),
@@ -103,8 +146,9 @@ class _DateRow extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Text(
-          DateFormat.MMMEd(localization.localeName)
-              .format(dateInfo.gregorianDate),
+          DateFormat.MMMEd(
+            localization.localeName,
+          ).format(dateInfo.gregorianDate),
           style: textTheme.bodyMedium?.copyWith(color: color),
         ),
       ],
