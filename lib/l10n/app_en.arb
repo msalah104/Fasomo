@@ -83,6 +83,17 @@
   "specialDays": "Special Days",
   "previousMonth": "Previous month",
   "nextMonth": "Next month",
+  "goToToday": "Today",
+  "@goToToday": {
+    "description": "Calendar button that jumps back to the month containing today."
+  },
+  "goToTodayTooltip": "Go to the current month",
+  "gregorianDays": "Gregorian",
+  "@gregorianDays": {
+    "description": "Calendar toggle that shows the Gregorian day number in each day cell."
+  },
+  "gregorianDaysTooltip": "Show Gregorian day numbers",
+  "calendarSettingSaveFailed": "Could not save the calendar setting",
   "hijriYear": "{year} AH",
   "@hijriYear": {
     "description": "A Hijri year.",

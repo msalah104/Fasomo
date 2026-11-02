@@ -6,6 +6,8 @@ import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_current_hijri_month.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_hijri_month.dart';
+import 'package:fasomo/features/calendar/domain/usecases/get_show_gregorian_days.dart';
+import 'package:fasomo/features/calendar/domain/usecases/save_show_gregorian_days.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -13,6 +15,10 @@ import 'package:mocktail/mocktail.dart';
 class MockGetCurrentHijriMonth extends Mock implements GetCurrentHijriMonth;
 
 class MockGetHijriMonth extends Mock implements GetHijriMonth;
+
+class MockGetShowGregorianDays extends Mock implements GetShowGregorianDays;
+
+class MockSaveShowGregorianDays extends Mock implements SaveShowGregorianDays;
 
 List<CalendarDay> daysOf(HijriMonth month) => [
   CalendarDay(
@@ -26,9 +32,12 @@ List<CalendarDay> daysOf(HijriMonth month) => [
 void main() {
   late MockGetCurrentHijriMonth getCurrentHijriMonth;
   late MockGetHijriMonth getHijriMonth;
+  late MockGetShowGregorianDays getShowGregorianDays;
+  late MockSaveShowGregorianDays saveShowGregorianDays;
 
   const current = HijriMonth(1448, 12);
   const outOfRange = CalendarOutOfRange(minHijriYear: 1356, maxHijriYear: 1500);
+  const writeFailed = StorageWriteFailed('calendar_show_gregorian_days');
 
   setUpAll(() {
     registerFallbackValue(const NoParams());
@@ -38,94 +47,233 @@ void main() {
   setUp(() {
     getCurrentHijriMonth = MockGetCurrentHijriMonth();
     getHijriMonth = MockGetHijriMonth();
+    getShowGregorianDays = MockGetShowGregorianDays();
+    saveShowGregorianDays = MockSaveShowGregorianDays();
     when(() => getCurrentHijriMonth(any())).thenReturn(const Ok(current));
     when(() => getHijriMonth(any())).thenAnswer(
       (invocation) =>
           Ok(daysOf(invocation.positionalArguments.first as HijriMonth)),
     );
+    when(() => getShowGregorianDays(any())).thenReturn(const Ok(false));
+    when(
+      () => saveShowGregorianDays(any()),
+    ).thenAnswer((_) async => const Ok(null));
   });
 
   CalendarBloc build() => CalendarBloc(
     getCurrentHijriMonth: getCurrentHijriMonth,
     getHijriMonth: getHijriMonth,
+    getShowGregorianDays: getShowGregorianDays,
+    saveShowGregorianDays: saveShowGregorianDays,
   );
 
-  CalendarState shown(HijriMonth month) => CalendarState(
+  CalendarState shown(
+    HijriMonth month, {
+    HijriMonth? currentMonth,
+    bool showGregorianDays = false,
+  }) => CalendarState(
     status: CalendarStatus.success,
     days: daysOf(month),
+    previousDays: daysOf(month.previous),
+    nextDays: daysOf(month.next),
     month: month,
+    currentMonth: currentMonth,
+    showGregorianDays: showGregorianDays,
   );
 
-  blocTest<CalendarBloc, CalendarState>(
-    'LoadCalendar opens the current month',
-    build: build,
-    act: (bloc) => bloc.add(const LoadCalendar()),
-    expect: () => [
-      const CalendarState(status: CalendarStatus.loading),
-      shown(current),
-    ],
-  );
+  group('opening', () {
+    test('starts with the saved Gregorian choice', () {
+      when(() => getShowGregorianDays(any())).thenReturn(const Ok(true));
+      expect(build().state.showGregorianDays, isTrue);
+    });
 
-  blocTest<CalendarBloc, CalendarState>(
-    'NextMonth wraps into the next Hijri year',
-    build: build,
-    seed: () => shown(current),
-    act: (bloc) => bloc.add(const NextMonth()),
-    expect: () => [shown(const HijriMonth(1449, 1))],
-  );
+    test('an unreadable Gregorian choice falls back to off', () {
+      when(
+        () => getShowGregorianDays(any()),
+      ).thenReturn(
+        const Err(StorageReadFailed('calendar_show_gregorian_days')),
+      );
+      expect(build().state.showGregorianDays, isFalse);
+    });
 
-  blocTest<CalendarBloc, CalendarState>(
-    'PreviousMonth goes back one month',
-    build: build,
-    seed: () => shown(current),
-    act: (bloc) => bloc.add(const PreviousMonth()),
-    expect: () => [shown(const HijriMonth(1448, 11))],
-  );
+    blocTest<CalendarBloc, CalendarState>(
+      'LoadCalendar opens the current month with its neighbours',
+      build: build,
+      act: (bloc) => bloc.add(const LoadCalendar()),
+      expect: () => [
+        const CalendarState(status: CalendarStatus.loading),
+        shown(current, currentMonth: current),
+      ],
+      verify: (bloc) => expect(bloc.state.isShowingCurrentMonth, isTrue),
+    );
 
-  blocTest<CalendarBloc, CalendarState>(
-    'ChangeMonth jumps to any month',
-    build: build,
-    act: (bloc) => bloc.add(const ChangeMonth(HijriMonth(1447, 9))),
-    expect: () => [shown(const HijriMonth(1447, 9))],
-  );
+    blocTest<CalendarBloc, CalendarState>(
+      'a failure resolving today is an error state',
+      setUp: () => when(
+        () => getCurrentHijriMonth(any()),
+      ).thenReturn(const Err(outOfRange)),
+      build: build,
+      act: (bloc) => bloc.add(const LoadCalendar()),
+      expect: () => [
+        const CalendarState(status: CalendarStatus.loading),
+        const CalendarState(status: CalendarStatus.error, failure: outOfRange),
+      ],
+    );
+  });
 
-  blocTest<CalendarBloc, CalendarState>(
-    'navigating before the first load does nothing',
-    build: build,
-    act: (bloc) => bloc
-      ..add(const NextMonth())
-      ..add(const PreviousMonth()),
-    expect: () => <CalendarState>[],
-  );
+  group('month navigation', () {
+    blocTest<CalendarBloc, CalendarState>(
+      'NextMonth wraps into the next Hijri year',
+      build: build,
+      seed: () => shown(current, currentMonth: current),
+      act: (bloc) => bloc.add(const NextMonth()),
+      expect: () => [shown(const HijriMonth(1449, 1), currentMonth: current)],
+      verify: (bloc) => expect(bloc.state.isShowingCurrentMonth, isFalse),
+    );
 
-  blocTest<CalendarBloc, CalendarState>(
-    'an unsupported month keeps the last good month and reports the failure',
-    setUp: () => when(
-      () => getHijriMonth(const HijriMonth(1501, 1)),
-    ).thenReturn(const Err(outOfRange)),
-    build: build,
-    seed: () => shown(const HijriMonth(1500, 12)),
-    act: (bloc) => bloc.add(const NextMonth()),
-    expect: () => [
-      CalendarState(
-        status: CalendarStatus.error,
-        days: daysOf(const HijriMonth(1500, 12)),
-        month: const HijriMonth(1500, 12),
-        failure: outOfRange,
-      ),
-    ],
-  );
+    blocTest<CalendarBloc, CalendarState>(
+      'PreviousMonth goes back one month',
+      build: build,
+      seed: () => shown(current),
+      act: (bloc) => bloc.add(const PreviousMonth()),
+      expect: () => [shown(const HijriMonth(1448, 11))],
+    );
 
-  blocTest<CalendarBloc, CalendarState>(
-    'a failure resolving today is an error state',
-    setUp: () => when(
-      () => getCurrentHijriMonth(any()),
-    ).thenReturn(const Err(outOfRange)),
-    build: build,
-    act: (bloc) => bloc.add(const LoadCalendar()),
-    expect: () => [
-      const CalendarState(status: CalendarStatus.loading),
-      const CalendarState(status: CalendarStatus.error, failure: outOfRange),
-    ],
-  );
+    blocTest<CalendarBloc, CalendarState>(
+      'ChangeMonth jumps to any month',
+      build: build,
+      act: (bloc) => bloc.add(const ChangeMonth(HijriMonth(1447, 9))),
+      expect: () => [shown(const HijriMonth(1447, 9))],
+    );
+
+    blocTest<CalendarBloc, CalendarState>(
+      'navigating before the first load does nothing',
+      build: build,
+      act: (bloc) => bloc
+        ..add(const NextMonth())
+        ..add(const PreviousMonth()),
+      expect: () => <CalendarState>[],
+    );
+
+    blocTest<CalendarBloc, CalendarState>(
+      'an unsupported month keeps the last good month and reports the failure',
+      setUp: () => when(
+        () => getHijriMonth(const HijriMonth(1501, 1)),
+      ).thenReturn(const Err(outOfRange)),
+      build: build,
+      seed: () => shown(const HijriMonth(1500, 12)),
+      act: (bloc) => bloc.add(const NextMonth()),
+      expect: () => [
+        shown(
+          const HijriMonth(1500, 12),
+        ).copyWith(status: CalendarStatus.error, failure: outOfRange),
+      ],
+    );
+
+    blocTest<CalendarBloc, CalendarState>(
+      'a neighbour outside the supported range has no days to preview',
+      setUp: () => when(
+        () => getHijriMonth(const HijriMonth(1501, 1)),
+      ).thenReturn(const Err(outOfRange)),
+      build: build,
+      act: (bloc) => bloc.add(const ChangeMonth(HijriMonth(1500, 12))),
+      expect: () => [
+        CalendarState(
+          status: CalendarStatus.success,
+          days: daysOf(const HijriMonth(1500, 12)),
+          previousDays: daysOf(const HijriMonth(1500, 11)),
+          month: const HijriMonth(1500, 12),
+        ),
+      ],
+    );
+  });
+
+  group('GoToToday', () {
+    blocTest<CalendarBloc, CalendarState>(
+      'returns to the current month without a loading flash',
+      build: build,
+      seed: () => shown(const HijriMonth(1447, 3), currentMonth: current),
+      act: (bloc) => bloc.add(const GoToToday()),
+      expect: () => [shown(current, currentMonth: current)],
+    );
+
+    blocTest<CalendarBloc, CalendarState>(
+      'resolves today afresh, so it follows a month that has rolled over',
+      setUp: () => when(
+        () => getCurrentHijriMonth(any()),
+      ).thenReturn(const Ok(HijriMonth(1449, 1))),
+      build: build,
+      seed: () => shown(const HijriMonth(1447, 3), currentMonth: current),
+      act: (bloc) => bloc.add(const GoToToday()),
+      expect: () => [
+        shown(
+          const HijriMonth(1449, 1),
+          currentMonth: const HijriMonth(1449, 1),
+        ),
+      ],
+    );
+
+    blocTest<CalendarBloc, CalendarState>(
+      'keeps the shown month when today cannot be resolved',
+      setUp: () => when(
+        () => getCurrentHijriMonth(any()),
+      ).thenReturn(const Err(outOfRange)),
+      build: build,
+      seed: () => shown(const HijriMonth(1447, 3), currentMonth: current),
+      act: (bloc) => bloc.add(const GoToToday()),
+      expect: () => [
+        shown(
+          const HijriMonth(1447, 3),
+          currentMonth: current,
+        ).copyWith(status: CalendarStatus.error, failure: outOfRange),
+      ],
+    );
+  });
+
+  group('ToggleGregorianDays', () {
+    blocTest<CalendarBloc, CalendarState>(
+      'saves the new choice, then shows it',
+      build: build,
+      seed: () => shown(current),
+      act: (bloc) => bloc.add(const ToggleGregorianDays()),
+      expect: () => [shown(current, showGregorianDays: true)],
+      verify: (_) => verify(() => saveShowGregorianDays(true)).called(1),
+    );
+
+    blocTest<CalendarBloc, CalendarState>(
+      'two quick taps turn it on and off again',
+      build: build,
+      seed: () => shown(current),
+      act: (bloc) => bloc
+        ..add(const ToggleGregorianDays())
+        ..add(const ToggleGregorianDays()),
+      expect: () => [
+        shown(current, showGregorianDays: true),
+        shown(current),
+      ],
+      verify: (_) {
+        verify(() => saveShowGregorianDays(true)).called(1);
+        verify(() => saveShowGregorianDays(false)).called(1);
+      },
+    );
+
+    blocTest<CalendarBloc, CalendarState>(
+      'a failed save keeps the old choice and reports the failure once',
+      setUp: () => when(
+        () => saveShowGregorianDays(any()),
+      ).thenAnswer((_) async => const Err(writeFailed)),
+      build: build,
+      seed: () => shown(current),
+      act: (bloc) => bloc.add(const ToggleGregorianDays()),
+      expect: () => [
+        shown(current).copyWith(preferenceFailure: writeFailed),
+      ],
+      verify: (bloc) => expect(bloc.state.showGregorianDays, isFalse),
+    );
+
+    test('the failure is cleared by the next change', () {
+      final failed = shown(current).copyWith(preferenceFailure: writeFailed);
+      expect(failed.copyWith(month: current).preferenceFailure, isNull);
+    });
+  });
 }

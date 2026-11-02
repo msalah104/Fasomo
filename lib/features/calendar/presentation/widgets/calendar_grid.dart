@@ -7,11 +7,16 @@ class CalendarGrid extends StatelessWidget {
     required this.days,
     required this.onDayTap,
     this.dayBadgeBuilder,
+    this.showGregorianDays = false,
     super.key,
   });
   final List<CalendarDay> days;
   final ValueChanged<CalendarDay> onDayTap;
   final Widget? Function(CalendarDay day)? dayBadgeBuilder;
+
+  /// Whether each cell shows the Gregorian day number too; the cells grow
+  /// taller to make room for it.
+  final bool showGregorianDays;
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +25,11 @@ class CalendarGrid extends StatelessWidget {
     final startingWeekday = firstDay.weekday % 7; // 0 = Sunday
 
     return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 7,
         crossAxisSpacing: 4,
         mainAxisSpacing: 4,
+        childAspectRatio: showGregorianDays ? 0.75 : 1,
       ),
       itemCount: days.length + startingWeekday,
       itemBuilder: (context, index) {
@@ -37,6 +43,7 @@ class CalendarGrid extends StatelessWidget {
         return CalendarDayCell(
           day: day,
           badge: dayBadgeBuilder?.call(day),
+          showGregorianDay: showGregorianDays,
           onTap: () => onDayTap(day),
         );
       },

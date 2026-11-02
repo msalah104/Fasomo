@@ -200,6 +200,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nextMonth => 'الشهر التالي';
 
   @override
+  String get goToToday => 'اليوم';
+
+  @override
+  String get goToTodayTooltip => 'الانتقال إلى الشهر الحالي';
+
+  @override
+  String get gregorianDays => 'ميلادي';
+
+  @override
+  String get gregorianDaysTooltip => 'إظهار أرقام الأيام الميلادية';
+
+  @override
+  String get calendarSettingSaveFailed => 'تعذّر حفظ إعداد التقويم';
+
+  @override
   String hijriYear(String year) {
     return '$year هـ';
   }

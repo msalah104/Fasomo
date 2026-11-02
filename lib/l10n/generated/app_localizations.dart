@@ -422,6 +422,36 @@ abstract class AppLocalizations {
   /// **'Next month'**
   String get nextMonth;
 
+  /// Calendar button that jumps back to the month containing today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get goToToday;
+
+  /// No description provided for @goToTodayTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to the current month'**
+  String get goToTodayTooltip;
+
+  /// Calendar toggle that shows the Gregorian day number in each day cell.
+  ///
+  /// In en, this message translates to:
+  /// **'Gregorian'**
+  String get gregorianDays;
+
+  /// No description provided for @gregorianDaysTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Gregorian day numbers'**
+  String get gregorianDaysTooltip;
+
+  /// No description provided for @calendarSettingSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the calendar setting'**
+  String get calendarSettingSaveFailed;
+
   /// A Hijri year.
   ///
   /// In en, this message translates to:

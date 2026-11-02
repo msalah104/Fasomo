@@ -1,7 +1,9 @@
+import 'package:fasomo/core/presentation/date_formatter.dart';
 import 'package:fasomo/core/presentation/fasting_type_style.dart';
 import 'package:fasomo/core/theme/app_colors.dart';
 import 'package:fasomo/core/theme/app_shapes.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class CalendarDayCell extends StatelessWidget {
@@ -9,11 +11,15 @@ class CalendarDayCell extends StatelessWidget {
     required this.day,
     required this.onTap,
     this.badge,
+    this.showGregorianDay = false,
     super.key,
   });
 
   final CalendarDay day;
   final VoidCallback onTap;
+
+  /// Whether the Gregorian day number is shown under the Hijri one.
+  final bool showGregorianDay;
 
   /// Drawn in the top-end corner; it carries its own semantics label.
   final Widget? badge;
@@ -42,14 +48,22 @@ class CalendarDayCell extends StatelessWidget {
         child: Stack(
           children: [
             Center(
-              child: Text(
-                '${day.hijriDate.day}',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: day.isToday ? FontWeight.bold : FontWeight.normal,
-                  color: day.isToday
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurface,
-                ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '${day.hijriDate.day}',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: day.isToday
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color: day.isToday
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  if (showGregorianDay) _GregorianDay(date: day.gregorianDate),
+                ],
               ),
             ),
             if (day.isFastingDay)
@@ -63,6 +77,25 @@ class CalendarDayCell extends StatelessWidget {
               PositionedDirectional(top: 2, end: 2, child: badge),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// The Gregorian day number in small muted type. A screen reader hears the
+/// full Gregorian date instead of a bare number.
+class _GregorianDay extends StatelessWidget {
+  const new({required this.date});
+
+  final DateTime date;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      '${date.day}',
+      semanticsLabel: AppLocalizations.of(context).formatGregorian(date),
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        color: AppColors.of(context).onSurfaceMuted,
       ),
     );
   }

@@ -200,6 +200,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nextMonth => 'Next month';
 
   @override
+  String get goToToday => 'Today';
+
+  @override
+  String get goToTodayTooltip => 'Go to the current month';
+
+  @override
+  String get gregorianDays => 'Gregorian';
+
+  @override
+  String get gregorianDaysTooltip => 'Show Gregorian day numbers';
+
+  @override
+  String get calendarSettingSaveFailed => 'Could not save the calendar setting';
+
+  @override
   String hijriYear(String year) {
     return '$year AH';
   }

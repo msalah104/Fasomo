@@ -10,10 +10,15 @@ import 'package:fasomo/core/push/push_messaging.dart';
 import 'package:fasomo/core/push/sync_announcement_topic.dart';
 import 'package:fasomo/core/services/notifications/fln_notification_gateway.dart';
 import 'package:fasomo/core/services/push/fcm_push_messaging.dart';
+import 'package:fasomo/features/calendar/data/datasources/calendar_local_data_source.dart';
+import 'package:fasomo/features/calendar/data/repositories/calendar_preferences_repository_impl.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
+import 'package:fasomo/features/calendar/domain/repositories/calendar_preferences_repository.dart';
 import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_current_hijri_month.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_hijri_month.dart';
+import 'package:fasomo/features/calendar/domain/usecases/get_show_gregorian_days.dart';
+import 'package:fasomo/features/calendar/domain/usecases/save_show_gregorian_days.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/home/data/repositories/fasting_repository_impl.dart';
 import 'package:fasomo/features/home/domain/repositories/fasting_repository.dart';
@@ -94,12 +99,25 @@ Future<void> init({PlatformServices? platform}) async {
     )
     // --- Calendar ---
     ..registerFactory(
-      () => CalendarBloc(getCurrentHijriMonth: sl(), getHijriMonth: sl()),
+      () => CalendarBloc(
+        getCurrentHijriMonth: sl(),
+        getHijriMonth: sl(),
+        getShowGregorianDays: sl(),
+        saveShowGregorianDays: sl(),
+      ),
     )
     ..registerLazySingleton(() => GetCurrentHijriMonth(sl()))
     ..registerLazySingleton(() => GetHijriMonth(sl()))
+    ..registerLazySingleton(() => GetShowGregorianDays(sl()))
+    ..registerLazySingleton(() => SaveShowGregorianDays(sl()))
     ..registerLazySingleton<CalendarRepository>(
       () => CalendarRepositoryImpl(calendar: sl(), clock: sl()),
+    )
+    ..registerLazySingleton<CalendarPreferencesRepository>(
+      () => CalendarPreferencesRepositoryImpl(localDataSource: sl()),
+    )
+    ..registerLazySingleton<CalendarLocalDataSource>(
+      () => CalendarLocalDataSourceImpl(sharedPreferences: sl()),
     )
     // --- Reminders ---
     ..registerFactory(

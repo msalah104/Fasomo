@@ -28,3 +28,14 @@ final class NextMonth extends CalendarEvent {
 final class PreviousMonth extends CalendarEvent {
   const new();
 }
+
+/// Jumps back to the month containing today, resolving "today" afresh.
+final class GoToToday extends CalendarEvent {
+  const new();
+}
+
+/// Shows or hides the Gregorian day number in each day cell, and saves the
+/// choice.
+final class ToggleGregorianDays extends CalendarEvent {
+  const new();
+}
