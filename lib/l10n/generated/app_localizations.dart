@@ -1740,6 +1740,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get openSettings;
+
+  /// Settings section title for how prayer times are calculated.
+  ///
+  /// In en, this message translates to:
+  /// **'Prayer times'**
+  String get settingsPrayerTimes;
+
+  /// No description provided for @prayerFajr.
+  ///
+  /// In en, this message translates to:
+  /// **'Fajr'**
+  String get prayerFajr;
+
+  /// No description provided for @prayerSunrise.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunrise'**
+  String get prayerSunrise;
+
+  /// No description provided for @prayerDhuhr.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhuhr'**
+  String get prayerDhuhr;
+
+  /// No description provided for @prayerAsr.
+  ///
+  /// In en, this message translates to:
+  /// **'Asr'**
+  String get prayerAsr;
+
+  /// No description provided for @prayerMaghrib.
+  ///
+  /// In en, this message translates to:
+  /// **'Maghrib'**
+  String get prayerMaghrib;
+
+  /// No description provided for @prayerIsha.
+  ///
+  /// In en, this message translates to:
+  /// **'Isha'**
+  String get prayerIsha;
+
+  /// No description provided for @prayerMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculation method'**
+  String get prayerMethod;
+
+  /// No description provided for @prayerMethodAutomatic.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic (by country)'**
+  String get prayerMethodAutomatic;
+
+  /// Subtitle of the method setting when it follows the country; method is the method it resolved to.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic: {method}'**
+  String prayerMethodAutomaticResolved(String method);
+
+  /// No description provided for @prayerMethodUmmAlQura.
+  ///
+  /// In en, this message translates to:
+  /// **'Umm al-Qura, Makkah'**
+  String get prayerMethodUmmAlQura;
+
+  /// No description provided for @prayerMethodEgyptian.
+  ///
+  /// In en, this message translates to:
+  /// **'Egyptian General Authority of Survey'**
+  String get prayerMethodEgyptian;
+
+  /// No description provided for @prayerMethodMuslimWorldLeague.
+  ///
+  /// In en, this message translates to:
+  /// **'Muslim World League'**
+  String get prayerMethodMuslimWorldLeague;
+
+  /// No description provided for @prayerMethodIsna.
+  ///
+  /// In en, this message translates to:
+  /// **'Islamic Society of North America'**
+  String get prayerMethodIsna;
+
+  /// No description provided for @prayerMethodKarachi.
+  ///
+  /// In en, this message translates to:
+  /// **'University of Islamic Sciences, Karachi'**
+  String get prayerMethodKarachi;
+
+  /// No description provided for @prayerMethodDubai.
+  ///
+  /// In en, this message translates to:
+  /// **'Dubai'**
+  String get prayerMethodDubai;
+
+  /// No description provided for @prayerMethodKuwait.
+  ///
+  /// In en, this message translates to:
+  /// **'Kuwait'**
+  String get prayerMethodKuwait;
+
+  /// No description provided for @prayerMethodQatar.
+  ///
+  /// In en, this message translates to:
+  /// **'Qatar'**
+  String get prayerMethodQatar;
+
+  /// No description provided for @prayerMethodSingapore.
+  ///
+  /// In en, this message translates to:
+  /// **'Singapore (MUIS)'**
+  String get prayerMethodSingapore;
+
+  /// No description provided for @prayerMethodTurkey.
+  ///
+  /// In en, this message translates to:
+  /// **'Turkey (Diyanet)'**
+  String get prayerMethodTurkey;
+
+  /// No description provided for @prayerMethodTehran.
+  ///
+  /// In en, this message translates to:
+  /// **'Institute of Geophysics, Tehran'**
+  String get prayerMethodTehran;
+
+  /// Settings tile title: how Asr is reckoned.
+  ///
+  /// In en, this message translates to:
+  /// **'Asr'**
+  String get asrMethod;
+
+  /// No description provided for @asrMethodStandard.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard (Shafi\'i, Maliki, Hanbali)'**
+  String get asrMethodStandard;
+
+  /// No description provided for @asrMethodHanafi.
+  ///
+  /// In en, this message translates to:
+  /// **'Hanafi'**
+  String get asrMethodHanafi;
+
+  /// No description provided for @highLatitudeRule.
+  ///
+  /// In en, this message translates to:
+  /// **'High latitudes'**
+  String get highLatitudeRule;
+
+  /// No description provided for @highLatitudeMiddle.
+  ///
+  /// In en, this message translates to:
+  /// **'Middle of the night'**
+  String get highLatitudeMiddle;
+
+  /// No description provided for @highLatitudeSeventh.
+  ///
+  /// In en, this message translates to:
+  /// **'One-seventh of the night'**
+  String get highLatitudeSeventh;
+
+  /// No description provided for @highLatitudeAngle.
+  ///
+  /// In en, this message translates to:
+  /// **'Twilight angle'**
+  String get highLatitudeAngle;
+
+  /// No description provided for @highLatitudeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'For places where the sky never gets dark enough for Fajr or Isha'**
+  String get highLatitudeHint;
+
+  /// No description provided for @prayerAdjustments.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust times'**
+  String get prayerAdjustments;
+
+  /// No description provided for @prayerAdjustmentsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes added to or taken from each time, to match your mosque'**
+  String get prayerAdjustmentsHint;
+
+  /// No description provided for @prayerAdjustmentsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No adjustments'**
+  String get prayerAdjustmentsNone;
+
+  /// An adjustment in minutes with its sign, e.g. +3 min.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String prayerAdjustmentMinutes(String minutes);
+
+  /// One adjusted prayer in the summary, e.g. Maghrib +3 min.
+  ///
+  /// In en, this message translates to:
+  /// **'{prayer} {minutes}'**
+  String prayerAdjustmentItem(String prayer, String minutes);
+
+  /// Screen-reader label of the minus button for one prayer's adjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'{prayer} one minute earlier'**
+  String prayerAdjustEarlier(String prayer);
+
+  /// Screen-reader label of the plus button for one prayer's adjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'{prayer} one minute later'**
+  String prayerAdjustLater(String prayer);
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
 }
 
 class _AppLocalizationsDelegate

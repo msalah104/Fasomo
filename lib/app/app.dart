@@ -8,6 +8,7 @@ import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bl
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/prayer_settings_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/splash/presentation/pages/splash_page.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
@@ -25,6 +26,7 @@ class FasomoApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<LanguageBloc>()),
         BlocProvider(create: (_) => sl<ThemeBloc>()),
         BlocProvider(create: (_) => sl<HijriAdjustmentBloc>()),
+        BlocProvider(create: (_) => sl<PrayerSettingsBloc>()),
         BlocProvider(create: (_) => sl<HomeBloc>()..add(const LoadHomeData())),
         BlocProvider(
           create: (_) => sl<CalendarBloc>()..add(const LoadCalendar()),

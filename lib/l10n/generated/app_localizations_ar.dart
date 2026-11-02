@@ -1099,4 +1099,127 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get openSettings => 'الإعدادات';
+
+  @override
+  String get settingsPrayerTimes => 'مواقيت الصلاة';
+
+  @override
+  String get prayerFajr => 'الفجر';
+
+  @override
+  String get prayerSunrise => 'الشروق';
+
+  @override
+  String get prayerDhuhr => 'الظهر';
+
+  @override
+  String get prayerAsr => 'العصر';
+
+  @override
+  String get prayerMaghrib => 'المغرب';
+
+  @override
+  String get prayerIsha => 'العشاء';
+
+  @override
+  String get prayerMethod => 'طريقة الحساب';
+
+  @override
+  String get prayerMethodAutomatic => 'تلقائي (حسب الدولة)';
+
+  @override
+  String prayerMethodAutomaticResolved(String method) {
+    return 'تلقائي: $method';
+  }
+
+  @override
+  String get prayerMethodUmmAlQura => 'أم القرى، مكة المكرمة';
+
+  @override
+  String get prayerMethodEgyptian => 'الهيئة المصرية العامة للمساحة';
+
+  @override
+  String get prayerMethodMuslimWorldLeague => 'رابطة العالم الإسلامي';
+
+  @override
+  String get prayerMethodIsna => 'الجمعية الإسلامية لأمريكا الشمالية';
+
+  @override
+  String get prayerMethodKarachi => 'جامعة العلوم الإسلامية، كراتشي';
+
+  @override
+  String get prayerMethodDubai => 'دبي';
+
+  @override
+  String get prayerMethodKuwait => 'الكويت';
+
+  @override
+  String get prayerMethodQatar => 'قطر';
+
+  @override
+  String get prayerMethodSingapore => 'سنغافورة (المجلس الإسلامي)';
+
+  @override
+  String get prayerMethodTurkey => 'تركيا (رئاسة الشؤون الدينية)';
+
+  @override
+  String get prayerMethodTehran => 'معهد الجيوفيزياء، طهران';
+
+  @override
+  String get asrMethod => 'العصر';
+
+  @override
+  String get asrMethodStandard => 'الجمهور (الشافعي والمالكي والحنبلي)';
+
+  @override
+  String get asrMethodHanafi => 'الحنفي';
+
+  @override
+  String get highLatitudeRule => 'خطوط العرض العليا';
+
+  @override
+  String get highLatitudeMiddle => 'منتصف الليل';
+
+  @override
+  String get highLatitudeSeventh => 'سُبع الليل';
+
+  @override
+  String get highLatitudeAngle => 'زاوية الشفق';
+
+  @override
+  String get highLatitudeHint =>
+      'للأماكن التي لا تُظلم فيها السماء بما يكفي للفجر أو العشاء';
+
+  @override
+  String get prayerAdjustments => 'تعديل المواقيت';
+
+  @override
+  String get prayerAdjustmentsHint =>
+      'دقائق تُضاف إلى كل وقت أو تُطرح منه لتوافق مسجدك';
+
+  @override
+  String get prayerAdjustmentsNone => 'بلا تعديل';
+
+  @override
+  String prayerAdjustmentMinutes(String minutes) {
+    return '$minutes د';
+  }
+
+  @override
+  String prayerAdjustmentItem(String prayer, String minutes) {
+    return '$prayer $minutes';
+  }
+
+  @override
+  String prayerAdjustEarlier(String prayer) {
+    return 'تقديم $prayer دقيقة';
+  }
+
+  @override
+  String prayerAdjustLater(String prayer) {
+    return 'تأخير $prayer دقيقة';
+  }
+
+  @override
+  String get reset => 'إعادة الضبط';
 }

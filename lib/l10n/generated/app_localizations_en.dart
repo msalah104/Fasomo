@@ -1074,4 +1074,127 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openSettings => 'Settings';
+
+  @override
+  String get settingsPrayerTimes => 'Prayer times';
+
+  @override
+  String get prayerFajr => 'Fajr';
+
+  @override
+  String get prayerSunrise => 'Sunrise';
+
+  @override
+  String get prayerDhuhr => 'Dhuhr';
+
+  @override
+  String get prayerAsr => 'Asr';
+
+  @override
+  String get prayerMaghrib => 'Maghrib';
+
+  @override
+  String get prayerIsha => 'Isha';
+
+  @override
+  String get prayerMethod => 'Calculation method';
+
+  @override
+  String get prayerMethodAutomatic => 'Automatic (by country)';
+
+  @override
+  String prayerMethodAutomaticResolved(String method) {
+    return 'Automatic: $method';
+  }
+
+  @override
+  String get prayerMethodUmmAlQura => 'Umm al-Qura, Makkah';
+
+  @override
+  String get prayerMethodEgyptian => 'Egyptian General Authority of Survey';
+
+  @override
+  String get prayerMethodMuslimWorldLeague => 'Muslim World League';
+
+  @override
+  String get prayerMethodIsna => 'Islamic Society of North America';
+
+  @override
+  String get prayerMethodKarachi => 'University of Islamic Sciences, Karachi';
+
+  @override
+  String get prayerMethodDubai => 'Dubai';
+
+  @override
+  String get prayerMethodKuwait => 'Kuwait';
+
+  @override
+  String get prayerMethodQatar => 'Qatar';
+
+  @override
+  String get prayerMethodSingapore => 'Singapore (MUIS)';
+
+  @override
+  String get prayerMethodTurkey => 'Turkey (Diyanet)';
+
+  @override
+  String get prayerMethodTehran => 'Institute of Geophysics, Tehran';
+
+  @override
+  String get asrMethod => 'Asr';
+
+  @override
+  String get asrMethodStandard => 'Standard (Shafi\'i, Maliki, Hanbali)';
+
+  @override
+  String get asrMethodHanafi => 'Hanafi';
+
+  @override
+  String get highLatitudeRule => 'High latitudes';
+
+  @override
+  String get highLatitudeMiddle => 'Middle of the night';
+
+  @override
+  String get highLatitudeSeventh => 'One-seventh of the night';
+
+  @override
+  String get highLatitudeAngle => 'Twilight angle';
+
+  @override
+  String get highLatitudeHint =>
+      'For places where the sky never gets dark enough for Fajr or Isha';
+
+  @override
+  String get prayerAdjustments => 'Adjust times';
+
+  @override
+  String get prayerAdjustmentsHint =>
+      'Minutes added to or taken from each time, to match your mosque';
+
+  @override
+  String get prayerAdjustmentsNone => 'No adjustments';
+
+  @override
+  String prayerAdjustmentMinutes(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String prayerAdjustmentItem(String prayer, String minutes) {
+    return '$prayer $minutes';
+  }
+
+  @override
+  String prayerAdjustEarlier(String prayer) {
+    return '$prayer one minute earlier';
+  }
+
+  @override
+  String prayerAdjustLater(String prayer) {
+    return '$prayer one minute later';
+  }
+
+  @override
+  String get reset => 'Reset';
 }

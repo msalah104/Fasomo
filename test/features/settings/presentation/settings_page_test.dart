@@ -2,11 +2,14 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:fasomo/core/calendar/hijri_date.dart';
 import 'package:fasomo/core/calendar/hijri_offset.dart';
 import 'package:fasomo/core/error/failures.dart';
+import 'package:fasomo/core/location/geo_point.dart';
+import 'package:fasomo/core/prayer/prayer_settings.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/features/settings/domain/entities/app_language.dart';
 import 'package:fasomo/features/settings/domain/entities/app_theme_mode.dart';
 import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/prayer_settings_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/settings/presentation/pages/settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_section.dart';
@@ -26,7 +29,12 @@ class MockHijriAdjustmentBloc
     extends MockBloc<HijriAdjustmentEvent, HijriAdjustmentState>
     implements HijriAdjustmentBloc;
 
+class MockPrayerSettingsBloc
+    extends MockBloc<PrayerSettingsEvent, PrayerSettingsState>
+    implements PrayerSettingsBloc;
+
 void main() {
+  late MockPrayerSettingsBloc prayerBloc;
   late MockLanguageBloc languageBloc;
   late MockThemeBloc themeBloc;
   late MockHijriAdjustmentBloc hijriBloc;
@@ -48,6 +56,7 @@ void main() {
           BlocProvider<LanguageBloc>.value(value: languageBloc),
           BlocProvider<ThemeBloc>.value(value: themeBloc),
           BlocProvider<HijriAdjustmentBloc>.value(value: hijriBloc),
+          BlocProvider<PrayerSettingsBloc>.value(value: prayerBloc),
         ],
         child: MaterialApp(
           theme: buildAppTheme(Brightness.light),
@@ -62,6 +71,13 @@ void main() {
   }
 
   setUp(() {
+    prayerBloc = MockPrayerSettingsBloc();
+    when(() => prayerBloc.state).thenReturn(
+      const PrayerSettingsState(
+        settings: PrayerSettings.defaults,
+        location: GeoPoint.makkah,
+      ),
+    );
     languageBloc = MockLanguageBloc();
     when(
       () => languageBloc.state,
@@ -194,7 +210,7 @@ void main() {
 
       expect(find.bySemanticsLabel(RegExp('Add 2 days')), findsOneWidget);
       expect(find.bySemanticsLabel(RegExp('Subtract 1 day')), findsOneWidget);
-      expect(find.bySemanticsLabel(RegExp('No adjustment')), findsOneWidget);
+      expect(find.bySemanticsLabel(RegExp(r'No adjustment\b')), findsOneWidget);
       semantics.dispose();
     });
 
@@ -228,6 +244,7 @@ void main() {
         ],
       ),
     );
+    await tester.scrollUntilVisible(find.text('Extra tile'), 200);
 
     expect(find.text('Extra'), findsOneWidget);
     expect(find.text('Extra tile'), findsOneWidget);

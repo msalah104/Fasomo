@@ -21,6 +21,7 @@ import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
 import 'package:fasomo/features/reminders/presentation/widgets/notification_tone_tile.dart';
 import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/prayer_settings_bloc.dart';
 import 'package:fasomo/features/settings/presentation/pages/settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_button.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_section.dart';
@@ -202,6 +203,8 @@ class _AppShellState extends State<AppShell> {
 void _openSettings(BuildContext context) {
   // "Today" may have moved on since the adjustment preview was computed.
   context.read<HijriAdjustmentBloc>().add(const HijriPreviewRefreshed());
+  // The location may have changed, and with it the automatic method.
+  context.read<PrayerSettingsBloc>().add(const PrayerSettingsRefreshed());
   Navigator.of(context).push(
     MaterialPageRoute<void>(
       builder: (context) => SettingsPage(

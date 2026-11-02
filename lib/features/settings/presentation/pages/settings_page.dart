@@ -1,8 +1,10 @@
 import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/prayer_settings_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/settings/presentation/widgets/hijri_adjustment_tile.dart';
 import 'package:fasomo/features/settings/presentation/widgets/language_tile.dart';
+import 'package:fasomo/features/settings/presentation/widgets/prayer_settings_tiles.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_section.dart';
 import 'package:fasomo/features/settings/presentation/widgets/theme_tile.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
@@ -37,6 +39,15 @@ class SettingsPage extends StatelessWidget {
               title: localization.settingsCalendar,
               children: const [HijriAdjustmentTile()],
             ),
+            SettingsSection(
+              title: localization.settingsPrayerTimes,
+              children: const [
+                PrayerMethodTile(),
+                AsrMethodTile(),
+                HighLatitudeRuleTile(),
+                PrayerAdjustmentsTile(),
+              ],
+            ),
             ...extraSections,
           ],
         ),
@@ -66,6 +77,11 @@ class _SaveFailureListener extends StatelessWidget {
           listener: (context, _) => _showSaveFailed(context),
         ),
         BlocListener<HijriAdjustmentBloc, HijriAdjustmentState>(
+          listenWhen: (previous, current) =>
+              current.failure != null && current != previous,
+          listener: (context, _) => _showSaveFailed(context),
+        ),
+        BlocListener<PrayerSettingsBloc, PrayerSettingsState>(
           listenWhen: (previous, current) =>
               current.failure != null && current != previous,
           listener: (context, _) => _showSaveFailed(context),

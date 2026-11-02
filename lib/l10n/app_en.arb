@@ -933,5 +933,97 @@
   "openSettings": "Settings",
   "@openSettings": {
     "description": "Snackbar action that opens the system settings for this app."
-  }
+  },
+  "settingsPrayerTimes": "Prayer times",
+  "@settingsPrayerTimes": {
+    "description": "Settings section title for how prayer times are calculated."
+  },
+  "prayerFajr": "Fajr",
+  "prayerSunrise": "Sunrise",
+  "prayerDhuhr": "Dhuhr",
+  "prayerAsr": "Asr",
+  "prayerMaghrib": "Maghrib",
+  "prayerIsha": "Isha",
+  "prayerMethod": "Calculation method",
+  "prayerMethodAutomatic": "Automatic (by country)",
+  "prayerMethodAutomaticResolved": "Automatic: {method}",
+  "@prayerMethodAutomaticResolved": {
+    "description": "Subtitle of the method setting when it follows the country; method is the method it resolved to.",
+    "placeholders": {
+      "method": {
+        "type": "String",
+        "example": "Egyptian General Authority of Survey"
+      }
+    }
+  },
+  "prayerMethodUmmAlQura": "Umm al-Qura, Makkah",
+  "prayerMethodEgyptian": "Egyptian General Authority of Survey",
+  "prayerMethodMuslimWorldLeague": "Muslim World League",
+  "prayerMethodIsna": "Islamic Society of North America",
+  "prayerMethodKarachi": "University of Islamic Sciences, Karachi",
+  "prayerMethodDubai": "Dubai",
+  "prayerMethodKuwait": "Kuwait",
+  "prayerMethodQatar": "Qatar",
+  "prayerMethodSingapore": "Singapore (MUIS)",
+  "prayerMethodTurkey": "Turkey (Diyanet)",
+  "prayerMethodTehran": "Institute of Geophysics, Tehran",
+  "asrMethod": "Asr",
+  "@asrMethod": {
+    "description": "Settings tile title: how Asr is reckoned."
+  },
+  "asrMethodStandard": "Standard (Shafi'i, Maliki, Hanbali)",
+  "asrMethodHanafi": "Hanafi",
+  "highLatitudeRule": "High latitudes",
+  "highLatitudeMiddle": "Middle of the night",
+  "highLatitudeSeventh": "One-seventh of the night",
+  "highLatitudeAngle": "Twilight angle",
+  "highLatitudeHint": "For places where the sky never gets dark enough for Fajr or Isha",
+  "prayerAdjustments": "Adjust times",
+  "prayerAdjustmentsHint": "Minutes added to or taken from each time, to match your mosque",
+  "prayerAdjustmentsNone": "No adjustments",
+  "prayerAdjustmentMinutes": "{minutes} min",
+  "@prayerAdjustmentMinutes": {
+    "description": "An adjustment in minutes with its sign, e.g. +3 min.",
+    "placeholders": {
+      "minutes": {
+        "type": "String",
+        "example": "+3"
+      }
+    }
+  },
+  "prayerAdjustmentItem": "{prayer} {minutes}",
+  "@prayerAdjustmentItem": {
+    "description": "One adjusted prayer in the summary, e.g. Maghrib +3 min.",
+    "placeholders": {
+      "prayer": {
+        "type": "String",
+        "example": "Maghrib"
+      },
+      "minutes": {
+        "type": "String",
+        "example": "+3 min"
+      }
+    }
+  },
+  "prayerAdjustEarlier": "{prayer} one minute earlier",
+  "@prayerAdjustEarlier": {
+    "description": "Screen-reader label of the minus button for one prayer's adjustment.",
+    "placeholders": {
+      "prayer": {
+        "type": "String",
+        "example": "Fajr"
+      }
+    }
+  },
+  "prayerAdjustLater": "{prayer} one minute later",
+  "@prayerAdjustLater": {
+    "description": "Screen-reader label of the plus button for one prayer's adjustment.",
+    "placeholders": {
+      "prayer": {
+        "type": "String",
+        "example": "Fajr"
+      }
+    }
+  },
+  "reset": "Reset"
 }

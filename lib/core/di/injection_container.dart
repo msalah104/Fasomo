@@ -8,12 +8,17 @@ import 'package:fasomo/core/location/geolocator_location_gateway.dart';
 import 'package:fasomo/core/location/location_repository.dart';
 import 'package:fasomo/core/location/location_repository_impl.dart';
 import 'package:fasomo/core/location/usecases/choose_city.dart';
+import 'package:fasomo/core/location/usecases/get_saved_location.dart';
 import 'package:fasomo/core/location/usecases/open_location_settings.dart';
 import 'package:fasomo/core/location/usecases/use_device_location.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
 import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/sync_notifications.dart';
+import 'package:fasomo/core/prayer/prayer_settings_repository.dart';
+import 'package:fasomo/core/prayer/prayer_settings_repository_impl.dart';
+import 'package:fasomo/core/prayer/usecases/get_prayer_settings.dart';
+import 'package:fasomo/core/prayer/usecases/save_prayer_settings.dart';
 import 'package:fasomo/core/push/push_messaging.dart';
 import 'package:fasomo/core/push/sync_announcement_topic.dart';
 import 'package:fasomo/core/services/notifications/fln_notification_gateway.dart';
@@ -69,6 +74,7 @@ import 'package:fasomo/features/settings/domain/usecases/save_language.dart';
 import 'package:fasomo/features/settings/domain/usecases/save_theme_mode.dart';
 import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/prayer_settings_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/tracker/data/datasources/fast_log_local_data_source.dart';
 import 'package:fasomo/features/tracker/data/datasources/qada_reminder_local_data_source.dart';
@@ -297,6 +303,7 @@ Future<void> init({PlatformServices? platform}) async {
       () => LocationRepositoryImpl(sharedPreferences: sl(), gateway: sl()),
     )
     ..registerLazySingleton(() => UseDeviceLocation(sl()))
+    ..registerLazySingleton(() => GetSavedLocation(sl()))
     ..registerLazySingleton(() => ChooseCity(sl()))
     ..registerLazySingleton(() => OpenLocationSettings(sl()))
     // --- Home sky ---
@@ -312,7 +319,20 @@ Future<void> init({PlatformServices? platform}) async {
     ..registerLazySingleton(
       () => GetSkyScene(clock: sl(), locationRepository: sl()),
     )
-    ..registerLazySingleton<MinuteTicker>(() => PeriodicMinuteTicker(sl()));
+    ..registerLazySingleton<MinuteTicker>(() => PeriodicMinuteTicker(sl()))
+    // --- Prayer times (shared by Settings and, later, Ramadan) ---
+    ..registerFactory(
+      () => PrayerSettingsBloc(
+        getPrayerSettings: sl(),
+        savePrayerSettings: sl(),
+        getSavedLocation: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => GetPrayerSettings(sl()))
+    ..registerLazySingleton(() => SavePrayerSettings(sl()))
+    ..registerLazySingleton<PrayerSettingsRepository>(
+      () => PrayerSettingsRepositoryImpl(sharedPreferences: sl()),
+    );
 
   final services = platform ?? await _devicePlatformServices();
   sl

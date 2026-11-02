@@ -43,6 +43,10 @@ const _screens = <String, List<Object>>{
   'settings': [Icons.settings_outlined],
   'calendar_year': [Icons.calendar_today_outlined, ('Year', 'سنة')],
   'tone-picker': [Icons.settings_outlined, Icons.music_note_outlined],
+  'prayer-method': [
+    Icons.settings_outlined,
+    ('Calculation method', 'طريقة الحساب'),
+  ],
   'progress': [('Your fasting', 'صيامك')],
   'duas': [Icons.info_outlined, ('Duas and intentions', 'الأدعية والنية')],
 };
