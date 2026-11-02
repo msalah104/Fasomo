@@ -15,6 +15,7 @@ import 'package:fasomo/app/app.dart';
 import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/di/injection_container.dart' as di;
 import 'package:fasomo/core/notifications/notification_gateway.dart';
+import 'package:fasomo/core/presentation/numerals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -164,7 +165,10 @@ Future<void> _bootApp(
 }
 
 void main() {
-  setUpAll(_loadFonts);
+  setUpAll(() async {
+    pinWesternDigits();
+    await _loadFonts();
+  });
 
   for (final language in ['en', 'ar']) {
     for (final brightness in Brightness.values) {

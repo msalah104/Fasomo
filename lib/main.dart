@@ -1,5 +1,6 @@
 import 'package:fasomo/app/app.dart';
 import 'package:fasomo/core/di/injection_container.dart' as di;
+import 'package:fasomo/core/presentation/numerals.dart';
 import 'package:fasomo/core/services/time_zone_setup.dart';
 import 'package:fasomo/core/theme/font_licenses.dart';
 import 'package:fasomo/firebase_options.dart';
@@ -11,6 +12,9 @@ Future<void> main() async {
 
   // Only registers a lazy collector; the files are read on demand.
   registerFontLicenses();
+
+  // Before anything formats a date.
+  pinWesternDigits();
 
   // Before any notification is scheduled.
   await setUpLocalTimeZone();
