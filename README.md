@@ -8,7 +8,8 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - **Animated splash**: the sun sets behind the dome, the sky turns through dusk to night and the stars come out. The new moon rises and settles as the dot of the ف logo, the letter draws itself around it, and the app name is typed out. Tap to skip; with reduced motion the finished scene shows briefly instead.
 
 ### 🏠 Home
-- **Sky header**: a full-width sky with the ف logo mark, showing a daytime scene from 06:00 to 18:00 and a night scene otherwise. Today's Hijri date and the short Gregorian date sit on the ground band. The scenes are static artwork for now; the live sun and moon are on the roadmap.
+- **Live sky**: the top of Home shows the real sky over where you are: the sun by day and the moon by night on their arcs, with the moon in its actual phase and tilt, and sunrise, sunset and moonrise times under the skyline. The sky's colours follow the sun through dawn, golden hour and dusk, and it refreshes every minute while Home is showing. Today's Hijri and Gregorian dates sit on the ground band.
+- **Location**: tap the location chip to use the device's approximate location (asked only when you tap) or pick from 317 bundled cities in English or Arabic, offline. Until then the sky is drawn for Makkah. Everything is computed on the phone (`lib/core/astronomy/`), and the location never leaves it.
 - **This week**: today and the next six days with their Hijri day numbers, and a dot under each fasting day. The strip stays pinned at the top when the sky scrolls away. Tap a day to list the fasting days from that day on; today keeps an outline.
 - **Month bar**: where today falls in the Hijri month, with the White Days marked.
 - **Upcoming fasting days**: the next five fasting days in the coming 30 days, including next month's White Days. A day that is several kinds at once (say, a White Day on a Monday) is listed once with all of them.
@@ -194,6 +195,9 @@ lib/
 - **Notifications**: flutter_local_notifications, timezone, flutter_timezone
 - **Push**: firebase_core, firebase_messaging (Firebase Cloud Messaging)
 - **Storage**: shared_preferences
+- **Location**: geolocator (coarse, on request only); sun and moon positions are computed in-house in `lib/core/astronomy/`
+- **Sharing**: share_plus
+- **Fonts**: El Messiri and IBM Plex Sans Arabic, bundled
 - **Localization**: flutter_localizations, intl, gen-l10n (ARB)
 - **Testing**: flutter_test, bloc_test, mocktail
 - **Lints**: very_good_analysis
@@ -204,10 +208,13 @@ lib/
 - `POST_NOTIFICATIONS`: show reminders (Android 13+, requested when you enable a reminder)
 - `RECEIVE_BOOT_COMPLETED`: restore scheduled reminders after a restart
 - `INTERNET`, `ACCESS_NETWORK_STATE`, `WAKE_LOCK`, `com.google.android.c2dm.permission.RECEIVE`: added by `firebase_messaging` to receive push announcements.
+- `ACCESS_COARSE_LOCATION`: optional, asked only when you tap "Use my location" on the sky. Approximate location is enough; it is rounded to about 1 km and stays on the device.
 - `SCHEDULE_EXACT_ALARM`: optional. If granted, reminders fire at the exact minute; otherwise they use inexact alarms that may arrive a few minutes late. `USE_EXACT_ALARM` is deliberately not declared, because Google Play restricts it to alarm-clock apps.
 
 ### iOS
 - Notification permission, requested when you enable a reminder.
+- Location when in use: optional, asked only when you tap "Use my location".
+- Add to photo library: only used if you choose "Save Image" from the share sheet.
 
 ## Roadmap
 
@@ -219,22 +226,11 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 
 | Priority | Feature | New packages | Backend |
 |---|---|---|---|
-| P1 | [Home sky header](#home-sky-header-p1) | `dart_suncalc`, `geolocator` (optional) | No |
-| P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | `adhan`, `geolocator` | No |
+| P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | — (uses `lib/core/astronomy` and `lib/core/location`) | No |
 | P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
 | P2 | [Onboarding](#onboarding-p2) | — | No |
 | P3 | [Backup and restore](#backup-and-restore-p3) | `share_plus`, `file_picker` | No |
 | — | [Needs a backend](#needs-a-backend) | Firebase or Supabase | Yes |
-
-### Home sky header (P1)
-
-A live sky at the top of Home: the sun by day and the moon by night, placed where they really are for the user's time and location, with the moon drawn in its real phase. It shows sunrise and sunset times and a countdown to the next one.
-
-- **Status:** the layout ships with two static scenes (day and night PNGs from `design/art/`), switched at fixed hours. What's left is drawing the scene live.
-
-- **Why:** it makes the app feel alive every time it opens, and it links the Hijri date to the moon it comes from.
-- **How:** a `CustomPainter` fed by a pure `SkyPosition` calculation (sun/moon altitude, azimuth and lit fraction from `dart_suncalc`, read through the injected clock). A `SkyBloc` loads the location (saved city, or device location if granted) and refreshes every minute while Home is visible. Respects reduced motion.
-- **Plan:** the full design is in [`docs/plans/home-sky-header.md`](docs/plans/home-sky-header.md).
 
 ### Ramadan mode with prayer times (P1)
 
