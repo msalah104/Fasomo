@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:bloc_test/bloc_test.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
@@ -9,7 +7,6 @@ import 'package:fasomo/core/location/geo_point.dart';
 import 'package:fasomo/core/location/usecases/choose_city.dart';
 import 'package:fasomo/core/location/usecases/open_location_settings.dart';
 import 'package:fasomo/core/location/usecases/use_device_location.dart';
-import 'package:fasomo/core/time/minute_ticker.dart';
 import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/home/domain/entities/sky_scene.dart';
 import 'package:fasomo/features/home/domain/sky_scene_builder.dart';
@@ -18,6 +15,8 @@ import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../../helpers/fake_minute_ticker.dart';
+
 class MockGetSkyScene extends Mock implements GetSkyScene;
 
 class MockUseDeviceLocation extends Mock implements UseDeviceLocation;
@@ -25,36 +24,6 @@ class MockUseDeviceLocation extends Mock implements UseDeviceLocation;
 class MockChooseCity extends Mock implements ChooseCity;
 
 class MockOpenLocationSettings extends Mock implements OpenLocationSettings;
-
-/// A [MinuteTicker] the test ticks by hand; it counts live listeners.
-class FakeMinuteTicker implements MinuteTicker {
-  final _controller = StreamController<void>.broadcast();
-
-  int get listeners => _listeners;
-  int _listeners = 0;
-
-  void tick() => _controller.add(null);
-
-  Future<void> dispose() => _controller.close();
-
-  @override
-  Stream<void> ticks() {
-    late StreamController<void> own;
-    StreamSubscription<void>? source;
-    own = StreamController<void>(
-      onListen: () {
-        _listeners++;
-        source = _controller.stream.listen(own.add);
-      },
-      onCancel: () async {
-        _listeners--;
-        await source?.cancel();
-        await own.close();
-      },
-    );
-    return own.stream;
-  }
-}
 
 void main() {
   final cairo = CityCatalog.byId('EG:Cairo')!;

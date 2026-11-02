@@ -11,10 +11,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
 
+import 'package:clock/clock.dart';
 import 'package:fasomo/app/app.dart';
 import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/di/injection_container.dart' as di;
+import 'package:fasomo/core/location/location_repository_impl.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
+import 'package:fasomo/core/presentation/western_digits.dart';
+import 'package:fasomo/features/ramadan/data/repositories/ramadan_checklist_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -51,9 +55,57 @@ const _screens = <String, List<Object>>{
   'duas': [Icons.info_outlined, ('Duas and intentions', 'الأدعية والنية')],
 };
 
+/// Screens at a moment other than now, each with its clock and what to tap
+/// or scroll to. They are drawn for London, whose winter time is UTC like
+/// the machine the harness runs on, so the times read as local ones.
+final _datedScreens = <String, (DateTime, List<Object>)>{
+  // Twelve days before 1 Ramadan 1448 (8 February 2027).
+  'ramadan-countdown': (
+    DateTime(2027, 1, 27, 10),
+    [const _ScrollTo('Your fasting', 'صيامك')],
+  ),
+  // The afternoon of the 12th day.
+  'ramadan': (
+    DateTime(2027, 2, 19, 13, 40),
+    [const _ScrollTo("Today's prayer times", 'مواقيت الصلاة اليوم')],
+  ),
+  'ramadan-times': (
+    DateTime(2027, 2, 19, 13, 40),
+    [
+      ("Today's prayer times", 'مواقيت الصلاة اليوم'),
+      const _ScrollTo('Isha', 'العشاء'),
+    ],
+  ),
+};
+
+/// Scrolls the English or Arabic label to the bottom of the screen without
+/// tapping it.
+final class _ScrollTo {
+  const new(this.en, this.ar);
+
+  final String en;
+  final String ar;
+}
+
+/// Saved data for the dated screens: a picked city and a few checklist and
+/// fasting-log entries in Ramadan.
+final _datedPreferences = <String, Object>{
+  LocationRepositoryImpl.storageKey: jsonEncode({
+    'lat': 51.51,
+    'lng': -0.13,
+    'source': 'manual',
+    'city': 'GB:London',
+  }),
+  RamadanChecklistRepositoryImpl.storageKey: jsonEncode({
+    '2027-02-19': {'taraweeh': true, 'quranPages': 12},
+  }),
+  AppConstants.fastLogKey: ['2027-02-08', '2027-02-09', '2027-02-18'],
+};
+
 Finder _finderFor(Object tap, String language) => switch (tap) {
   final IconData icon => find.byIcon(icon),
   (final String en, final String ar) => find.text(language == 'ar' ? ar : en),
+  _ScrollTo(:final en, :final ar) => find.text(language == 'ar' ? ar : en),
   _ => throw ArgumentError.value(tap, 'tap'),
 };
 
@@ -123,6 +175,7 @@ Future<void> _bootApp(
   WidgetTester tester, {
   required String language,
   required Brightness brightness,
+  DateTime? now,
 }) async {
   tester.view
     ..physicalSize = _screen * _pixelRatio
@@ -139,6 +192,7 @@ Future<void> _bootApp(
     // A little history, so streaks, totals and the make-up pace show.
     AppConstants.fastLogKey: ['2026-10-22', '2026-10-26', '2026-10-29'],
     AppConstants.extraOwedKey: ['1447:6'],
+    if (now != null) ..._datedPreferences,
   });
   await di.sl.reset();
   final notifications = FakeNotificationGateway();
@@ -152,6 +206,13 @@ Future<void> _bootApp(
       ),
     ),
   );
+  if (now != null) {
+    // Code that reads the clock from GetIt gets the same fixed time as code
+    // reading the zone's `clock` (see withClock in main).
+    di.sl
+      ..allowReassignment = true
+      ..registerLazySingleton<Clock>(() => Clock.fixed(now));
+  }
 
   await tester.pumpWidget(
     const RepaintBoundary(
@@ -167,8 +228,42 @@ Future<void> _bootApp(
   }
 }
 
+Future<void> _visit(
+  WidgetTester tester,
+  List<Object> taps,
+  String language,
+) async {
+  for (final tap in taps) {
+    final matches = _finderFor(tap, language);
+    final target = matches.first;
+    if (matches.evaluate().isEmpty) {
+      // Lazy lists build only what is on screen: scroll to it.
+      await tester.dragUntilVisible(
+        matches,
+        find.byType(Scrollable).hitTestable().first,
+        const Offset(0, -300),
+      );
+    }
+    if (tap is _ScrollTo) {
+      await Scrollable.ensureVisible(tester.element(target), alignment: 1);
+      await tester.pump(const Duration(milliseconds: 300));
+      continue;
+    }
+    await tester.ensureVisible(target);
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(target);
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+  }
+}
+
 void main() {
-  setUpAll(_loadFonts);
+  setUpAll(() async {
+    // As main() does.
+    useWesternDigitsInDates();
+    await _loadFonts();
+  });
 
   for (final language in ['en', 'ar']) {
     for (final brightness in Brightness.values) {
@@ -176,26 +271,26 @@ void main() {
         final name = '$screen-$language-${brightness.name}';
         testWidgets(name, (tester) async {
           await _bootApp(tester, language: language, brightness: brightness);
-          for (final tap in taps) {
-            final matches = _finderFor(tap, language);
-            final target = matches.first;
-            if (matches.evaluate().isEmpty) {
-              // Lazy lists build only what is on screen: scroll to it.
-              await tester.dragUntilVisible(
-                matches,
-                find.byType(Scrollable).hitTestable().first,
-                const Offset(0, -300),
-              );
-            }
-            await tester.ensureVisible(target);
-            await tester.pump(const Duration(milliseconds: 300));
-            await tester.tap(target);
-            for (var i = 0; i < 10; i++) {
-              await tester.pump(const Duration(milliseconds: 100));
-            }
-          }
+          await _visit(tester, taps, language);
           await _capture(tester, name);
         });
+      }
+      for (final MapEntry(key: screen, value: (now, taps))
+          in _datedScreens.entries) {
+        final name = '$screen-$language-${brightness.name}';
+        testWidgets(
+          name,
+          (tester) => withClock(Clock.fixed(now), () async {
+            await _bootApp(
+              tester,
+              language: language,
+              brightness: brightness,
+              now: now,
+            );
+            await _visit(tester, taps, language);
+            await _capture(tester, name);
+          }),
+        );
       }
     }
   }

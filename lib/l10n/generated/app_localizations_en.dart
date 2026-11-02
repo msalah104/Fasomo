@@ -1197,4 +1197,112 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reset => 'Reset';
+
+  @override
+  String ramadanStartsOn(String date) {
+    return 'Expected to start on $date';
+  }
+
+  @override
+  String ramadanFirstSuhoor(String time) {
+    return 'The first suhoor ends at $time (Fajr)';
+  }
+
+  @override
+  String ramadanDayOf(int day, int days) {
+    return 'Day $day of $days';
+  }
+
+  @override
+  String ramadanIftarIn(String duration) {
+    return 'Iftar in $duration';
+  }
+
+  @override
+  String ramadanSuhoorEndsIn(String duration) {
+    return 'Suhoor ends in $duration';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, String minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String durationSpoken(int hours, int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours hours ',
+      one: '1 hour ',
+      zero: '',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minutes',
+      one: '1 minute',
+    );
+    return '$_temp0$_temp1';
+  }
+
+  @override
+  String get ramadanSuhoorEnds => 'Suhoor ends';
+
+  @override
+  String get ramadanIftar => 'Iftar';
+
+  @override
+  String ramadanTimesFor(String place, String method) {
+    return '$place · $method';
+  }
+
+  @override
+  String ramadanTimesApproximate(String place) {
+    return 'Times for $place until you set your location';
+  }
+
+  @override
+  String get ramadanComplete => 'Ramadan is complete. Eid Mubarak!';
+
+  @override
+  String get ramadanChecklistTitle => 'Today';
+
+  @override
+  String get ramadanTaraweeh => 'Taraweeh';
+
+  @override
+  String get ramadanQuranPages => 'Quran pages';
+
+  @override
+  String ramadanQuranPagesValue(int pages) {
+    String _temp0 = intl.Intl.pluralLogic(
+      pages,
+      locale: localeName,
+      other: '$pages pages',
+      one: '1 page',
+      zero: 'No pages',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ramadanQuranPageAdd => 'Add a page';
+
+  @override
+  String get ramadanQuranPageRemove => 'Remove a page';
+
+  @override
+  String get ramadanPrayerTimesToday => 'Today\'s prayer times';
+
+  @override
+  String get ramadanChecklistLoadFailed => 'Couldn\'t load today\'s checklist.';
+
+  @override
+  String get ramadanChecklistSaveFailed => 'Couldn\'t save today\'s checklist.';
 }

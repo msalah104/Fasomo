@@ -2,10 +2,10 @@ import 'dart:math' as math;
 
 import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/calendar/fasting_calendar.dart';
+import 'package:fasomo/core/calendar/ramadan_dates.dart';
 import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 import 'package:fasomo/features/tracker/domain/entities/qada_pace.dart';
 import 'package:fasomo/features/tracker/domain/fast_log_rules.dart';
-import 'package:fasomo/features/tracker/domain/ramadan_dates.dart';
 
 /// Works out the suggested make-up pace: from the days owed and the days
 /// left before the next Ramadan, how many make-up days a week it takes, and

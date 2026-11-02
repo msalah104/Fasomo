@@ -1025,5 +1025,133 @@
       }
     }
   },
-  "reset": "Reset"
+  "reset": "Reset",
+  "ramadanStartsOn": "Expected to start on {date}",
+  "@ramadanStartsOn": {
+    "description": "Countdown card on Home: the first day of Ramadan by the adjusted calendar.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Monday, February 8"
+      }
+    }
+  },
+  "ramadanFirstSuhoor": "The first suhoor ends at {time} (Fajr)",
+  "@ramadanFirstSuhoor": {
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "5:31 AM"
+      }
+    }
+  },
+  "ramadanDayOf": "Day {day} of {days}",
+  "@ramadanDayOf": {
+    "description": "On the Ramadan card: today's day of the month and the month's length.",
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "ramadanIftarIn": "Iftar in {duration}",
+  "@ramadanIftarIn": {
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "2 h 15 min"
+      }
+    }
+  },
+  "ramadanSuhoorEndsIn": "Suhoor ends in {duration}",
+  "@ramadanSuhoorEndsIn": {
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "1 h 05 min"
+      }
+    }
+  },
+  "durationHoursMinutes": "{hours} h {minutes} min",
+  "@durationHoursMinutes": {
+    "description": "A short countdown, e.g. 2 h 15 min.",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "String",
+        "example": "05"
+      }
+    }
+  },
+  "durationMinutes": "{minutes} min",
+  "@durationMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "durationSpoken": "{hours, plural, =0{} =1{1 hour } other{{hours} hours }}{minutes, plural, =1{1 minute} other{{minutes} minutes}}",
+  "@durationSpoken": {
+    "description": "The countdown as a screen reader says it.",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "ramadanSuhoorEnds": "Suhoor ends",
+  "ramadanIftar": "Iftar",
+  "ramadanTimesFor": "{place} · {method}",
+  "@ramadanTimesFor": {
+    "description": "Under the Ramadan times: where they are for and the calculation method.",
+    "placeholders": {
+      "place": {
+        "type": "String",
+        "example": "Cairo"
+      },
+      "method": {
+        "type": "String",
+        "example": "Egyptian General Authority of Survey"
+      }
+    }
+  },
+  "ramadanTimesApproximate": "Times for {place} until you set your location",
+  "@ramadanTimesApproximate": {
+    "placeholders": {
+      "place": {
+        "type": "String",
+        "example": "Makkah"
+      }
+    }
+  },
+  "ramadanComplete": "Ramadan is complete. Eid Mubarak!",
+  "ramadanChecklistTitle": "Today",
+  "@ramadanChecklistTitle": {
+    "description": "Title of the daily Ramadan checklist."
+  },
+  "ramadanTaraweeh": "Taraweeh",
+  "ramadanQuranPages": "Quran pages",
+  "ramadanQuranPagesValue": "{pages, plural, =0{No pages} =1{1 page} other{{pages} pages}}",
+  "@ramadanQuranPagesValue": {
+    "description": "The Quran pages read today, as a screen reader says it.",
+    "placeholders": {
+      "pages": {
+        "type": "int"
+      }
+    }
+  },
+  "ramadanQuranPageAdd": "Add a page",
+  "ramadanQuranPageRemove": "Remove a page",
+  "ramadanPrayerTimesToday": "Today's prayer times",
+  "ramadanChecklistLoadFailed": "Couldn't load today's checklist.",
+  "ramadanChecklistSaveFailed": "Couldn't save today's checklist."
 }

@@ -1,11 +1,11 @@
 import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/calendar/fasting_calendar.dart';
+import 'package:fasomo/core/calendar/ramadan_dates.dart';
 import 'package:fasomo/core/notifications/reminder_occurrence.dart';
 import 'package:fasomo/core/notifications/reminder_timing.dart';
 import 'package:fasomo/features/tracker/domain/entities/qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/fast_log_rules.dart';
 import 'package:fasomo/features/tracker/domain/qada_pace_planner.dart';
-import 'package:fasomo/features/tracker/domain/ramadan_dates.dart';
 
 /// Works out which days to suggest a make-up fast on, and when to count down
 /// to Ramadan. Pure: "today" is passed in by the caller.

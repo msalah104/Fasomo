@@ -4,6 +4,7 @@ import 'package:fasomo/core/di/injection_container.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/ramadan/presentation/bloc/ramadan_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
@@ -28,6 +29,9 @@ class FasomoApp extends StatelessWidget {
         BlocProvider(create: (_) => sl<HijriAdjustmentBloc>()),
         BlocProvider(create: (_) => sl<PrayerSettingsBloc>()),
         BlocProvider(create: (_) => sl<HomeBloc>()..add(const LoadHomeData())),
+        // App-wide so the shell can refresh it when what it depends on
+        // changes; it ticks only while its card is in view.
+        BlocProvider(create: (_) => sl<RamadanBloc>()),
         BlocProvider(
           create: (_) => sl<CalendarBloc>()..add(const LoadCalendar()),
         ),

@@ -52,6 +52,12 @@ import 'package:fasomo/features/home/domain/usecases/get_sky_scene.dart';
 import 'package:fasomo/features/home/domain/usecases/get_upcoming_fasting_days.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
+import 'package:fasomo/features/ramadan/data/repositories/ramadan_checklist_repository_impl.dart';
+import 'package:fasomo/features/ramadan/domain/repositories/ramadan_checklist_repository.dart';
+import 'package:fasomo/features/ramadan/domain/usecases/get_ramadan_checklist.dart';
+import 'package:fasomo/features/ramadan/domain/usecases/get_ramadan_overview.dart';
+import 'package:fasomo/features/ramadan/domain/usecases/save_ramadan_checklist.dart';
+import 'package:fasomo/features/ramadan/presentation/bloc/ramadan_bloc.dart';
 import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fasomo/features/reminders/data/repositories/reminder_repository_impl.dart';
 import 'package:fasomo/features/reminders/domain/fasting_reminder_source.dart';
@@ -320,7 +326,7 @@ Future<void> init({PlatformServices? platform}) async {
       () => GetSkyScene(clock: sl(), locationRepository: sl()),
     )
     ..registerLazySingleton<MinuteTicker>(() => PeriodicMinuteTicker(sl()))
-    // --- Prayer times (shared by Settings and, later, Ramadan) ---
+    // --- Prayer times (shared by Settings and Ramadan) ---
     ..registerFactory(
       () => PrayerSettingsBloc(
         getPrayerSettings: sl(),
@@ -332,6 +338,28 @@ Future<void> init({PlatformServices? platform}) async {
     ..registerLazySingleton(() => SavePrayerSettings(sl()))
     ..registerLazySingleton<PrayerSettingsRepository>(
       () => PrayerSettingsRepositoryImpl(sharedPreferences: sl()),
+    )
+    // --- Ramadan ---
+    ..registerFactory(
+      () => RamadanBloc(
+        getOverview: sl(),
+        getChecklist: sl(),
+        saveChecklist: sl(),
+        ticker: sl(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => GetRamadanOverview(
+        calendar: sl(),
+        prayerSettings: sl(),
+        locationRepository: sl(),
+        clock: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => GetRamadanChecklist(sl()))
+    ..registerLazySingleton(() => SaveRamadanChecklist(sl()))
+    ..registerLazySingleton<RamadanChecklistRepository>(
+      () => RamadanChecklistRepositoryImpl(sharedPreferences: sl()),
     );
 
   final services = platform ?? await _devicePlatformServices();

@@ -104,6 +104,7 @@ void main() {
                 onToggleReminder: (_) {},
                 headerActionBuilder: (color) =>
                     Icon(Icons.language, color: color),
+                spotlightSection: const Text('SPOTLIGHT'),
                 progressSection: const Text('PROGRESS'),
                 todayActionBuilder: (date, hijri) =>
                     Text('TODAY ${date.day} ${hijri.day}'),
@@ -186,6 +187,11 @@ void main() {
     await pumpHome(tester, brightness: Brightness.light, homeState: withToday);
 
     expect(find.text('PROGRESS'), findsOneWidget);
+    // The spotlight (the Ramadan card) comes first.
+    expect(
+      tester.getTopLeft(find.text('SPOTLIGHT')).dy,
+      lessThan(tester.getTopLeft(find.text('PROGRESS')).dy),
+    );
     await tester.scrollUntilVisible(find.text('TODAY 28 17'), 200);
     expect(find.text('TODAY 28 17'), findsOneWidget);
     expect(find.textContaining('TODAY', skipOffstage: false), findsOneWidget);

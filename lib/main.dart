@@ -1,5 +1,6 @@
 import 'package:fasomo/app/app.dart';
 import 'package:fasomo/core/di/injection_container.dart' as di;
+import 'package:fasomo/core/presentation/western_digits.dart';
 import 'package:fasomo/core/services/time_zone_setup.dart';
 import 'package:fasomo/core/theme/font_licenses.dart';
 import 'package:fasomo/firebase_options.dart';
@@ -11,6 +12,10 @@ Future<void> main() async {
 
   // Only registers a lazy collector; the files are read on demand.
   registerFontLicenses();
+
+  // Times and dates in Arabic use the same 0-9 digits as the rest of the
+  // app.
+  useWesternDigitsInDates();
 
   // Before any notification is scheduled.
   await setUpLocalTimeZone();

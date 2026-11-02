@@ -27,6 +27,7 @@ class HomePage extends StatelessWidget {
     required this.isReminderOn,
     required this.onToggleReminder,
     this.headerActionBuilder,
+    this.spotlightSection,
     this.progressSection,
     this.todayActionBuilder,
     this.dayActionBuilder,
@@ -38,6 +39,10 @@ class HomePage extends StatelessWidget {
 
   /// Builds the action shown on the sky, in the colour that reads on it.
   final Widget Function(Color color)? headerActionBuilder;
+
+  /// Shown under the month bar, above [progressSection], e.g. the Ramadan
+  /// card. It brings its own top gap, so it can be empty.
+  final Widget? spotlightSection;
 
   /// Shown between the month bar and the fasting days list.
   final Widget? progressSection;
@@ -62,6 +67,7 @@ class HomePage extends StatelessWidget {
             isReminderOn: isReminderOn,
             onToggleReminder: onToggleReminder,
             headerActionBuilder: headerActionBuilder,
+            spotlightSection: spotlightSection,
             progressSection: progressSection,
             todayActionBuilder: todayActionBuilder,
             dayActionBuilder: dayActionBuilder,
@@ -87,6 +93,7 @@ class _HomeContent extends StatelessWidget {
     required this.isReminderOn,
     required this.onToggleReminder,
     required this.headerActionBuilder,
+    required this.spotlightSection,
     required this.progressSection,
     required this.todayActionBuilder,
     required this.dayActionBuilder,
@@ -96,6 +103,7 @@ class _HomeContent extends StatelessWidget {
   final bool Function(FastingType type) isReminderOn;
   final ValueChanged<FastingType> onToggleReminder;
   final Widget Function(Color color)? headerActionBuilder;
+  final Widget? spotlightSection;
   final Widget? progressSection;
   final TodayActionBuilder? todayActionBuilder;
   final FastingDayActionBuilder? dayActionBuilder;
@@ -164,6 +172,11 @@ class _HomeContent extends StatelessWidget {
                         ),
                       ),
                     ],
+                    if (spotlightSection case final section?)
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        sliver: SliverToBoxAdapter(child: section),
+                      ),
                     if (progressSection case final section?)
                       SliverPadding(
                         padding: const EdgeInsets.fromLTRB(16, 24, 16, 0),

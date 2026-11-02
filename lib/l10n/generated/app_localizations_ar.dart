@@ -1222,4 +1222,121 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get reset => 'إعادة الضبط';
+
+  @override
+  String ramadanStartsOn(String date) {
+    return 'يُتوقَّع أن يبدأ يوم $date';
+  }
+
+  @override
+  String ramadanFirstSuhoor(String time) {
+    return 'ينتهي أول سحور عند $time (الفجر)';
+  }
+
+  @override
+  String ramadanDayOf(int day, int days) {
+    return 'اليوم $day من $days';
+  }
+
+  @override
+  String ramadanIftarIn(String duration) {
+    return 'الإفطار بعد $duration';
+  }
+
+  @override
+  String ramadanSuhoorEndsIn(String duration) {
+    return 'ينتهي السحور بعد $duration';
+  }
+
+  @override
+  String durationHoursMinutes(int hours, String minutes) {
+    return '$hours س $minutes د';
+  }
+
+  @override
+  String durationMinutes(int minutes) {
+    return '$minutes د';
+  }
+
+  @override
+  String durationSpoken(int hours, int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours ساعة و',
+      many: '$hours ساعة و',
+      few: '$hours ساعات و',
+      two: 'ساعتين و',
+      one: 'ساعة و',
+      zero: '',
+    );
+    String _temp1 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes دقيقة',
+      many: '$minutes دقيقة',
+      few: '$minutes دقائق',
+      two: 'دقيقتين',
+      one: 'دقيقة',
+    );
+    return '$_temp0$_temp1';
+  }
+
+  @override
+  String get ramadanSuhoorEnds => 'ينتهي السحور';
+
+  @override
+  String get ramadanIftar => 'الإفطار';
+
+  @override
+  String ramadanTimesFor(String place, String method) {
+    return '$place · $method';
+  }
+
+  @override
+  String ramadanTimesApproximate(String place) {
+    return 'المواقيت لـ$place حتى تحدد موقعك';
+  }
+
+  @override
+  String get ramadanComplete => 'اكتمل رمضان. عيد مبارك!';
+
+  @override
+  String get ramadanChecklistTitle => 'اليوم';
+
+  @override
+  String get ramadanTaraweeh => 'صلاة التراويح';
+
+  @override
+  String get ramadanQuranPages => 'صفحات القرآن';
+
+  @override
+  String ramadanQuranPagesValue(int pages) {
+    String _temp0 = intl.Intl.pluralLogic(
+      pages,
+      locale: localeName,
+      other: '$pages صفحة',
+      many: '$pages صفحة',
+      few: '$pages صفحات',
+      two: 'صفحتان',
+      one: 'صفحة واحدة',
+      zero: 'لا صفحات',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ramadanQuranPageAdd => 'إضافة صفحة';
+
+  @override
+  String get ramadanQuranPageRemove => 'إزالة صفحة';
+
+  @override
+  String get ramadanPrayerTimesToday => 'مواقيت الصلاة اليوم';
+
+  @override
+  String get ramadanChecklistLoadFailed => 'تعذّر تحميل قائمة اليوم.';
+
+  @override
+  String get ramadanChecklistSaveFailed => 'تعذّر حفظ قائمة اليوم.';
 }

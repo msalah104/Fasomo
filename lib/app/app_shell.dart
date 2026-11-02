@@ -16,6 +16,8 @@ import 'package:fasomo/features/duas/presentation/widgets/duas_button.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
+import 'package:fasomo/features/ramadan/presentation/bloc/ramadan_bloc.dart';
+import 'package:fasomo/features/ramadan/presentation/widgets/ramadan_spotlight.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
@@ -134,10 +136,18 @@ class _AppShellState extends State<AppShell> {
           listenWhen: (previous, current) => previous.offset != current.offset,
           listener: (context, _) {
             context.read<HomeBloc>().add(const RefreshHomeData());
+            context.read<RamadanBloc>().add(const RamadanRefreshed());
             context.read<CalendarBloc>().add(const LoadCalendar());
             context.read<TrackerBloc>().add(const RefreshTracker());
             context.read<ReminderBloc>().add(const SyncRequested());
           },
+        ),
+        // New prayer settings move the Ramadan times.
+        BlocListener<PrayerSettingsBloc, PrayerSettingsState>(
+          listenWhen: (previous, current) =>
+              previous.settings != current.settings,
+          listener: (context, _) =>
+              context.read<RamadanBloc>().add(const RamadanRefreshed()),
         ),
         // On Android the sound belongs to the notification channel, so a
         // new tone means rescheduling every pending reminder. The tone is
@@ -287,7 +297,7 @@ class _AboutTab extends StatelessWidget {
   }
 }
 
-/// Home wired to the reminders, tracker, duas and share features.
+/// Home wired to the reminders, tracker, Ramadan, duas and share features.
 class _HomeTab extends StatelessWidget {
   const new();
 
@@ -296,23 +306,45 @@ class _HomeTab extends StatelessWidget {
     final reminders = context.watch<ReminderBloc>().state;
     return BlocProvider(
       create: (_) => sl<SkyBloc>()..add(const SkyStarted()),
-      child: HomePage(
-        isReminderOn: reminders.isEnabledFor,
-        onToggleReminder: (type) =>
-            context.read<ReminderBloc>().add(ToggleReminder(type)),
-        headerActionBuilder: (color) => SettingsButton(
-          color: color,
-          onPressed: () => _openSettings(context),
-        ),
-        progressSection: const TrackerSummaryCard(),
-        todayActionBuilder: (date, hijri) =>
+      // A new location moves the prayer times.
+      child: BlocListener<SkyBloc, SkyState>(
+        listenWhen: (previous, current) =>
+            previous.scene.location != current.scene.location,
+        listener: (context, _) =>
+            context.read<RamadanBloc>().add(const RamadanRefreshed()),
+        child: _HomeWithSlots(reminders: reminders),
+      ),
+    );
+  }
+}
+
+class _HomeWithSlots extends StatelessWidget {
+  const new({required this.reminders});
+
+  final ReminderState reminders;
+
+  @override
+  Widget build(BuildContext context) {
+    return HomePage(
+      isReminderOn: reminders.isEnabledFor,
+      onToggleReminder: (type) =>
+          context.read<ReminderBloc>().add(ToggleReminder(type)),
+      headerActionBuilder: (color) => SettingsButton(
+        color: color,
+        onPressed: () => _openSettings(context),
+      ),
+      spotlightSection: RamadanSpotlight(
+        fastedActionBuilder: (date, hijri) =>
             FastedToggle(date: date, hijri: hijri),
-        dayActionBuilder: (day) => _FastingDayLinks(
-          type: day.primaryType,
-          hijriDate: day.hijriDate,
-          gregorianDate: day.gregorianDate,
-          daysUntil: day.daysUntil,
-        ),
+      ),
+      progressSection: const TrackerSummaryCard(),
+      todayActionBuilder: (date, hijri) =>
+          FastedToggle(date: date, hijri: hijri),
+      dayActionBuilder: (day) => _FastingDayLinks(
+        type: day.primaryType,
+        hijriDate: day.hijriDate,
+        gregorianDate: day.gregorianDate,
+        daysUntil: day.daysUntil,
       ),
     );
   }

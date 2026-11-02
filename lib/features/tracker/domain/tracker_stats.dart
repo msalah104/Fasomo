@@ -3,9 +3,9 @@ import 'package:fasomo/core/calendar/fasting_calendar.dart';
 import 'package:fasomo/core/calendar/fasting_rules.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/calendar/hijri_date.dart';
+import 'package:fasomo/core/calendar/ramadan_dates.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
-import 'package:fasomo/features/tracker/domain/ramadan_dates.dart';
 
 /// Derives streaks and totals from the set of fasted days. Pure: "today" is
 /// passed in by the caller, which reads it from an injected clock.

@@ -1962,6 +1962,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset'**
   String get reset;
+
+  /// Countdown card on Home: the first day of Ramadan by the adjusted calendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected to start on {date}'**
+  String ramadanStartsOn(String date);
+
+  /// No description provided for @ramadanFirstSuhoor.
+  ///
+  /// In en, this message translates to:
+  /// **'The first suhoor ends at {time} (Fajr)'**
+  String ramadanFirstSuhoor(String time);
+
+  /// On the Ramadan card: today's day of the month and the month's length.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of {days}'**
+  String ramadanDayOf(int day, int days);
+
+  /// No description provided for @ramadanIftarIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Iftar in {duration}'**
+  String ramadanIftarIn(String duration);
+
+  /// No description provided for @ramadanSuhoorEndsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Suhoor ends in {duration}'**
+  String ramadanSuhoorEndsIn(String duration);
+
+  /// A short countdown, e.g. 2 h 15 min.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} h {minutes} min'**
+  String durationHoursMinutes(int hours, String minutes);
+
+  /// No description provided for @durationMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String durationMinutes(int minutes);
+
+  /// The countdown as a screen reader says it.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours, plural, =0{} =1{1 hour } other{{hours} hours }}{minutes, plural, =1{1 minute} other{{minutes} minutes}}'**
+  String durationSpoken(int hours, int minutes);
+
+  /// No description provided for @ramadanSuhoorEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'Suhoor ends'**
+  String get ramadanSuhoorEnds;
+
+  /// No description provided for @ramadanIftar.
+  ///
+  /// In en, this message translates to:
+  /// **'Iftar'**
+  String get ramadanIftar;
+
+  /// Under the Ramadan times: where they are for and the calculation method.
+  ///
+  /// In en, this message translates to:
+  /// **'{place} · {method}'**
+  String ramadanTimesFor(String place, String method);
+
+  /// No description provided for @ramadanTimesApproximate.
+  ///
+  /// In en, this message translates to:
+  /// **'Times for {place} until you set your location'**
+  String ramadanTimesApproximate(String place);
+
+  /// No description provided for @ramadanComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan is complete. Eid Mubarak!'**
+  String get ramadanComplete;
+
+  /// Title of the daily Ramadan checklist.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get ramadanChecklistTitle;
+
+  /// No description provided for @ramadanTaraweeh.
+  ///
+  /// In en, this message translates to:
+  /// **'Taraweeh'**
+  String get ramadanTaraweeh;
+
+  /// No description provided for @ramadanQuranPages.
+  ///
+  /// In en, this message translates to:
+  /// **'Quran pages'**
+  String get ramadanQuranPages;
+
+  /// The Quran pages read today, as a screen reader says it.
+  ///
+  /// In en, this message translates to:
+  /// **'{pages, plural, =0{No pages} =1{1 page} other{{pages} pages}}'**
+  String ramadanQuranPagesValue(int pages);
+
+  /// No description provided for @ramadanQuranPageAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a page'**
+  String get ramadanQuranPageAdd;
+
+  /// No description provided for @ramadanQuranPageRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove a page'**
+  String get ramadanQuranPageRemove;
+
+  /// No description provided for @ramadanPrayerTimesToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s prayer times'**
+  String get ramadanPrayerTimesToday;
+
+  /// No description provided for @ramadanChecklistLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load today\'s checklist.'**
+  String get ramadanChecklistLoadFailed;
+
+  /// No description provided for @ramadanChecklistSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save today\'s checklist.'**
+  String get ramadanChecklistSaveFailed;
 }
 
 class _AppLocalizationsDelegate
