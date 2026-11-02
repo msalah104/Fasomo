@@ -9,7 +9,11 @@ import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class AboutPage extends StatelessWidget {
-  const new({super.key});
+  const new({this.onOpenDuas, super.key});
+
+  /// Opens the duas and intentions. The app shell wires it, so this feature
+  /// does not depend on the duas feature.
+  final VoidCallback? onOpenDuas;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +52,8 @@ class AboutPage extends StatelessWidget {
             color: type.color(colors),
             onColor: type.onColor(colors),
           ),
+        if (onOpenDuas case final onOpenDuas?)
+          _DuasEntry(onPressed: onOpenDuas),
         const SizedBox(height: 24),
         Text(localization.features, style: theme.textTheme.headlineSmall),
         const SizedBox(height: 12),
@@ -74,6 +80,30 @@ class AboutPage extends StatelessWidget {
         const _CreditsCard(),
         const SizedBox(height: 16),
       ],
+    );
+  }
+}
+
+/// Leads from the hadith above to the full collection of duas and hadith.
+class _DuasEntry extends StatelessWidget {
+  const new({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
+    final primary = Theme.of(context).colorScheme.primary;
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 8, 8, 8),
+        leading: Icon(Icons.menu_book_outlined, color: primary),
+        title: Text(localization.duasTitle),
+        subtitle: Text(localization.duasAboutDesc),
+        // Points forward in either direction (mirrored in RTL).
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onPressed,
+      ),
     );
   }
 }

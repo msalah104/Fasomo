@@ -604,5 +604,144 @@
       }
     }
   },
-  "notificationTonePreviewFailed": "Could not play the sound."
+  "notificationTonePreviewFailed": "Could not play the sound.",
+  "duasTitle": "Duas and intentions",
+  "@duasTitle": {
+    "description": "Title of the Duas page and its entry on the About tab."
+  },
+  "duasAboutDesc": "The intention, the duas for breaking the fast and for Laylat al-Qadr, and the hadith behind each fasting day, with their sources. Available offline.",
+  "@duasAboutDesc": {
+    "description": "What the Duas page holds, on its About tab entry."
+  },
+  "duasOpen": "Duas",
+  "@duasOpen": {
+    "description": "Button on a fasting day that opens the Duas page for that kind of fast."
+  },
+  "duasFilterAll": "All",
+  "@duasFilterAll": {
+    "description": "Filter chip on the Duas page that shows the texts for every fast."
+  },
+  "duaSectionIntention": "Intention",
+  "@duaSectionIntention": {
+    "description": "Section heading on the Duas page."
+  },
+  "duaSectionBreakingTheFast": "Breaking the fast",
+  "@duaSectionBreakingTheFast": {
+    "description": "Section heading on the Duas page."
+  },
+  "duaSectionLaylatAlQadr": "Laylat al-Qadr",
+  "@duaSectionLaylatAlQadr": {
+    "description": "Section heading on the Duas page."
+  },
+  "duaSectionVirtue": "The virtue of each fast",
+  "@duaSectionVirtue": {
+    "description": "Section heading on the Duas page for the hadith on each kind of fast."
+  },
+  "duaIntentionTitle": "The intention (niyyah)",
+  "@duaIntentionTitle": {
+    "description": "Title of the hadith on intention."
+  },
+  "duaIntentionNote": "The intention to fast is made in the heart; it does not need to be said aloud.",
+  "@duaIntentionNote": {
+    "description": "Note under the hadith on intention."
+  },
+  "duaIftarTitle": "When breaking the fast",
+  "@duaIftarTitle": {
+    "description": "Title of the dua said when breaking the fast."
+  },
+  "duaIftarAsGuestTitle": "When breaking the fast at someone's home",
+  "@duaIftarAsGuestTitle": {
+    "description": "Title of the dua for the hosts when breaking the fast at their home."
+  },
+  "duaLaylatAlQadrTitle": "On Laylat al-Qadr",
+  "@duaLaylatAlQadrTitle": {
+    "description": "Title of the dua for Laylat al-Qadr."
+  },
+  "duaSources": "Source: {sources}",
+  "@duaSources": {
+    "description": "The hadith references under a text.",
+    "placeholders": {
+      "sources": {
+        "type": "String",
+        "example": "Sahih Muslim 1162"
+      }
+    }
+  },
+  "duaSourceSeparator": "; ",
+  "@duaSourceSeparator": {
+    "description": "Separator between two hadith references, including its spacing."
+  },
+  "hadithSourceBukhari": "Sahih al-Bukhari {number}",
+  "@hadithSourceBukhari": {
+    "description": "A hadith reference.",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "38"
+      }
+    }
+  },
+  "hadithSourceMuslim": "Sahih Muslim {number}",
+  "@hadithSourceMuslim": {
+    "description": "A hadith reference.",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "1162"
+      }
+    }
+  },
+  "hadithSourceAbuDawud": "Sunan Abi Dawud {number}",
+  "@hadithSourceAbuDawud": {
+    "description": "A hadith reference.",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "2357"
+      }
+    }
+  },
+  "hadithSourceTirmidhi": "Jami` at-Tirmidhi {number}",
+  "@hadithSourceTirmidhi": {
+    "description": "A hadith reference.",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "747"
+      }
+    }
+  },
+  "hadithSourceNasai": "Sunan an-Nasa'i {number}",
+  "@hadithSourceNasai": {
+    "description": "A hadith reference.",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "2420"
+      }
+    }
+  },
+  "hadithSourceIbnMajah": "Sunan Ibn Majah {number}",
+  "@hadithSourceIbnMajah": {
+    "description": "A hadith reference.",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "3850"
+      }
+    }
+  },
+  "duaCopy": "Copy {title}",
+  "@duaCopy": {
+    "description": "Tooltip and screen-reader label of the button that copies a dua.",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "duaCopied": "Copied",
+  "@duaCopied": {
+    "description": "Shown after a dua is copied to the clipboard."
+  }
 }

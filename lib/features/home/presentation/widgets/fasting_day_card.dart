@@ -11,6 +11,7 @@ class FastingDayCard extends StatelessWidget {
     required this.isReminderOn,
     required this.onToggleReminder,
     this.extraAction,
+    this.dayAction,
     super.key,
   });
 
@@ -22,6 +23,9 @@ class FastingDayCard extends StatelessWidget {
 
   /// Shown after the reminder button, e.g. to mark today as fasted.
   final Widget? extraAction;
+
+  /// Shown last, on every card, e.g. to open the day's duas.
+  final Widget? dayAction;
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +91,7 @@ class FastingDayCard extends StatelessWidget {
                   onPressed: onToggleReminder,
                 ),
                 ?extraAction,
+                ?dayAction,
               ],
             ),
           ],

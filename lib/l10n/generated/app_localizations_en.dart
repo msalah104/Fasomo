@@ -813,4 +813,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationTonePreviewFailed => 'Could not play the sound.';
+
+  @override
+  String get duasTitle => 'Duas and intentions';
+
+  @override
+  String get duasAboutDesc =>
+      'The intention, the duas for breaking the fast and for Laylat al-Qadr, and the hadith behind each fasting day, with their sources. Available offline.';
+
+  @override
+  String get duasOpen => 'Duas';
+
+  @override
+  String get duasFilterAll => 'All';
+
+  @override
+  String get duaSectionIntention => 'Intention';
+
+  @override
+  String get duaSectionBreakingTheFast => 'Breaking the fast';
+
+  @override
+  String get duaSectionLaylatAlQadr => 'Laylat al-Qadr';
+
+  @override
+  String get duaSectionVirtue => 'The virtue of each fast';
+
+  @override
+  String get duaIntentionTitle => 'The intention (niyyah)';
+
+  @override
+  String get duaIntentionNote =>
+      'The intention to fast is made in the heart; it does not need to be said aloud.';
+
+  @override
+  String get duaIftarTitle => 'When breaking the fast';
+
+  @override
+  String get duaIftarAsGuestTitle =>
+      'When breaking the fast at someone\'s home';
+
+  @override
+  String get duaLaylatAlQadrTitle => 'On Laylat al-Qadr';
+
+  @override
+  String duaSources(String sources) {
+    return 'Source: $sources';
+  }
+
+  @override
+  String get duaSourceSeparator => '; ';
+
+  @override
+  String hadithSourceBukhari(String number) {
+    return 'Sahih al-Bukhari $number';
+  }
+
+  @override
+  String hadithSourceMuslim(String number) {
+    return 'Sahih Muslim $number';
+  }
+
+  @override
+  String hadithSourceAbuDawud(String number) {
+    return 'Sunan Abi Dawud $number';
+  }
+
+  @override
+  String hadithSourceTirmidhi(String number) {
+    return 'Jami` at-Tirmidhi $number';
+  }
+
+  @override
+  String hadithSourceNasai(String number) {
+    return 'Sunan an-Nasa\'i $number';
+  }
+
+  @override
+  String hadithSourceIbnMajah(String number) {
+    return 'Sunan Ibn Majah $number';
+  }
+
+  @override
+  String duaCopy(String title) {
+    return 'Copy $title';
+  }
+
+  @override
+  String get duaCopied => 'Copied';
 }

@@ -840,4 +840,90 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notificationTonePreviewFailed => 'تعذّر تشغيل الصوت.';
+
+  @override
+  String get duasTitle => 'الأدعية والنية';
+
+  @override
+  String get duasAboutDesc =>
+      'النية، ودعاء الإفطار وليلة القدر، والحديث الوارد في كل يوم صيام، مع مصادرها. متاحة دون اتصال.';
+
+  @override
+  String get duasOpen => 'الأدعية';
+
+  @override
+  String get duasFilterAll => 'الكل';
+
+  @override
+  String get duaSectionIntention => 'النية';
+
+  @override
+  String get duaSectionBreakingTheFast => 'الإفطار';
+
+  @override
+  String get duaSectionLaylatAlQadr => 'ليلة القدر';
+
+  @override
+  String get duaSectionVirtue => 'فضل كل صيام';
+
+  @override
+  String get duaIntentionTitle => 'النية';
+
+  @override
+  String get duaIntentionNote => 'النية محلها القلب، ولا يلزم التلفظ بها.';
+
+  @override
+  String get duaIftarTitle => 'عند الإفطار';
+
+  @override
+  String get duaIftarAsGuestTitle => 'إذا أفطرت عند أحد';
+
+  @override
+  String get duaLaylatAlQadrTitle => 'في ليلة القدر';
+
+  @override
+  String duaSources(String sources) {
+    return 'المصدر: $sources';
+  }
+
+  @override
+  String get duaSourceSeparator => '؛ ';
+
+  @override
+  String hadithSourceBukhari(String number) {
+    return 'صحيح البخاري $number';
+  }
+
+  @override
+  String hadithSourceMuslim(String number) {
+    return 'صحيح مسلم $number';
+  }
+
+  @override
+  String hadithSourceAbuDawud(String number) {
+    return 'سنن أبي داود $number';
+  }
+
+  @override
+  String hadithSourceTirmidhi(String number) {
+    return 'جامع الترمذي $number';
+  }
+
+  @override
+  String hadithSourceNasai(String number) {
+    return 'سنن النسائي $number';
+  }
+
+  @override
+  String hadithSourceIbnMajah(String number) {
+    return 'سنن ابن ماجه $number';
+  }
+
+  @override
+  String duaCopy(String title) {
+    return 'نسخ $title';
+  }
+
+  @override
+  String get duaCopied => 'تم النسخ';
 }

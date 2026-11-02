@@ -1333,6 +1333,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not play the sound.'**
   String get notificationTonePreviewFailed;
+
+  /// Title of the Duas page and its entry on the About tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Duas and intentions'**
+  String get duasTitle;
+
+  /// What the Duas page holds, on its About tab entry.
+  ///
+  /// In en, this message translates to:
+  /// **'The intention, the duas for breaking the fast and for Laylat al-Qadr, and the hadith behind each fasting day, with their sources. Available offline.'**
+  String get duasAboutDesc;
+
+  /// Button on a fasting day that opens the Duas page for that kind of fast.
+  ///
+  /// In en, this message translates to:
+  /// **'Duas'**
+  String get duasOpen;
+
+  /// Filter chip on the Duas page that shows the texts for every fast.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get duasFilterAll;
+
+  /// Section heading on the Duas page.
+  ///
+  /// In en, this message translates to:
+  /// **'Intention'**
+  String get duaSectionIntention;
+
+  /// Section heading on the Duas page.
+  ///
+  /// In en, this message translates to:
+  /// **'Breaking the fast'**
+  String get duaSectionBreakingTheFast;
+
+  /// Section heading on the Duas page.
+  ///
+  /// In en, this message translates to:
+  /// **'Laylat al-Qadr'**
+  String get duaSectionLaylatAlQadr;
+
+  /// Section heading on the Duas page for the hadith on each kind of fast.
+  ///
+  /// In en, this message translates to:
+  /// **'The virtue of each fast'**
+  String get duaSectionVirtue;
+
+  /// Title of the hadith on intention.
+  ///
+  /// In en, this message translates to:
+  /// **'The intention (niyyah)'**
+  String get duaIntentionTitle;
+
+  /// Note under the hadith on intention.
+  ///
+  /// In en, this message translates to:
+  /// **'The intention to fast is made in the heart; it does not need to be said aloud.'**
+  String get duaIntentionNote;
+
+  /// Title of the dua said when breaking the fast.
+  ///
+  /// In en, this message translates to:
+  /// **'When breaking the fast'**
+  String get duaIftarTitle;
+
+  /// Title of the dua for the hosts when breaking the fast at their home.
+  ///
+  /// In en, this message translates to:
+  /// **'When breaking the fast at someone\'s home'**
+  String get duaIftarAsGuestTitle;
+
+  /// Title of the dua for Laylat al-Qadr.
+  ///
+  /// In en, this message translates to:
+  /// **'On Laylat al-Qadr'**
+  String get duaLaylatAlQadrTitle;
+
+  /// The hadith references under a text.
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {sources}'**
+  String duaSources(String sources);
+
+  /// Separator between two hadith references, including its spacing.
+  ///
+  /// In en, this message translates to:
+  /// **'; '**
+  String get duaSourceSeparator;
+
+  /// A hadith reference.
+  ///
+  /// In en, this message translates to:
+  /// **'Sahih al-Bukhari {number}'**
+  String hadithSourceBukhari(String number);
+
+  /// A hadith reference.
+  ///
+  /// In en, this message translates to:
+  /// **'Sahih Muslim {number}'**
+  String hadithSourceMuslim(String number);
+
+  /// A hadith reference.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunan Abi Dawud {number}'**
+  String hadithSourceAbuDawud(String number);
+
+  /// A hadith reference.
+  ///
+  /// In en, this message translates to:
+  /// **'Jami` at-Tirmidhi {number}'**
+  String hadithSourceTirmidhi(String number);
+
+  /// A hadith reference.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunan an-Nasa\'i {number}'**
+  String hadithSourceNasai(String number);
+
+  /// A hadith reference.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunan Ibn Majah {number}'**
+  String hadithSourceIbnMajah(String number);
+
+  /// Tooltip and screen-reader label of the button that copies a dua.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy {title}'**
+  String duaCopy(String title);
+
+  /// Shown after a dua is copied to the clipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get duaCopied;
 }
 
 class _AppLocalizationsDelegate

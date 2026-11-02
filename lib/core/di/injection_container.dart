@@ -22,6 +22,10 @@ import 'package:fasomo/features/calendar/domain/usecases/get_hijri_year.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_show_gregorian_days.dart';
 import 'package:fasomo/features/calendar/domain/usecases/save_show_gregorian_days.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
+import 'package:fasomo/features/duas/data/repositories/dua_repository_impl.dart';
+import 'package:fasomo/features/duas/domain/repositories/dua_repository.dart';
+import 'package:fasomo/features/duas/domain/usecases/get_duas.dart';
+import 'package:fasomo/features/duas/presentation/bloc/duas_bloc.dart';
 import 'package:fasomo/features/home/data/repositories/fasting_repository_impl.dart';
 import 'package:fasomo/features/home/domain/repositories/fasting_repository.dart';
 import 'package:fasomo/features/home/domain/usecases/get_current_hijri_date.dart';
@@ -215,6 +219,10 @@ Future<void> init({PlatformServices? platform}) async {
     ..registerLazySingleton<FastLogLocalDataSource>(
       () => FastLogLocalDataSourceImpl(sharedPreferences: sl()),
     )
+    // --- Duas ---
+    ..registerFactory(() => DuasBloc(getDuas: sl()))
+    ..registerLazySingleton(() => GetDuas(sl()))
+    ..registerLazySingleton<DuaRepository>(DuaRepositoryImpl.new)
     // --- Settings ---
     ..registerFactory(() => LanguageBloc(getLanguage: sl(), saveLanguage: sl()))
     ..registerLazySingleton(() => GetLanguage(sl()))

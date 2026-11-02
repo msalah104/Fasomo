@@ -72,6 +72,7 @@ void main() {
               progressSection: const Text('PROGRESS'),
               todayActionBuilder: (date, hijri) =>
                   Text('TODAY ${date.day} ${hijri.day}'),
+              dayActionBuilder: (day) => Text('DAY ${day.daysUntil}'),
             ),
           ),
         ),
@@ -163,5 +164,16 @@ void main() {
     await tester.scrollUntilVisible(find.text('TODAY 28 17'), 200);
     expect(find.text('TODAY 28 17'), findsOneWidget);
     expect(find.textContaining('TODAY', skipOffstage: false), findsOneWidget);
+  });
+
+  testWidgets('every fasting-day card shows the day action', (tester) async {
+    await withClock(Clock.fixed(DateTime(2026, 10, 28, 10)), () async {
+      await pumpHome(tester, brightness: Brightness.light);
+    });
+
+    for (final offset in [1, 5, 8, 12, 15]) {
+      await tester.scrollUntilVisible(find.text('DAY $offset'), 200);
+      expect(find.text('DAY $offset'), findsOneWidget);
+    }
   });
 }

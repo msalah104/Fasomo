@@ -2,6 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/calendar/hijri_date.dart';
+import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/sky_period.dart';
 import 'package:fasomo/features/home/presentation/widgets/fasting_day_card.dart';
@@ -27,6 +28,7 @@ class HomePage extends StatelessWidget {
     this.headerActionBuilder,
     this.progressSection,
     this.todayActionBuilder,
+    this.dayActionBuilder,
     super.key,
   });
 
@@ -41,6 +43,9 @@ class HomePage extends StatelessWidget {
 
   /// Builds an extra action for today's fasting-day card.
   final TodayActionBuilder? todayActionBuilder;
+
+  /// Builds actions shown on every fasting-day card, e.g. its duas.
+  final FastingDayActionBuilder? dayActionBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +63,7 @@ class HomePage extends StatelessWidget {
             headerActionBuilder: headerActionBuilder,
             progressSection: progressSection,
             todayActionBuilder: todayActionBuilder,
+            dayActionBuilder: dayActionBuilder,
           ),
         };
       },
@@ -71,6 +77,9 @@ typedef TodayActionBuilder = Widget Function(
   HijriDate hijriDate,
 );
 
+/// Builds an action for any upcoming fasting day.
+typedef FastingDayActionBuilder = Widget Function(FastingDay day);
+
 class _HomeContent extends StatelessWidget {
   const new({
     required this.state,
@@ -79,6 +88,7 @@ class _HomeContent extends StatelessWidget {
     required this.headerActionBuilder,
     required this.progressSection,
     required this.todayActionBuilder,
+    required this.dayActionBuilder,
   });
 
   final HomeState state;
@@ -87,6 +97,7 @@ class _HomeContent extends StatelessWidget {
   final Widget Function(Color color)? headerActionBuilder;
   final Widget? progressSection;
   final TodayActionBuilder? todayActionBuilder;
+  final FastingDayActionBuilder? dayActionBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -157,6 +168,7 @@ class _HomeContent extends StatelessWidget {
                         isReminderOn: isReminderOn,
                         onToggleReminder: onToggleReminder,
                         todayActionBuilder: todayActionBuilder,
+                        dayActionBuilder: dayActionBuilder,
                       ),
                     ),
                   ],
@@ -177,12 +189,14 @@ class _UpcomingList extends StatelessWidget {
     required this.isReminderOn,
     required this.onToggleReminder,
     required this.todayActionBuilder,
+    required this.dayActionBuilder,
   });
 
   final HomeState state;
   final bool Function(FastingType type) isReminderOn;
   final ValueChanged<FastingType> onToggleReminder;
   final TodayActionBuilder? todayActionBuilder;
+  final FastingDayActionBuilder? dayActionBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -225,6 +239,7 @@ class _UpcomingList extends StatelessWidget {
               extraAction: day.daysUntil == 0
                   ? todayActionBuilder?.call(day.gregorianDate, day.hijriDate)
                   : null,
+              dayAction: dayActionBuilder?.call(day),
             ),
       ],
     );

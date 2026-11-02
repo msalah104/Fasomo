@@ -1,9 +1,14 @@
 import 'package:clock/clock.dart';
+import 'package:fasomo/core/calendar/fasting_type.dart';
+import 'package:fasomo/core/di/injection_container.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/presentation/localized_notification_copy.dart';
 import 'package:fasomo/features/about/presentation/pages/about_page.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:fasomo/features/duas/presentation/bloc/duas_bloc.dart';
+import 'package:fasomo/features/duas/presentation/pages/duas_page.dart';
+import 'package:fasomo/features/duas/presentation/widgets/duas_button.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
@@ -151,7 +156,7 @@ class _AppShellState extends State<AppShell> {
             _HomeTab(),
             _CalendarTab(),
             ReminderSettingsPage(extraSection: QadaReminderCard()),
-            AboutPage(),
+            _AboutTab(),
           ],
         ),
         bottomNavigationBar: NavigationBar(
@@ -204,7 +209,47 @@ void _openSettings(BuildContext context) {
   );
 }
 
-/// Home wired to the reminders and tracker features.
+/// Opens the duas and intentions, narrowed to [type] when one is given.
+void _openDuas(BuildContext context, FastingType? type) {
+  Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      builder: (_) => BlocProvider(
+        create: (_) => sl<DuasBloc>()..add(DuasFilterChanged(type)),
+        child: const DuasPage(),
+      ),
+    ),
+  );
+}
+
+/// What every fasting day offers, on Home's cards and in the calendar's day
+/// sheet: its duas.
+class _FastingDayLinks extends StatelessWidget {
+  const new({required this.type});
+
+  /// The day's primary type.
+  final FastingType type;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [DuasButton(onPressed: () => _openDuas(context, type))],
+    );
+  }
+}
+
+/// About wired to the duas feature.
+class _AboutTab extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    return AboutPage(onOpenDuas: () => _openDuas(context, null));
+  }
+}
+
+/// Home wired to the reminders, tracker and duas features.
 class _HomeTab extends StatelessWidget {
   const new();
 
@@ -220,11 +265,12 @@ class _HomeTab extends StatelessWidget {
       progressSection: const TrackerSummaryCard(),
       todayActionBuilder: (date, hijri) =>
           FastedToggle(date: date, hijri: hijri),
+      dayActionBuilder: (day) => _FastingDayLinks(type: day.primaryType),
     );
   }
 }
 
-/// Calendar wired to the tracker feature.
+/// Calendar wired to the tracker and duas features.
 class _CalendarTab extends StatelessWidget {
   const new();
 
@@ -236,14 +282,26 @@ class _CalendarTab extends StatelessWidget {
         final mark? => TrackerDayBadge(mark: mark),
         null => null,
       },
-      dayActionBuilder: (day) =>
-          TrackerDayActions.appliesTo(
+      dayActionBuilder: (day) {
+        final actions = [
+          if (TrackerDayActions.appliesTo(
             date: day.gregorianDate,
             hijri: day.hijriDate,
             today: clock.now(),
-          )
-          ? TrackerDayActions(date: day.gregorianDate, hijri: day.hijriDate)
-          : null,
+          ))
+            TrackerDayActions(date: day.gregorianDate, hijri: day.hijriDate),
+          if (day.fastingTypes.firstOrNull case final type?)
+            _FastingDayLinks(type: type),
+        ];
+        return actions.isEmpty
+            ? null
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 8,
+                children: actions,
+              );
+      },
     );
   }
 }
