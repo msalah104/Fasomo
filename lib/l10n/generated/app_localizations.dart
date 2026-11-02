@@ -1530,6 +1530,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No city matches “{query}”. Try a nearby big city.'**
   String cityPickerNoResults(String query);
+
+  /// Under the Home sky: today's sunrise time.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunrise {time}'**
+  String skySunrise(String time);
+
+  /// Under the Home sky: today's sunset time.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunset {time}'**
+  String skySunset(String time);
+
+  /// Under the Home sky at night: when the moon rose or will rise.
+  ///
+  /// In en, this message translates to:
+  /// **'Moonrise {time}'**
+  String skyMoonrise(String time);
+
+  /// No description provided for @skyDaytime.
+  ///
+  /// In en, this message translates to:
+  /// **'Daytime'**
+  String get skyDaytime;
+
+  /// No description provided for @skyNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Night'**
+  String get skyNight;
+
+  /// No description provided for @skyDawn.
+  ///
+  /// In en, this message translates to:
+  /// **'Dawn'**
+  String get skyDawn;
+
+  /// No description provided for @skyDusk.
+  ///
+  /// In en, this message translates to:
+  /// **'Dusk'**
+  String get skyDusk;
+
+  /// Screen-reader description of the Home sky: the place it is drawn for.
+  ///
+  /// In en, this message translates to:
+  /// **'Sky over {place}'**
+  String skyOver(String place);
+
+  /// Like skyOver, when the user has not set a location yet.
+  ///
+  /// In en, this message translates to:
+  /// **'Sky over {place}, an approximate location'**
+  String skyOverApproximate(String place);
+
+  /// No description provided for @skySunUp.
+  ///
+  /// In en, this message translates to:
+  /// **'The sun is up'**
+  String get skySunUp;
+
+  /// Screen-reader description of the moon in the Home sky.
+  ///
+  /// In en, this message translates to:
+  /// **'The moon is up: {phase}, {percent} lit'**
+  String skyMoonUp(String phase, String percent);
+
+  /// Screen-reader description of the moon when it has set.
+  ///
+  /// In en, this message translates to:
+  /// **'The moon is below the horizon: {phase}, {percent} lit'**
+  String skyMoonDown(String phase, String percent);
+
+  /// Moon phase name, used mid-sentence (lower case).
+  ///
+  /// In en, this message translates to:
+  /// **'new moon'**
+  String get moonNew;
+
+  /// No description provided for @moonWaxingCrescent.
+  ///
+  /// In en, this message translates to:
+  /// **'waxing crescent'**
+  String get moonWaxingCrescent;
+
+  /// No description provided for @moonFirstQuarter.
+  ///
+  /// In en, this message translates to:
+  /// **'first quarter'**
+  String get moonFirstQuarter;
+
+  /// No description provided for @moonWaxingGibbous.
+  ///
+  /// In en, this message translates to:
+  /// **'waxing gibbous'**
+  String get moonWaxingGibbous;
+
+  /// No description provided for @moonFull.
+  ///
+  /// In en, this message translates to:
+  /// **'full moon'**
+  String get moonFull;
+
+  /// No description provided for @moonWaningGibbous.
+  ///
+  /// In en, this message translates to:
+  /// **'waning gibbous'**
+  String get moonWaningGibbous;
+
+  /// No description provided for @moonLastQuarter.
+  ///
+  /// In en, this message translates to:
+  /// **'last quarter'**
+  String get moonLastQuarter;
+
+  /// No description provided for @moonWaningCrescent.
+  ///
+  /// In en, this message translates to:
+  /// **'waning crescent'**
+  String get moonWaningCrescent;
+
+  /// Location chip on the Home sky before the user sets a location.
+  ///
+  /// In en, this message translates to:
+  /// **'Approximate · Set location'**
+  String get locationApproximate;
+
+  /// Location chip for a device location with no listed city nearby.
+  ///
+  /// In en, this message translates to:
+  /// **'My location'**
+  String get locationMyLocation;
+
+  /// No description provided for @locationLocating.
+  ///
+  /// In en, this message translates to:
+  /// **'Locating…'**
+  String get locationLocating;
+
+  /// Screen-reader hint for the location chip.
+  ///
+  /// In en, this message translates to:
+  /// **'Change location'**
+  String get locationChipHint;
+
+  /// No description provided for @locationSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your location'**
+  String get locationSheetTitle;
+
+  /// No description provided for @locationSheetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The sky is drawn for your approximate location. It stays on this device.'**
+  String get locationSheetBody;
+
+  /// No description provided for @locationUseDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my location'**
+  String get locationUseDevice;
+
+  /// No description provided for @locationUseDeviceDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Approximate, to about a kilometre. Asks for permission.'**
+  String get locationUseDeviceDetail;
+
+  /// No description provided for @locationChooseCity.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a city'**
+  String get locationChooseCity;
+
+  /// No description provided for @locationChooseCityDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Works offline, with no permission needed'**
+  String get locationChooseCityDetail;
+
+  /// No description provided for @locationDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission wasn\'t given. You can choose a city instead.'**
+  String get locationDenied;
+
+  /// No description provided for @locationDeniedForever.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is blocked for Fasomo. Allow it in Settings, or choose a city.'**
+  String get locationDeniedForever;
+
+  /// No description provided for @locationServiceOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Location services are off. Turn them on, or choose a city.'**
+  String get locationServiceOff;
+
+  /// No description provided for @locationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t find your location. Try again, or choose a city.'**
+  String get locationUnavailable;
+
+  /// Snackbar action that opens the system settings for this app.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get openSettings;
 }
 
 class _AppLocalizationsDelegate

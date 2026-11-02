@@ -6,7 +6,8 @@ final class CountryName {
   final String ar;
 
   /// The name in [languageCode], English unless it is Arabic.
-  String nameFor(String languageCode) => languageCode == 'ar' ? ar : en;
+  String nameFor(String languageCode) =>
+      languageCode.startsWith('ar') ? ar : en;
 }
 
 /// Names of every country in `bundledCities`, by ISO 3166-1 alpha-2 code.

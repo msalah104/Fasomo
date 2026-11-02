@@ -812,5 +812,126 @@
         "example": "Springfield"
       }
     }
+  },
+  "skySunrise": "Sunrise {time}",
+  "@skySunrise": {
+    "description": "Under the Home sky: today's sunrise time.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "6:04 AM"
+      }
+    }
+  },
+  "skySunset": "Sunset {time}",
+  "@skySunset": {
+    "description": "Under the Home sky: today's sunset time.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "5:12 PM"
+      }
+    }
+  },
+  "skyMoonrise": "Moonrise {time}",
+  "@skyMoonrise": {
+    "description": "Under the Home sky at night: when the moon rose or will rise.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "7:32 PM"
+      }
+    }
+  },
+  "skyDaytime": "Daytime",
+  "skyNight": "Night",
+  "skyDawn": "Dawn",
+  "skyDusk": "Dusk",
+  "skyOver": "Sky over {place}",
+  "@skyOver": {
+    "description": "Screen-reader description of the Home sky: the place it is drawn for.",
+    "placeholders": {
+      "place": {
+        "type": "String",
+        "example": "Cairo"
+      }
+    }
+  },
+  "skyOverApproximate": "Sky over {place}, an approximate location",
+  "@skyOverApproximate": {
+    "description": "Like skyOver, when the user has not set a location yet.",
+    "placeholders": {
+      "place": {
+        "type": "String",
+        "example": "Makkah"
+      }
+    }
+  },
+  "skySunUp": "The sun is up",
+  "skyMoonUp": "The moon is up: {phase}, {percent} lit",
+  "@skyMoonUp": {
+    "description": "Screen-reader description of the moon in the Home sky.",
+    "placeholders": {
+      "phase": {
+        "type": "String",
+        "example": "waxing crescent"
+      },
+      "percent": {
+        "type": "String",
+        "example": "23%"
+      }
+    }
+  },
+  "skyMoonDown": "The moon is below the horizon: {phase}, {percent} lit",
+  "@skyMoonDown": {
+    "description": "Screen-reader description of the moon when it has set.",
+    "placeholders": {
+      "phase": {
+        "type": "String",
+        "example": "waning gibbous"
+      },
+      "percent": {
+        "type": "String",
+        "example": "81%"
+      }
+    }
+  },
+  "moonNew": "new moon",
+  "@moonNew": {
+    "description": "Moon phase name, used mid-sentence (lower case)."
+  },
+  "moonWaxingCrescent": "waxing crescent",
+  "moonFirstQuarter": "first quarter",
+  "moonWaxingGibbous": "waxing gibbous",
+  "moonFull": "full moon",
+  "moonWaningGibbous": "waning gibbous",
+  "moonLastQuarter": "last quarter",
+  "moonWaningCrescent": "waning crescent",
+  "locationApproximate": "Approximate · Set location",
+  "@locationApproximate": {
+    "description": "Location chip on the Home sky before the user sets a location."
+  },
+  "locationMyLocation": "My location",
+  "@locationMyLocation": {
+    "description": "Location chip for a device location with no listed city nearby."
+  },
+  "locationLocating": "Locating…",
+  "locationChipHint": "Change location",
+  "@locationChipHint": {
+    "description": "Screen-reader hint for the location chip."
+  },
+  "locationSheetTitle": "Set your location",
+  "locationSheetBody": "The sky is drawn for your approximate location. It stays on this device.",
+  "locationUseDevice": "Use my location",
+  "locationUseDeviceDetail": "Approximate, to about a kilometre. Asks for permission.",
+  "locationChooseCity": "Choose a city",
+  "locationChooseCityDetail": "Works offline, with no permission needed",
+  "locationDenied": "Location permission wasn't given. You can choose a city instead.",
+  "locationDeniedForever": "Location is blocked for Fasomo. Allow it in Settings, or choose a city.",
+  "locationServiceOff": "Location services are off. Turn them on, or choose a city.",
+  "locationUnavailable": "Couldn't find your location. Try again, or choose a city.",
+  "openSettings": "Settings",
+  "@openSettings": {
+    "description": "Snackbar action that opens the system settings for this app."
   }
 }

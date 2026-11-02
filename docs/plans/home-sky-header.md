@@ -1,5 +1,49 @@
 # Home sky header — implementation plan
 
+> **Status: Built** (November 2026). It shipped close to this plan, with these
+> deviations:
+>
+> - **No `dart_suncalc`** (unmaintained, SDK < 3). The astronomy is pure Dart in
+>   `lib/core/astronomy/`, shared with the coming prayer times: NOAA/Meeus for
+>   the sun (position, declination, equation of time, solar noon, sunrise and
+>   sunset, `sunTimeForAngle` for any altitude such as −18°), and the
+>   Astronomical Almanac's low-precision series for the moon (position,
+>   parallactic angle, rises and sets, lit fraction, phase, bright-limb angle).
+>   Tested against PyEphem. So there is no `SkyCalculator` interface or data
+>   adapter: `buildSkyScene` calls `core/astronomy` directly, and `GetSkyScene`
+>   is the `Clock` plus `LocationRepository`.
+> - **`LocationRepository.current()` is synchronous** (SharedPreferences is in
+>   memory), so `SkyBloc` starts with the real scene and the first frame never
+>   shows the wrong sky.
+> - **`LocationSource` is `device | manual | fallback`**: a saved point keeps
+>   where it came from, so there is no `cached` source. `GeoPoint` carries an
+>   optional bundled `City` (English and Arabic names, country code).
+> - **The device is asked only when the user taps "Use my location"**, with no
+>   daily background refresh. The fix is low accuracy with a 10 s limit, then
+>   the last known position.
+> - **The manual city picker (phase 2) shipped now**: 317 bundled cities,
+>   searchable in English and Arabic, coordinates checked against GeoNames.
+> - **The body sits on the drawn arc**: `y = sin(πx)` rather than
+>   altitude ÷ peak, so the sun and moon are exactly on the dotted path.
+>   Altitude ÷ peak and the hour angle are used only when there is no rise or
+>   set that day (polar day), and then no arc is drawn.
+> - **The moon's tilt is real**: the bright-limb angle minus the parallactic
+>   angle, rather than "lit on the right while waxing". It mirrors with the
+>   arc in right-to-left locales.
+> - **Times row**: by day, sunrise and sunset; by night, the moon's rise (of
+>   the moon in the sky, or the next one) and the next sunrise. Times are in
+>   the device's time zone, even for a picked city elsewhere.
+> - **One sky palette for both themes**: `SkyPalette` in `lib/core/theme/`
+>   follows the sun, as the splash does, so there are no dark-theme variants.
+>   Contrast is asserted in tests at every sun altitude.
+> - **No golden images**: the repo has no golden setup. The painter is tested
+>   by rendering to pixels, and the Semantics label is tested.
+> - **The static header is gone**: `assets/images/sky_*.png`, `SkyArt`,
+>   `skyArtAt` and `SkyHero` were removed. The skyline geometry is shared with
+>   the splash in `lib/core/presentation/skyline_art.dart`.
+> - **iOS**: English usage string in `Info.plist` only; the iOS project has no
+>   localized `InfoPlist.strings` yet.
+
 A live sky at the top of the Home tab. Each time the app opens, the sun (by day)
 or the moon (by night) sits where it really is in the sky for the user's time and
 place, and the moon shows its real phase for the current Hijri day.

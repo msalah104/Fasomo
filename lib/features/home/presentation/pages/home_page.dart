@@ -1,13 +1,13 @@
-import 'package:clock/clock.dart';
 import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/calendar/hijri_date.dart';
+import 'package:fasomo/core/theme/sky_palette.dart';
 import 'package:fasomo/features/home/domain/entities/fasting_day.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
-import 'package:fasomo/features/home/presentation/sky_period.dart';
+import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:fasomo/features/home/presentation/widgets/fasting_day_card.dart';
 import 'package:fasomo/features/home/presentation/widgets/month_progress_bar.dart';
-import 'package:fasomo/features/home/presentation/widgets/sky_hero.dart';
+import 'package:fasomo/features/home/presentation/widgets/sky_header.dart';
 import 'package:fasomo/features/home/presentation/widgets/week_header_delegate.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +21,7 @@ import 'package:intl/intl.dart';
 /// Reminder state, the header action, the progress section and today's
 /// action come from outside so this feature does not depend on the
 /// reminders, settings or tracker features; the app shell wires them together.
+/// Needs a [HomeBloc] and a [SkyBloc] above it.
 class HomePage extends StatelessWidget {
   const new({
     required this.isReminderOn,
@@ -103,17 +104,21 @@ class _HomeContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentDate = state.currentDate;
     final selectedDate = state.selectedDate;
-    final art = skyArtAt(clock.now());
+    // The sky's colours follow the real sun; they change a few times an
+    // hour at most, so only those changes rebuild the page.
+    final palette = context.select<SkyBloc, SkyPalette>(
+      (sky) => SkyPalette.forSunAltitude(sky.state.scene.sun.altitudeDegrees),
+    );
     final bloc = context.read<HomeBloc>();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: art.overlayStyle,
+      value: palette.overlayStyle,
       child: Column(
         children: [
           // The status bar sits on the sky's top colour, so the sky reads as
           // full-bleed and the pinned week strip has a band to sit under.
           ColoredBox(
-            color: art.top,
+            color: palette.skyTop,
             child: SizedBox(
               height: MediaQuery.paddingOf(context).top,
               width: double.infinity,
@@ -124,15 +129,18 @@ class _HomeContent extends StatelessWidget {
               context: context,
               removeTop: true,
               child: RefreshIndicator(
-                onRefresh: () async => bloc.add(const RefreshHomeData()),
+                onRefresh: () async {
+                  bloc.add(const RefreshHomeData());
+                  context.read<SkyBloc>().add(const SkyTicked());
+                },
                 child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [
                     if (currentDate != null && selectedDate != null) ...[
                       SliverToBoxAdapter(
-                        child: SkyHero(
+                        child: SkyHeader(
                           dateInfo: currentDate,
-                          art: art,
+                          palette: palette,
                           actionBuilder: headerActionBuilder,
                         ),
                       ),
@@ -142,7 +150,7 @@ class _HomeContent extends StatelessWidget {
                           week: currentDate.week,
                           selectedDate: selectedDate,
                           onDaySelected: (date) => bloc.add(DaySelected(date)),
-                          art: art,
+                          palette: palette,
                           textScaler: MediaQuery.textScalerOf(context),
                         ),
                       ),

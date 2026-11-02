@@ -948,4 +948,130 @@ class AppLocalizationsEn extends AppLocalizations {
   String cityPickerNoResults(String query) {
     return 'No city matches “$query”. Try a nearby big city.';
   }
+
+  @override
+  String skySunrise(String time) {
+    return 'Sunrise $time';
+  }
+
+  @override
+  String skySunset(String time) {
+    return 'Sunset $time';
+  }
+
+  @override
+  String skyMoonrise(String time) {
+    return 'Moonrise $time';
+  }
+
+  @override
+  String get skyDaytime => 'Daytime';
+
+  @override
+  String get skyNight => 'Night';
+
+  @override
+  String get skyDawn => 'Dawn';
+
+  @override
+  String get skyDusk => 'Dusk';
+
+  @override
+  String skyOver(String place) {
+    return 'Sky over $place';
+  }
+
+  @override
+  String skyOverApproximate(String place) {
+    return 'Sky over $place, an approximate location';
+  }
+
+  @override
+  String get skySunUp => 'The sun is up';
+
+  @override
+  String skyMoonUp(String phase, String percent) {
+    return 'The moon is up: $phase, $percent lit';
+  }
+
+  @override
+  String skyMoonDown(String phase, String percent) {
+    return 'The moon is below the horizon: $phase, $percent lit';
+  }
+
+  @override
+  String get moonNew => 'new moon';
+
+  @override
+  String get moonWaxingCrescent => 'waxing crescent';
+
+  @override
+  String get moonFirstQuarter => 'first quarter';
+
+  @override
+  String get moonWaxingGibbous => 'waxing gibbous';
+
+  @override
+  String get moonFull => 'full moon';
+
+  @override
+  String get moonWaningGibbous => 'waning gibbous';
+
+  @override
+  String get moonLastQuarter => 'last quarter';
+
+  @override
+  String get moonWaningCrescent => 'waning crescent';
+
+  @override
+  String get locationApproximate => 'Approximate · Set location';
+
+  @override
+  String get locationMyLocation => 'My location';
+
+  @override
+  String get locationLocating => 'Locating…';
+
+  @override
+  String get locationChipHint => 'Change location';
+
+  @override
+  String get locationSheetTitle => 'Set your location';
+
+  @override
+  String get locationSheetBody =>
+      'The sky is drawn for your approximate location. It stays on this device.';
+
+  @override
+  String get locationUseDevice => 'Use my location';
+
+  @override
+  String get locationUseDeviceDetail =>
+      'Approximate, to about a kilometre. Asks for permission.';
+
+  @override
+  String get locationChooseCity => 'Choose a city';
+
+  @override
+  String get locationChooseCityDetail =>
+      'Works offline, with no permission needed';
+
+  @override
+  String get locationDenied =>
+      'Location permission wasn\'t given. You can choose a city instead.';
+
+  @override
+  String get locationDeniedForever =>
+      'Location is blocked for Fasomo. Allow it in Settings, or choose a city.';
+
+  @override
+  String get locationServiceOff =>
+      'Location services are off. Turn them on, or choose a city.';
+
+  @override
+  String get locationUnavailable =>
+      'Couldn\'t find your location. Try again, or choose a city.';
+
+  @override
+  String get openSettings => 'Settings';
 }

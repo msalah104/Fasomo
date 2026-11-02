@@ -23,6 +23,7 @@ import 'package:fasomo/core/services/share/share_plus_share_service.dart';
 import 'package:fasomo/core/share/share_service.dart';
 import 'package:fasomo/core/share/share_widget_image.dart';
 import 'package:fasomo/core/share/widget_image_renderer.dart';
+import 'package:fasomo/core/time/minute_ticker.dart';
 import 'package:fasomo/features/calendar/data/datasources/calendar_local_data_source.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_preferences_repository_impl.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
@@ -42,8 +43,10 @@ import 'package:fasomo/features/duas/presentation/bloc/duas_bloc.dart';
 import 'package:fasomo/features/home/data/repositories/fasting_repository_impl.dart';
 import 'package:fasomo/features/home/domain/repositories/fasting_repository.dart';
 import 'package:fasomo/features/home/domain/usecases/get_current_hijri_date.dart';
+import 'package:fasomo/features/home/domain/usecases/get_sky_scene.dart';
 import 'package:fasomo/features/home/domain/usecases/get_upcoming_fasting_days.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fasomo/features/reminders/data/repositories/reminder_repository_impl.dart';
 import 'package:fasomo/features/reminders/domain/fasting_reminder_source.dart';
@@ -295,7 +298,21 @@ Future<void> init({PlatformServices? platform}) async {
     )
     ..registerLazySingleton(() => UseDeviceLocation(sl()))
     ..registerLazySingleton(() => ChooseCity(sl()))
-    ..registerLazySingleton(() => OpenLocationSettings(sl()));
+    ..registerLazySingleton(() => OpenLocationSettings(sl()))
+    // --- Home sky ---
+    ..registerFactory(
+      () => SkyBloc(
+        getSkyScene: sl(),
+        useDeviceLocation: sl(),
+        chooseCity: sl(),
+        openLocationSettings: sl(),
+        ticker: sl(),
+      ),
+    )
+    ..registerLazySingleton(
+      () => GetSkyScene(clock: sl(), locationRepository: sl()),
+    )
+    ..registerLazySingleton<MinuteTicker>(() => PeriodicMinuteTicker(sl()));
 
   final services = platform ?? await _devicePlatformServices();
   sl

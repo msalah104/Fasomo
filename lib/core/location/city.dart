@@ -31,7 +31,8 @@ final class City extends Equatable {
   String get id => '$countryCode:$nameEn';
 
   /// The name in [languageCode], English unless it is Arabic.
-  String nameFor(String languageCode) => languageCode == 'ar' ? nameAr : nameEn;
+  String nameFor(String languageCode) =>
+      languageCode.startsWith('ar') ? nameAr : nameEn;
 
   @override
   List<Object> get props => [nameEn, nameAr, countryCode, latitude, longitude];

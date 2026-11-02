@@ -975,4 +975,128 @@ class AppLocalizationsAr extends AppLocalizations {
   String cityPickerNoResults(String query) {
     return 'لا توجد مدينة تطابق «$query». جرّب مدينة كبيرة قريبة.';
   }
+
+  @override
+  String skySunrise(String time) {
+    return 'الشروق $time';
+  }
+
+  @override
+  String skySunset(String time) {
+    return 'الغروب $time';
+  }
+
+  @override
+  String skyMoonrise(String time) {
+    return 'شروق القمر $time';
+  }
+
+  @override
+  String get skyDaytime => 'النهار';
+
+  @override
+  String get skyNight => 'الليل';
+
+  @override
+  String get skyDawn => 'الفجر';
+
+  @override
+  String get skyDusk => 'الغسق';
+
+  @override
+  String skyOver(String place) {
+    return 'السماء فوق $place';
+  }
+
+  @override
+  String skyOverApproximate(String place) {
+    return 'السماء فوق $place، وهو موقع تقريبي';
+  }
+
+  @override
+  String get skySunUp => 'الشمس فوق الأفق';
+
+  @override
+  String skyMoonUp(String phase, String percent) {
+    return 'القمر فوق الأفق: $phase، مضاء بنسبة $percent';
+  }
+
+  @override
+  String skyMoonDown(String phase, String percent) {
+    return 'القمر تحت الأفق: $phase، مضاء بنسبة $percent';
+  }
+
+  @override
+  String get moonNew => 'محاق';
+
+  @override
+  String get moonWaxingCrescent => 'هلال متزايد';
+
+  @override
+  String get moonFirstQuarter => 'تربيع أول';
+
+  @override
+  String get moonWaxingGibbous => 'أحدب متزايد';
+
+  @override
+  String get moonFull => 'بدر';
+
+  @override
+  String get moonWaningGibbous => 'أحدب متناقص';
+
+  @override
+  String get moonLastQuarter => 'تربيع أخير';
+
+  @override
+  String get moonWaningCrescent => 'هلال متناقص';
+
+  @override
+  String get locationApproximate => 'موقع تقريبي · حدِّد موقعك';
+
+  @override
+  String get locationMyLocation => 'موقعي';
+
+  @override
+  String get locationLocating => 'جارٍ تحديد الموقع…';
+
+  @override
+  String get locationChipHint => 'تغيير الموقع';
+
+  @override
+  String get locationSheetTitle => 'حدِّد موقعك';
+
+  @override
+  String get locationSheetBody =>
+      'تُرسم السماء حسب موقعك التقريبي، ويبقى الموقع على هذا الجهاز فقط.';
+
+  @override
+  String get locationUseDevice => 'استخدم موقعي';
+
+  @override
+  String get locationUseDeviceDetail => 'تقريبي، في حدود كيلومتر. يطلب الإذن.';
+
+  @override
+  String get locationChooseCity => 'اختر مدينة';
+
+  @override
+  String get locationChooseCityDetail => 'يعمل دون اتصال ودون أي إذن';
+
+  @override
+  String get locationDenied =>
+      'لم يُمنح إذن الموقع. يمكنك اختيار مدينة بدلًا من ذلك.';
+
+  @override
+  String get locationDeniedForever =>
+      'الموقع محظور على فاصومو. اسمح به من الإعدادات، أو اختر مدينة.';
+
+  @override
+  String get locationServiceOff =>
+      'خدمات الموقع متوقفة. شغّلها، أو اختر مدينة.';
+
+  @override
+  String get locationUnavailable =>
+      'تعذّر تحديد موقعك. حاول مرة أخرى، أو اختر مدينة.';
+
+  @override
+  String get openSettings => 'الإعدادات';
 }

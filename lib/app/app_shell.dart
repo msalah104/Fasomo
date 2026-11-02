@@ -14,6 +14,7 @@ import 'package:fasomo/features/duas/presentation/dua_text.dart';
 import 'package:fasomo/features/duas/presentation/pages/duas_page.dart';
 import 'package:fasomo/features/duas/presentation/widgets/duas_button.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
@@ -290,20 +291,25 @@ class _HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final reminders = context.watch<ReminderBloc>().state;
-    return HomePage(
-      isReminderOn: reminders.isEnabledFor,
-      onToggleReminder: (type) =>
-          context.read<ReminderBloc>().add(ToggleReminder(type)),
-      headerActionBuilder: (color) =>
-          SettingsButton(color: color, onPressed: () => _openSettings(context)),
-      progressSection: const TrackerSummaryCard(),
-      todayActionBuilder: (date, hijri) =>
-          FastedToggle(date: date, hijri: hijri),
-      dayActionBuilder: (day) => _FastingDayLinks(
-        type: day.primaryType,
-        hijriDate: day.hijriDate,
-        gregorianDate: day.gregorianDate,
-        daysUntil: day.daysUntil,
+    return BlocProvider(
+      create: (_) => sl<SkyBloc>()..add(const SkyStarted()),
+      child: HomePage(
+        isReminderOn: reminders.isEnabledFor,
+        onToggleReminder: (type) =>
+            context.read<ReminderBloc>().add(ToggleReminder(type)),
+        headerActionBuilder: (color) => SettingsButton(
+          color: color,
+          onPressed: () => _openSettings(context),
+        ),
+        progressSection: const TrackerSummaryCard(),
+        todayActionBuilder: (date, hijri) =>
+            FastedToggle(date: date, hijri: hijri),
+        dayActionBuilder: (day) => _FastingDayLinks(
+          type: day.primaryType,
+          hijriDate: day.hijriDate,
+          gregorianDate: day.gregorianDate,
+          daysUntil: day.daysUntil,
+        ),
       ),
     );
   }
