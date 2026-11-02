@@ -11,6 +11,7 @@ import 'package:fasomo/core/calendar/hijri_offset.dart';
 import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/location/device_location_gateway.dart';
 import 'package:fasomo/core/location/geolocator_location_gateway.dart';
+import 'package:fasomo/core/location/location_backup_section.dart';
 import 'package:fasomo/core/location/location_repository.dart';
 import 'package:fasomo/core/location/location_repository_impl.dart';
 import 'package:fasomo/core/location/usecases/choose_city.dart';
@@ -308,6 +309,7 @@ Future<void> init({PlatformServices? platform}) async {
           RemindersBackupSection(sl()),
           TrackerBackupSection(fastLog: sl(), qadaReminders: sl()),
           CalendarBackupSection(sl()),
+          LocationBackupSection(sl()),
         ],
         snapshots: sl(),
         clock: sl(),

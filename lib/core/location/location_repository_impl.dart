@@ -63,6 +63,24 @@ class LocationRepositoryImpl implements LocationRepository {
   @override
   Future<bool> openSettings() => gateway.openAppSettings();
 
+  @override
+  GeoPoint? saved() => switch (current()) {
+    GeoPoint(isApproximate: true) => null,
+    final point => point,
+  };
+
+  @override
+  Future<bool> replaceSaved(GeoPoint? point) async {
+    if (point != null) return await _save(point);
+    _latest = null;
+    try {
+      return await sharedPreferences.remove(storageKey);
+    } on PlatformException catch (e, st) {
+      AppLog.error('location.write', e, st);
+      return false;
+    }
+  }
+
   GeoPoint? _read() {
     final raw = sharedPreferences.getString(storageKey);
     if (raw == null) return null;
@@ -107,7 +125,7 @@ class LocationRepositoryImpl implements LocationRepository {
     return null;
   }
 
-  Future<void> _save(GeoPoint point) async {
+  Future<bool> _save(GeoPoint point) async {
     _latest = point;
     final encoded = jsonEncode({
       'lat': point.latitude,
@@ -120,8 +138,10 @@ class LocationRepositoryImpl implements LocationRepository {
       if (!saved) {
         AppLog.error('location.write', 'Not saved', StackTrace.current);
       }
+      return saved;
     } on PlatformException catch (e, st) {
       AppLog.error('location.write', e, st);
+      return false;
     }
   }
 

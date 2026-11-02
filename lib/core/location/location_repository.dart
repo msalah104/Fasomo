@@ -24,4 +24,13 @@ abstract interface class LocationRepository {
 
   /// Opens the system settings where location permission is granted.
   Future<bool> openSettings();
+
+  /// The location the user saved, or `null` when the sky still uses the
+  /// approximate fallback. Read by backups.
+  GeoPoint? saved();
+
+  /// Replaces the saved location with [point], or forgets it when `null`, so
+  /// the fallback applies again. Used by restore; returns whether it was
+  /// written.
+  Future<bool> replaceSaved(GeoPoint? point);
 }
