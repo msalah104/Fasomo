@@ -2,7 +2,9 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/features/settings/domain/entities/app_language.dart';
+import 'package:fasomo/features/settings/domain/entities/app_theme_mode.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/settings/presentation/pages/settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_section.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
@@ -14,12 +16,17 @@ import 'package:mocktail/mocktail.dart';
 class MockLanguageBloc extends MockBloc<LanguageEvent, LanguageState>
     implements LanguageBloc;
 
+class MockThemeBloc extends MockBloc<ThemeEvent, ThemeState>
+    implements ThemeBloc;
+
 void main() {
   late MockLanguageBloc languageBloc;
+  late MockThemeBloc themeBloc;
 
-  setUpAll(
-    () => registerFallbackValue(const LanguageChanged(AppLanguage.system)),
-  );
+  setUpAll(() {
+    registerFallbackValue(const LanguageChanged(AppLanguage.system));
+    registerFallbackValue(const ThemeModeChanged(AppThemeMode.system));
+  });
 
   Future<void> pump(
     WidgetTester tester, {
@@ -27,8 +34,11 @@ void main() {
     Locale locale = const Locale('en'),
   }) async {
     await tester.pumpWidget(
-      BlocProvider<LanguageBloc>.value(
-        value: languageBloc,
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<LanguageBloc>.value(value: languageBloc),
+          BlocProvider<ThemeBloc>.value(value: themeBloc),
+        ],
         child: MaterialApp(
           theme: buildAppTheme(Brightness.light),
           locale: locale,
@@ -46,6 +56,10 @@ void main() {
     when(
       () => languageBloc.state,
     ).thenReturn(const LanguageState(language: AppLanguage.english));
+    themeBloc = MockThemeBloc();
+    when(
+      () => themeBloc.state,
+    ).thenReturn(const ThemeState(mode: AppThemeMode.system));
   });
 
   testWidgets('shows the appearance section with the current language', (
@@ -83,6 +97,47 @@ void main() {
     await tester.pumpAndSettle();
 
     verifyNever(() => languageBloc.add(any()));
+  });
+
+  testWidgets('shows the current theme mode', (tester) async {
+    await pump(tester);
+
+    expect(find.text('Theme'), findsOneWidget);
+    expect(find.text('System default'), findsOneWidget);
+    expect(find.byIcon(Icons.brightness_auto_outlined), findsOneWidget);
+  });
+
+  testWidgets('picking Dark from the dialog changes the theme', (
+    tester,
+  ) async {
+    await pump(tester);
+
+    await tester.tap(find.text('Theme'));
+    await tester.pumpAndSettle();
+    expect(find.text('Light'), findsOneWidget);
+    await tester.tap(find.text('Dark'));
+    await tester.pumpAndSettle();
+
+    verify(
+      () => themeBloc.add(const ThemeModeChanged(AppThemeMode.dark)),
+    ).called(1);
+    verifyNever(() => languageBloc.add(any()));
+  });
+
+  testWidgets('reports a theme that could not be saved', (tester) async {
+    whenListen(
+      themeBloc,
+      Stream.value(
+        const ThemeState(
+          mode: AppThemeMode.dark,
+          failure: StorageWriteFailed('theme_mode'),
+        ),
+      ),
+      initialState: const ThemeState(mode: AppThemeMode.system),
+    );
+    await pump(tester);
+
+    expect(find.textContaining('Could not save this setting'), findsOneWidget);
   });
 
   testWidgets('shows sections contributed by the app shell', (tester) async {

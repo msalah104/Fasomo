@@ -29,8 +29,11 @@ import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:fasomo/features/settings/domain/repositories/settings_repository.dart';
 import 'package:fasomo/features/settings/domain/usecases/get_language.dart';
+import 'package:fasomo/features/settings/domain/usecases/get_theme_mode.dart';
 import 'package:fasomo/features/settings/domain/usecases/save_language.dart';
+import 'package:fasomo/features/settings/domain/usecases/save_theme_mode.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/tracker/data/datasources/fast_log_local_data_source.dart';
 import 'package:fasomo/features/tracker/data/datasources/qada_reminder_local_data_source.dart';
 import 'package:fasomo/features/tracker/data/repositories/fast_log_repository_impl.dart';
@@ -162,6 +165,11 @@ Future<void> init({PlatformServices? platform}) async {
     ..registerFactory(() => LanguageBloc(getLanguage: sl(), saveLanguage: sl()))
     ..registerLazySingleton(() => GetLanguage(sl()))
     ..registerLazySingleton(() => SaveLanguage(sl()))
+    ..registerFactory(
+      () => ThemeBloc(getThemeMode: sl(), saveThemeMode: sl()),
+    )
+    ..registerLazySingleton(() => GetThemeMode(sl()))
+    ..registerLazySingleton(() => SaveThemeMode(sl()))
     ..registerLazySingleton<SettingsRepository>(
       () => SettingsRepositoryImpl(sharedPreferences: sl()),
     )

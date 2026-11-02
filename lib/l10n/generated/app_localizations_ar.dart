@@ -614,4 +614,16 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get settingSaveFailed =>
       'تعذّر حفظ هذا الإعداد. سيبقى مطبّقًا حتى إغلاق التطبيق.';
+
+  @override
+  String get theme => 'السمة';
+
+  @override
+  String get themeSystem => 'حسب إعداد النظام';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'داكن';
 }

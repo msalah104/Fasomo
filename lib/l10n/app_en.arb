@@ -413,5 +413,12 @@
   "@settingsAppearance": {
     "description": "Settings section header for language and theme."
   },
-  "settingSaveFailed": "Could not save this setting. It applies until the app is closed."
+  "settingSaveFailed": "Could not save this setting. It applies until the app is closed.",
+  "theme": "Theme",
+  "themeSystem": "System default",
+  "@themeSystem": {
+    "description": "Theme choice that follows the device's light or dark setting."
+  },
+  "themeLight": "Light",
+  "themeDark": "Dark"
 }

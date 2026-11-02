@@ -609,4 +609,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingSaveFailed =>
       'Could not save this setting. It applies until the app is closed.';
+
+  @override
+  String get theme => 'Theme';
+
+  @override
+  String get themeSystem => 'System default';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
 }

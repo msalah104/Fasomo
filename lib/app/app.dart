@@ -6,6 +6,7 @@ import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/splash/presentation/pages/splash_page.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
@@ -20,6 +21,7 @@ class FasomoApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => sl<LanguageBloc>()),
+        BlocProvider(create: (_) => sl<ThemeBloc>()),
         BlocProvider(create: (_) => sl<HomeBloc>()..add(const LoadHomeData())),
         BlocProvider(
           create: (_) => sl<CalendarBloc>()..add(const LoadCalendar()),
@@ -31,14 +33,22 @@ class FasomoApp extends StatelessWidget {
           create: (_) => sl<TrackerBloc>()..add(const LoadTracker()),
         ),
       ],
-      child: BlocSelector<LanguageBloc, LanguageState, Locale?>(
-        selector: (state) => state.locale,
-        builder: (context, locale) {
+      child: Builder(
+        builder: (context) {
+          // Both are read synchronously when the blocs are built, so the
+          // first frame already has the right language and brightness.
+          final locale = context.select<LanguageBloc, Locale?>(
+            (bloc) => bloc.state.locale,
+          );
+          final themeMode = context.select<ThemeBloc, ThemeMode>(
+            (bloc) => bloc.state.themeMode,
+          );
           return MaterialApp(
             onGenerateTitle: (context) => AppLocalizations.of(context).appName,
             debugShowCheckedModeBanner: false,
             theme: buildAppTheme(Brightness.light),
             darkTheme: buildAppTheme(Brightness.dark),
+            themeMode: themeMode,
             locale: locale,
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,

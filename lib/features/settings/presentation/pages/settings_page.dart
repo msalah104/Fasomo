@@ -1,6 +1,8 @@
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/settings/presentation/widgets/language_tile.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_section.dart';
+import 'package:fasomo/features/settings/presentation/widgets/theme_tile.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +29,7 @@ class SettingsPage extends StatelessWidget {
           children: [
             SettingsSection(
               title: localization.settingsAppearance,
-              children: const [LanguageTile()],
+              children: const [LanguageTile(), ThemeTile()],
             ),
             ...extraSections,
           ],
@@ -45,10 +47,19 @@ class _SaveFailureListener extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LanguageBloc, LanguageState>(
-      listenWhen: (previous, current) =>
-          current.failure != null && current != previous,
-      listener: (context, _) => _showSaveFailed(context),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<LanguageBloc, LanguageState>(
+          listenWhen: (previous, current) =>
+              current.failure != null && current != previous,
+          listener: (context, _) => _showSaveFailed(context),
+        ),
+        BlocListener<ThemeBloc, ThemeState>(
+          listenWhen: (previous, current) =>
+              current.failure != null && current != previous,
+          listener: (context, _) => _showSaveFailed(context),
+        ),
+      ],
       child: child,
     );
   }
