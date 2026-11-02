@@ -81,8 +81,16 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - **Hilal fonts**: El Messiri for headings and IBM Plex Sans Arabic for body text, bundled as static weights 400–700, so the app looks the same fully offline. Their OFL licences are listed on the licence page.
 - **App icon**: the gold ف mark (the letter Fa with the new moon as its dot) on night blue, with an adaptive icon on Android. Regenerate with `dart run flutter_launcher_icons` after changing `design/art/app_icon.svg` and its render in `assets/icon/`.
 
+### 🤲 Duas and intentions
+- An offline collection: the intention, the dua at iftar, the dua when breaking the fast as a guest, the dua for Laylat al-Qadr, and the hadith on the virtue of each fasting day, each with its reference (Bukhari, Muslim, Abu Dawud, Tirmidhi, Ibn Majah).
+- The Arabic is always laid out right-to-left and can be selected or copied; the English UI adds the transliteration and meaning.
+- Open it from the About tab, or from any fasting day on Home or in the calendar, already filtered to that fast.
+
+### 📤 Share a fasting day
+- Share any fasting day as an image card in the Hilal colours: the ف mark, "Fasting tomorrow: Day of Arafah", the Hijri and Gregorian dates, and the day's hadith with its reference, plus a short text, through the system share sheet.
+
 ### ℹ️ About
-- App information, the hadith behind each recommended fast, and contact details.
+- App information, the hadith behind each recommended fast, a link to the duas, and contact details.
 
 ## Supported Fasting Days
 
@@ -215,8 +223,6 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 | P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | `adhan`, `geolocator` | No |
 | P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
 | P2 | [Onboarding](#onboarding-p2) | — | No |
-| P3 | [Duas and intentions for fasting](#duas-and-intentions-for-fasting-p3) | — | No |
-| P3 | [Share a fasting day](#share-a-fasting-day-p3) | `share_plus` | No |
 | P3 | [Backup and restore](#backup-and-restore-p3) | `share_plus`, `file_picker` | No |
 | — | [Needs a backend](#needs-a-backend) | Firebase or Supabase | Yes |
 
@@ -246,14 +252,6 @@ During Ramadan (and optionally on any fasting day), Home switches to a Ramadan v
 ### Onboarding (P2)
 
 A short first-run flow: choose language, choose which fasting types interest you, set a default reminder time, and only then ask for notification permission (and location, if Ramadan mode or the sky header needs it), with a sentence explaining why.
-
-### Duas and intentions for fasting (P3)
-
-A small offline collection: the intention for fasting, the dua at iftar, and the relevant hadith for each fasting type, in Arabic with English translation and source references. It can be opened from a fasting day's details.
-
-### Share a fasting day (P3)
-
-Share an image card ("Tomorrow is the Day of Arafah") with the date and its hadith, using the system share sheet behind an injected share service.
 
 ### Backup and restore (P3)
 

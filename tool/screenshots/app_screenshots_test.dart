@@ -44,6 +44,7 @@ const _screens = <String, List<Object>>{
   'calendar_year': [Icons.calendar_today_outlined, ('Year', 'سنة')],
   'tone-picker': [Icons.settings_outlined, Icons.music_note_outlined],
   'progress': [('Your fasting', 'صيامك')],
+  'duas': [Icons.info_outlined, ('Duas and intentions', 'الأدعية والنية')],
 };
 
 Finder _finderFor(Object tap, String language) => switch (tap) {
@@ -172,7 +173,19 @@ void main() {
         testWidgets(name, (tester) async {
           await _bootApp(tester, language: language, brightness: brightness);
           for (final tap in taps) {
-            await tester.tap(_finderFor(tap, language).first);
+            final matches = _finderFor(tap, language);
+            final target = matches.first;
+            if (matches.evaluate().isEmpty) {
+              // Lazy lists build only what is on screen: scroll to it.
+              await tester.dragUntilVisible(
+                matches,
+                find.byType(Scrollable).hitTestable().first,
+                const Offset(0, -300),
+              );
+            }
+            await tester.ensureVisible(target);
+            await tester.pump(const Duration(milliseconds: 300));
+            await tester.tap(target);
             for (var i = 0; i < 10; i++) {
               await tester.pump(const Duration(milliseconds: 100));
             }
