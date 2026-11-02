@@ -58,6 +58,7 @@ void _showProblem(BuildContext context, NotificationToneState state) {
           CalendarFailure() ||
           TrackerFailure() ||
           PushFailure() ||
+          ShareFailure() ||
           null => localization.settingSaveFailed,
         };
   ScaffoldMessenger.of(context).showSnackBar(

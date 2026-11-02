@@ -116,3 +116,24 @@ final class PushTopicFailed extends PushFailure {
   @override
   String get code => 'push.topic_failed';
 }
+
+/// Failures while sharing an image through the OS share sheet.
+sealed class ShareFailure extends Failure {
+  const new();
+}
+
+/// The image to share could not be drawn or encoded.
+final class ShareRenderFailed extends ShareFailure {
+  const new();
+
+  @override
+  String get code => 'share.render_failed';
+}
+
+/// The OS share sheet could not be opened, or rejected the file.
+final class SharePlatformFailed extends ShareFailure {
+  const new();
+
+  @override
+  String get code => 'share.platform_failed';
+}

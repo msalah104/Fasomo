@@ -743,5 +743,58 @@
   "duaCopied": "Copied",
   "@duaCopied": {
     "description": "Shown after a dua is copied to the clipboard."
+  },
+  "shareDay": "Share",
+  "@shareDay": {
+    "description": "Button on a fasting day that shares it as an image."
+  },
+  "shareDayTooltip": "Share {type} as an image",
+  "@shareDayTooltip": {
+    "description": "Tooltip and screen-reader hint of the share button.",
+    "placeholders": {
+      "type": {
+        "type": "String",
+        "example": "Day of Arafah"
+      }
+    }
+  },
+  "shareDayHeadline": "{days, plural, =0{Fasting today: {type}} =1{Fasting tomorrow: {type}} other{Fasting in {days} days: {type}}}",
+  "@shareDayHeadline": {
+    "description": "Headline of a shared fasting day that is today or ahead.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "type": {
+        "type": "String",
+        "example": "Day of Arafah"
+      }
+    }
+  },
+  "shareDayText": "{headline}, {hijriDate} ({gregorianDate}). Shared from {appName}.",
+  "@shareDayText": {
+    "description": "Text sent with the shared image of a fasting day.",
+    "placeholders": {
+      "headline": {
+        "type": "String",
+        "example": "Fasting tomorrow: Day of Arafah"
+      },
+      "hijriDate": {
+        "type": "String",
+        "example": "9 Dhu al-Hijjah 1448 AH"
+      },
+      "gregorianDate": {
+        "type": "String",
+        "example": "May 16, 2027"
+      },
+      "appName": {
+        "type": "String",
+        "example": "Fasomo"
+      }
+    }
+  },
+  "shareDayFailed": "Couldn't share this day. Please try again.",
+  "@shareDayFailed": {
+    "description": "Shown when a fasting day could not be shared."
   }
 }

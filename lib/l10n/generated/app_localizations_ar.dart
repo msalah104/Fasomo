@@ -926,4 +926,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get duaCopied => 'تم النسخ';
+
+  @override
+  String get shareDay => 'مشاركة';
+
+  @override
+  String shareDayTooltip(String type) {
+    return 'مشاركة $type صورةً';
+  }
+
+  @override
+  String shareDayHeadline(int days, String type) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'صيام بعد $days يومًا: $type',
+      few: 'صيام بعد $days أيام: $type',
+      two: 'صيام بعد يومين: $type',
+      one: 'صيام الغد: $type',
+      zero: 'صيام اليوم: $type',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shareDayText(
+    String headline,
+    String hijriDate,
+    String gregorianDate,
+    String appName,
+  ) {
+    return '$headline، $hijriDate ($gregorianDate). مشاركة من تطبيق $appName.';
+  }
+
+  @override
+  String get shareDayFailed => 'تعذّرت مشاركة هذا اليوم. حاول مرة أخرى.';
 }

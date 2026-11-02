@@ -1471,6 +1471,41 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Copied'**
   String get duaCopied;
+
+  /// Button on a fasting day that shares it as an image.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareDay;
+
+  /// Tooltip and screen-reader hint of the share button.
+  ///
+  /// In en, this message translates to:
+  /// **'Share {type} as an image'**
+  String shareDayTooltip(String type);
+
+  /// Headline of a shared fasting day that is today or ahead.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =0{Fasting today: {type}} =1{Fasting tomorrow: {type}} other{Fasting in {days} days: {type}}}'**
+  String shareDayHeadline(int days, String type);
+
+  /// Text sent with the shared image of a fasting day.
+  ///
+  /// In en, this message translates to:
+  /// **'{headline}, {hijriDate} ({gregorianDate}). Shared from {appName}.'**
+  String shareDayText(
+    String headline,
+    String hijriDate,
+    String gregorianDate,
+    String appName,
+  );
+
+  /// Shown when a fasting day could not be shared.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t share this day. Please try again.'**
+  String get shareDayFailed;
 }
 
 class _AppLocalizationsDelegate

@@ -228,5 +228,10 @@
   "hadithSourceNasai": "سنن النسائي {number}",
   "hadithSourceIbnMajah": "سنن ابن ماجه {number}",
   "duaCopy": "نسخ {title}",
-  "duaCopied": "تم النسخ"
+  "duaCopied": "تم النسخ",
+  "shareDay": "مشاركة",
+  "shareDayTooltip": "مشاركة {type} صورةً",
+  "shareDayHeadline": "{days, plural, =0{صيام اليوم: {type}} =1{صيام الغد: {type}} =2{صيام بعد يومين: {type}} few{صيام بعد {days} أيام: {type}} other{صيام بعد {days} يومًا: {type}}}",
+  "shareDayText": "{headline}، {hijriDate} ({gregorianDate}). مشاركة من تطبيق {appName}.",
+  "shareDayFailed": "تعذّرت مشاركة هذا اليوم. حاول مرة أخرى."
 }

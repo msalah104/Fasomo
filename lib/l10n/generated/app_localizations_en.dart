@@ -901,4 +901,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get duaCopied => 'Copied';
+
+  @override
+  String get shareDay => 'Share';
+
+  @override
+  String shareDayTooltip(String type) {
+    return 'Share $type as an image';
+  }
+
+  @override
+  String shareDayHeadline(int days, String type) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Fasting in $days days: $type',
+      one: 'Fasting tomorrow: $type',
+      zero: 'Fasting today: $type',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shareDayText(
+    String headline,
+    String hijriDate,
+    String gregorianDate,
+    String appName,
+  ) {
+    return '$headline, $hijriDate ($gregorianDate). Shared from $appName.';
+  }
+
+  @override
+  String get shareDayFailed => 'Couldn\'t share this day. Please try again.';
 }

@@ -11,6 +11,11 @@ import 'package:fasomo/core/push/push_messaging.dart';
 import 'package:fasomo/core/push/sync_announcement_topic.dart';
 import 'package:fasomo/core/services/notifications/fln_notification_gateway.dart';
 import 'package:fasomo/core/services/push/fcm_push_messaging.dart';
+import 'package:fasomo/core/services/share/overlay_widget_image_renderer.dart';
+import 'package:fasomo/core/services/share/share_plus_share_service.dart';
+import 'package:fasomo/core/share/share_service.dart';
+import 'package:fasomo/core/share/share_widget_image.dart';
+import 'package:fasomo/core/share/widget_image_renderer.dart';
 import 'package:fasomo/features/calendar/data/datasources/calendar_local_data_source.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_preferences_repository_impl.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
@@ -25,6 +30,7 @@ import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/duas/data/repositories/dua_repository_impl.dart';
 import 'package:fasomo/features/duas/domain/repositories/dua_repository.dart';
 import 'package:fasomo/features/duas/domain/usecases/get_duas.dart';
+import 'package:fasomo/features/duas/domain/usecases/get_fasting_hadith.dart';
 import 'package:fasomo/features/duas/presentation/bloc/duas_bloc.dart';
 import 'package:fasomo/features/home/data/repositories/fasting_repository_impl.dart';
 import 'package:fasomo/features/home/domain/repositories/fasting_repository.dart';
@@ -222,6 +228,7 @@ Future<void> init({PlatformServices? platform}) async {
     // --- Duas ---
     ..registerFactory(() => DuasBloc(getDuas: sl()))
     ..registerLazySingleton(() => GetDuas(sl()))
+    ..registerLazySingleton(() => GetFastingHadith(sl()))
     ..registerLazySingleton<DuaRepository>(DuaRepositoryImpl.new)
     // --- Settings ---
     ..registerFactory(() => LanguageBloc(getLanguage: sl(), saveLanguage: sl()))
@@ -257,7 +264,16 @@ Future<void> init({PlatformServices? platform}) async {
     ..registerLazySingleton<HijriConverter>(
       () => AdjustedHijriConverter(const UmmAlQuraHijriConverter(), sl()),
     )
-    ..registerLazySingleton(() => FastingCalendar(sl()));
+    ..registerLazySingleton(() => FastingCalendar(sl()))
+    // Sharing opens the OS sheet only when asked, so no device check is
+    // needed to construct it.
+    ..registerLazySingleton<ShareService>(SharePlusShareService.new)
+    ..registerLazySingleton<WidgetImageRenderer>(
+      OverlayWidgetImageRenderer.new,
+    )
+    ..registerLazySingleton(
+      () => ShareWidgetImage(renderer: sl(), shareService: sl()),
+    );
 
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);

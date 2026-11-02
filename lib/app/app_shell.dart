@@ -1,12 +1,16 @@
 import 'package:clock/clock.dart';
+import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
+import 'package:fasomo/core/calendar/hijri_date.dart';
 import 'package:fasomo/core/di/injection_container.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/presentation/localized_notification_copy.dart';
 import 'package:fasomo/features/about/presentation/pages/about_page.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:fasomo/features/duas/domain/usecases/get_fasting_hadith.dart';
 import 'package:fasomo/features/duas/presentation/bloc/duas_bloc.dart';
+import 'package:fasomo/features/duas/presentation/dua_text.dart';
 import 'package:fasomo/features/duas/presentation/pages/duas_page.dart';
 import 'package:fasomo/features/duas/presentation/widgets/duas_button.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
@@ -19,6 +23,8 @@ import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc
 import 'package:fasomo/features/settings/presentation/pages/settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_button.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_section.dart';
+import 'package:fasomo/features/share_day/presentation/shareable_fasting_day.dart';
+import 'package:fasomo/features/share_day/presentation/widgets/share_day_button.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/fasted_toggle.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/qada_reminder_tile.dart';
@@ -222,19 +228,47 @@ void _openDuas(BuildContext context, FastingType? type) {
 }
 
 /// What every fasting day offers, on Home's cards and in the calendar's day
-/// sheet: its duas.
+/// sheet: its duas, and sharing it as an image with its hadith.
 class _FastingDayLinks extends StatelessWidget {
-  const new({required this.type});
+  const new({
+    required this.type,
+    required this.hijriDate,
+    required this.gregorianDate,
+    required this.daysUntil,
+  });
 
   /// The day's primary type.
   final FastingType type;
+  final HijriDate hijriDate;
+  final DateTime gregorianDate;
+  final int daysUntil;
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
+    final hadith = sl<GetFastingHadith>()(type);
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: [DuasButton(onPressed: () => _openDuas(context, type))],
+      children: [
+        DuasButton(onPressed: () => _openDuas(context, type)),
+        ShareDayButton(
+          share: sl(),
+          day: ShareableFastingDay(
+            type: type,
+            hijriDate: hijriDate,
+            gregorianDate: gregorianDate,
+            daysUntil: daysUntil,
+            hadith: hadith == null
+                ? null
+                : SharedHadith(
+                    arabic: hadith.arabic,
+                    translation: hadith.translation,
+                    reference: localization.hadithReferences(hadith.sources),
+                  ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -249,7 +283,7 @@ class _AboutTab extends StatelessWidget {
   }
 }
 
-/// Home wired to the reminders, tracker and duas features.
+/// Home wired to the reminders, tracker, duas and share features.
 class _HomeTab extends StatelessWidget {
   const new();
 
@@ -265,12 +299,17 @@ class _HomeTab extends StatelessWidget {
       progressSection: const TrackerSummaryCard(),
       todayActionBuilder: (date, hijri) =>
           FastedToggle(date: date, hijri: hijri),
-      dayActionBuilder: (day) => _FastingDayLinks(type: day.primaryType),
+      dayActionBuilder: (day) => _FastingDayLinks(
+        type: day.primaryType,
+        hijriDate: day.hijriDate,
+        gregorianDate: day.gregorianDate,
+        daysUntil: day.daysUntil,
+      ),
     );
   }
 }
 
-/// Calendar wired to the tracker and duas features.
+/// Calendar wired to the tracker, duas and share features.
 class _CalendarTab extends StatelessWidget {
   const new();
 
@@ -291,7 +330,12 @@ class _CalendarTab extends StatelessWidget {
           ))
             TrackerDayActions(date: day.gregorianDate, hijri: day.hijriDate),
           if (day.fastingTypes.firstOrNull case final type?)
-            _FastingDayLinks(type: type),
+            _FastingDayLinks(
+              type: type,
+              hijriDate: day.hijriDate,
+              gregorianDate: day.gregorianDate,
+              daysUntil: CalendarDays.between(clock.now(), day.gregorianDate),
+            ),
         ];
         return actions.isEmpty
             ? null
