@@ -5,8 +5,10 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/calendar/domain/entities/calendar_month.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_current_hijri_month.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_hijri_month.dart';
+import 'package:fasomo/features/calendar/domain/usecases/get_hijri_year.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_show_gregorian_days.dart';
 import 'package:fasomo/features/calendar/domain/usecases/save_show_gregorian_days.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +22,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   new({
     required this.getCurrentHijriMonth,
     required this.getHijriMonth,
+    required this.getHijriYear,
     required this.getShowGregorianDays,
     required this.saveShowGregorianDays,
   }) : super(
@@ -36,6 +39,10 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
     on<ChangeMonth>((event, emit) => _showMonth(event.month, emit));
     on<NextMonth>(_onNextMonth);
     on<PreviousMonth>(_onPreviousMonth);
+    on<ShowYearView>(_onShowYearView);
+    on<ShowMonthView>(_onShowMonthView);
+    on<NextYear>(_onNextYear);
+    on<PreviousYear>(_onPreviousYear);
     // Sequential, so two quick taps flip the setting twice.
     on<ToggleGregorianDays>(
       _onToggleGregorianDays,
@@ -45,6 +52,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
 
   final GetCurrentHijriMonth getCurrentHijriMonth;
   final GetHijriMonth getHijriMonth;
+  final GetHijriYear getHijriYear;
   final GetShowGregorianDays getShowGregorianDays;
   final SaveShowGregorianDays saveShowGregorianDays;
 
@@ -82,6 +90,7 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
         emit(
           state.copyWith(
             status: CalendarStatus.success,
+            view: CalendarView.month,
             days: days,
             previousDays: _daysOrEmpty(month.previous),
             nextDays: _daysOrEmpty(month.next),
@@ -91,6 +100,50 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
         );
       case Err(:final failure):
         // Keep the last good month visible; only the status changes.
+        emit(state.copyWith(status: CalendarStatus.error, failure: failure));
+    }
+  }
+
+  void _onShowYearView(ShowYearView event, Emitter<CalendarState> emit) {
+    final month = state.month;
+    if (month != null) _showYear(month.year, emit);
+  }
+
+  void _onShowMonthView(ShowMonthView event, Emitter<CalendarState> emit) {
+    // The month was already loaded; a year view failure no longer applies.
+    if (state.month != null) {
+      emit(
+        state.copyWith(
+          status: CalendarStatus.success,
+          view: CalendarView.month,
+        ),
+      );
+    }
+  }
+
+  void _onNextYear(NextYear event, Emitter<CalendarState> emit) {
+    final year = state.year;
+    if (year != null) _showYear(year + 1, emit);
+  }
+
+  void _onPreviousYear(PreviousYear event, Emitter<CalendarState> emit) {
+    final year = state.year;
+    if (year != null) _showYear(year - 1, emit);
+  }
+
+  void _showYear(int year, Emitter<CalendarState> emit) {
+    switch (getHijriYear(year)) {
+      case Ok(value: final months):
+        emit(
+          state.copyWith(
+            status: CalendarStatus.success,
+            view: CalendarView.year,
+            year: year,
+            yearMonths: months,
+          ),
+        );
+      case Err(:final failure):
+        // Keep the last good year visible; only the status changes.
         emit(state.copyWith(status: CalendarStatus.error, failure: failure));
     }
   }

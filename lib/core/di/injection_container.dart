@@ -17,6 +17,7 @@ import 'package:fasomo/features/calendar/domain/repositories/calendar_preference
 import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_current_hijri_month.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_hijri_month.dart';
+import 'package:fasomo/features/calendar/domain/usecases/get_hijri_year.dart';
 import 'package:fasomo/features/calendar/domain/usecases/get_show_gregorian_days.dart';
 import 'package:fasomo/features/calendar/domain/usecases/save_show_gregorian_days.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
@@ -102,12 +103,14 @@ Future<void> init({PlatformServices? platform}) async {
       () => CalendarBloc(
         getCurrentHijriMonth: sl(),
         getHijriMonth: sl(),
+        getHijriYear: sl(),
         getShowGregorianDays: sl(),
         saveShowGregorianDays: sl(),
       ),
     )
     ..registerLazySingleton(() => GetCurrentHijriMonth(sl()))
     ..registerLazySingleton(() => GetHijriMonth(sl()))
+    ..registerLazySingleton(() => GetHijriYear(sl()))
     ..registerLazySingleton(() => GetShowGregorianDays(sl()))
     ..registerLazySingleton(() => SaveShowGregorianDays(sl()))
     ..registerLazySingleton<CalendarRepository>(

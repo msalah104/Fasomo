@@ -452,6 +452,48 @@ abstract class AppLocalizations {
   /// **'Could not save the calendar setting'**
   String get calendarSettingSaveFailed;
 
+  /// Calendar view switch: one month at a time.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get monthView;
+
+  /// Calendar view switch: the twelve months of a Hijri year.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get yearView;
+
+  /// No description provided for @previousYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous year'**
+  String get previousYear;
+
+  /// No description provided for @nextYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Next year'**
+  String get nextYear;
+
+  /// No description provided for @yearUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This year is outside the supported calendar range'**
+  String get yearUnavailable;
+
+  /// Screen-reader note on the month containing today in the year view.
+  ///
+  /// In en, this message translates to:
+  /// **'Current month'**
+  String get currentMonth;
+
+  /// Screen-reader label of a month in the year view; tapping it opens the month.
+  ///
+  /// In en, this message translates to:
+  /// **'{month}, {count, plural, =0{no fasting days} =1{1 fasting day} other{{count} fasting days}}'**
+  String yearViewMonthLabel(String month, int count);
+
   /// A Hijri year.
   ///
   /// In en, this message translates to:

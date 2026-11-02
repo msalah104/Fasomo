@@ -2,18 +2,21 @@ import 'dart:async';
 
 import 'package:fasomo/core/calendar/hijri_date.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/calendar/domain/entities/calendar_month.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/calendar_header.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/calendar_legend.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/calendar_month_pager.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/calendar_toolbar.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/calendar_weekday_headers.dart';
+import 'package:fasomo/features/calendar/presentation/widgets/calendar_year_view.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/day_detail_sheet.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// The Hijri month grid.
+/// The Hijri calendar: one month at a time, swiped sideways, or the twelve
+/// months of a year.
 ///
 /// Each day's badge and the action in the day sheet come from outside so
 /// this feature does not depend on the tracker; the app shell wires them.
@@ -32,7 +35,7 @@ class CalendarPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
-        // A failed month change keeps the last good month and shows a
+        // A failed month or year change keeps the last good one and shows a
         // snackbar.
         BlocListener<CalendarBloc, CalendarState>(
           listenWhen: (previous, current) =>
@@ -41,7 +44,12 @@ class CalendarPage extends StatelessWidget {
               current.days.isNotEmpty,
           listener: (context, state) => _showSnackBar(
             context,
-            AppLocalizations.of(context).monthUnavailable,
+            switch (state.view) {
+              CalendarView.month => AppLocalizations.of(
+                context,
+              ).monthUnavailable,
+              CalendarView.year => AppLocalizations.of(context).yearUnavailable,
+            },
           ),
         ),
         BlocListener<CalendarBloc, CalendarState>(
@@ -53,13 +61,23 @@ class CalendarPage extends StatelessWidget {
         ),
       ],
       child: BlocBuilder<CalendarBloc, CalendarState>(
-        builder: (context, state) => switch (state.month) {
-          final month? when state.days.isNotEmpty => _MonthView(
-            month: month,
-            state: state,
-            dayBadgeBuilder: dayBadgeBuilder,
-            onDayTap: (day) => _showDay(context, day),
-          ),
+        builder: (context, state) => switch (state) {
+          CalendarState(view: CalendarView.year, year: final year?)
+              when state.yearMonths.isNotEmpty =>
+            _CalendarFrame(
+              state: state,
+              child: _YearBody(year: year, months: state.yearMonths),
+            ),
+          CalendarState(month: final month?) when state.days.isNotEmpty =>
+            _CalendarFrame(
+              state: state,
+              child: _MonthBody(
+                month: month,
+                state: state,
+                dayBadgeBuilder: dayBadgeBuilder,
+                onDayTap: (day) => _showDay(context, day),
+              ),
+            ),
           _ when state.status == CalendarStatus.error => const _CalendarError(),
           _ => const Center(child: CircularProgressIndicator()),
         },
@@ -85,9 +103,47 @@ class CalendarPage extends StatelessWidget {
   }
 }
 
-/// One month: toolbar, month header, weekday names, the swipeable grid and
-/// the legend. Only built once a month has loaded.
-class _MonthView extends StatelessWidget {
+/// What every loaded view shares: the toolbar above and, in the month view,
+/// the legend pinned below. The year view scrolls its legend after the
+/// months, leaving the room to the mini months.
+class _CalendarFrame extends StatelessWidget {
+  const new({required this.state, required this.child});
+
+  final CalendarState state;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final bloc = context.read<CalendarBloc>();
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          CalendarToolbar(
+            view: state.view,
+            showTodayButton: !state.isShowingCurrentMonth,
+            showGregorianDays: state.showGregorianDays,
+            onViewChanged: (view) => bloc.add(switch (view) {
+              CalendarView.month => const ShowMonthView(),
+              CalendarView.year => const ShowYearView(),
+            }),
+            onToday: () => bloc.add(const GoToToday()),
+            onToggleGregorianDays: () => bloc.add(const ToggleGregorianDays()),
+          ),
+          const SizedBox(height: 8),
+          Expanded(child: child),
+          if (state.view == CalendarView.month) ...[
+            const SizedBox(height: 16),
+            const CalendarLegend(),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// One month: its header, weekday names and the swipeable grid.
+class _MonthBody extends StatelessWidget {
   const new({
     required this.month,
     required this.state,
@@ -103,41 +159,62 @@ class _MonthView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<CalendarBloc>();
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          CalendarToolbar(
-            showTodayButton: !state.isShowingCurrentMonth,
-            showGregorianDays: state.showGregorianDays,
-            onToday: () => bloc.add(const GoToToday()),
-            onToggleGregorianDays: () => bloc.add(const ToggleGregorianDays()),
-          ),
-          const SizedBox(height: 8),
-          CalendarHeader(
+    return Column(
+      children: [
+        CalendarHeader(
+          month: month,
+          onPreviousMonth: () => bloc.add(const PreviousMonth()),
+          onNextMonth: () => bloc.add(const NextMonth()),
+        ),
+        const SizedBox(height: 16),
+        const CalendarWeekdayHeaders(),
+        const SizedBox(height: 8),
+        Expanded(
+          child: CalendarMonthPager(
             month: month,
-            onPreviousMonth: () => bloc.add(const PreviousMonth()),
-            onNextMonth: () => bloc.add(const NextMonth()),
+            days: state.days,
+            previousDays: state.previousDays,
+            nextDays: state.nextDays,
+            showGregorianDays: state.showGregorianDays,
+            dayBadgeBuilder: dayBadgeBuilder,
+            onDayTap: onDayTap,
+            onMonthChanged: (month) => bloc.add(ChangeMonth(month)),
           ),
-          const SizedBox(height: 16),
-          const CalendarWeekdayHeaders(),
-          const SizedBox(height: 8),
-          Expanded(
-            child: CalendarMonthPager(
-              month: month,
-              days: state.days,
-              previousDays: state.previousDays,
-              nextDays: state.nextDays,
-              showGregorianDays: state.showGregorianDays,
-              dayBadgeBuilder: dayBadgeBuilder,
-              onDayTap: onDayTap,
-              onMonthChanged: (month) => bloc.add(ChangeMonth(month)),
-            ),
+        ),
+      ],
+    );
+  }
+}
+
+/// One year: its header and the twelve mini months.
+class _YearBody extends StatelessWidget {
+  const new({required this.year, required this.months});
+
+  final int year;
+  final List<CalendarMonth> months;
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
+    final bloc = context.read<CalendarBloc>();
+    return Column(
+      children: [
+        CalendarPeriodHeader(
+          title: localization.hijriYear('$year'),
+          previousTooltip: localization.previousYear,
+          nextTooltip: localization.nextYear,
+          onPrevious: () => bloc.add(const PreviousYear()),
+          onNext: () => bloc.add(const NextYear()),
+        ),
+        const SizedBox(height: 16),
+        Expanded(
+          child: CalendarYearView(
+            months: months,
+            onMonthTap: (month) => bloc.add(ChangeMonth(month)),
+            footer: const CalendarLegend(),
           ),
-          const SizedBox(height: 16),
-          const CalendarLegend(),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -94,6 +94,34 @@
   },
   "gregorianDaysTooltip": "Show Gregorian day numbers",
   "calendarSettingSaveFailed": "Could not save the calendar setting",
+  "monthView": "Month",
+  "@monthView": {
+    "description": "Calendar view switch: one month at a time."
+  },
+  "yearView": "Year",
+  "@yearView": {
+    "description": "Calendar view switch: the twelve months of a Hijri year."
+  },
+  "previousYear": "Previous year",
+  "nextYear": "Next year",
+  "yearUnavailable": "This year is outside the supported calendar range",
+  "currentMonth": "Current month",
+  "@currentMonth": {
+    "description": "Screen-reader note on the month containing today in the year view."
+  },
+  "yearViewMonthLabel": "{month}, {count, plural, =0{no fasting days} =1{1 fasting day} other{{count} fasting days}}",
+  "@yearViewMonthLabel": {
+    "description": "Screen-reader label of a month in the year view; tapping it opens the month.",
+    "placeholders": {
+      "month": {
+        "type": "String",
+        "example": "Ramadan"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "hijriYear": "{year} AH",
   "@hijriYear": {
     "description": "A Hijri year.",

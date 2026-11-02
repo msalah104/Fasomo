@@ -215,6 +215,39 @@ class AppLocalizationsAr extends AppLocalizations {
   String get calendarSettingSaveFailed => 'تعذّر حفظ إعداد التقويم';
 
   @override
+  String get monthView => 'شهر';
+
+  @override
+  String get yearView => 'سنة';
+
+  @override
+  String get previousYear => 'السنة السابقة';
+
+  @override
+  String get nextYear => 'السنة التالية';
+
+  @override
+  String get yearUnavailable => 'هذه السنة خارج نطاق التقويم المدعوم';
+
+  @override
+  String get currentMonth => 'الشهر الحالي';
+
+  @override
+  String yearViewMonthLabel(String month, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count يوم صيام',
+      many: '$count يوم صيام',
+      few: '$count أيام صيام',
+      two: 'يوما صيام',
+      one: 'يوم صيام واحد',
+      zero: 'لا أيام صيام',
+    );
+    return '$month، $_temp0';
+  }
+
+  @override
   String hijriYear(String year) {
     return '$year هـ';
   }

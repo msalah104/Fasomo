@@ -5,6 +5,7 @@ import 'package:fasomo/core/calendar/hijri_date.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
+import 'package:fasomo/features/calendar/domain/entities/calendar_month.dart';
 import 'package:fasomo/features/calendar/domain/repositories/calendar_repository.dart';
 
 class CalendarRepositoryImpl implements CalendarRepository {
@@ -35,6 +36,21 @@ class CalendarRepositoryImpl implements CalendarRepository {
           fastingTypes: day.types,
         ),
     ]);
+  }
+
+  @override
+  Result<List<CalendarMonth>, CalendarFailure> getYear(int year) {
+    final months = <CalendarMonth>[];
+    for (var number = 1; number <= 12; number++) {
+      final month = HijriMonth(year, number);
+      switch (getMonth(month)) {
+        case Ok(value: final days):
+          months.add(CalendarMonth(month: month, days: days));
+        case Err(:final failure):
+          return Err(failure);
+      }
+    }
+    return Ok(months);
   }
 
   CalendarFailure _outOfRange() => CalendarOutOfRange(

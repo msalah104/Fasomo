@@ -215,6 +215,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarSettingSaveFailed => 'Could not save the calendar setting';
 
   @override
+  String get monthView => 'Month';
+
+  @override
+  String get yearView => 'Year';
+
+  @override
+  String get previousYear => 'Previous year';
+
+  @override
+  String get nextYear => 'Next year';
+
+  @override
+  String get yearUnavailable =>
+      'This year is outside the supported calendar range';
+
+  @override
+  String get currentMonth => 'Current month';
+
+  @override
+  String yearViewMonthLabel(String month, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fasting days',
+      one: '1 fasting day',
+      zero: 'no fasting days',
+    );
+    return '$month, $_temp0';
+  }
+
+  @override
   String hijriYear(String year) {
     return '$year AH';
   }
