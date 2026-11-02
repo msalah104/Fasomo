@@ -9,6 +9,7 @@ class AppConstants {
   static const String hijriOffsetKey = 'hijri_offset_days';
   static const String remindersKey = 'reminders';
   static const String permissionAskedKey = 'notification_permission_asked';
+  static const String notificationToneKey = 'notification_tone';
   static const String fastLogKey = 'fast_log';
   static const String makeUpDaysKey = 'qada_made_up';
   static const String missedRamadanKey = 'qada_missed';
@@ -20,6 +21,10 @@ class AppConstants {
   static const String notificationChannelName = 'Fasting Reminders';
   static const String notificationChannelDescription =
       'Notifications for upcoming fasting days';
+
+  // Reused by every tone preview, so a new one replaces the last. Reminder
+  // ids are hashes, so a clash with this one is a one-in-two-billion chance.
+  static const int tonePreviewNotificationId = 1;
 
   // Must match default_notification_channel_id in AndroidManifest.xml, so
   // background push messages land on the same channel.

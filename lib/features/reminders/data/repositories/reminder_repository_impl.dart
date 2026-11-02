@@ -4,12 +4,16 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/error/storage_write_exception.dart';
 import 'package:fasomo/core/logging/app_log.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 import 'package:fasomo/features/reminders/domain/repositories/reminder_repository.dart';
 import 'package:flutter/services.dart';
 
-class ReminderRepositoryImpl implements ReminderRepository {
+/// Also the [NotificationToneSource] the notification sync reads, so a saved
+/// tone applies at the next sync.
+class ReminderRepositoryImpl
+    implements ReminderRepository, NotificationToneSource {
   const new({required this.localDataSource});
 
   static const String _key = AppConstants.remindersKey;
@@ -60,6 +64,42 @@ class ReminderRepositoryImpl implements ReminderRepository {
       return const Err(StorageWriteFailed(AppConstants.permissionAskedKey));
     }
   }
+
+  @override
+  Result<NotificationTone, StorageFailure> getNotificationTone() {
+    try {
+      return Ok(
+        localDataSource.getNotificationTone() ?? NotificationTone.systemDefault,
+      );
+    } on FormatException catch (e, st) {
+      AppLog.error('reminders.tone.read', e, st);
+      return const Err(StorageReadFailed(AppConstants.notificationToneKey));
+    }
+  }
+
+  @override
+  Future<Result<void, StorageFailure>> saveNotificationTone(
+    NotificationTone tone,
+  ) async {
+    const key = AppConstants.notificationToneKey;
+    try {
+      await localDataSource.saveNotificationTone(tone);
+      return const Ok(null);
+    } on StorageWriteException catch (e, st) {
+      AppLog.error('reminders.tone.write', e, st);
+      return const Err(StorageWriteFailed(key));
+    } on PlatformException catch (e, st) {
+      AppLog.error('reminders.tone.write', e, st);
+      return const Err(StorageWriteFailed(key));
+    }
+  }
+
+  /// An unreadable tone counts as the system default.
+  @override
+  NotificationTone get notificationTone => switch (getNotificationTone()) {
+    Ok(:final value) => value,
+    Err() => NotificationTone.systemDefault,
+  };
 
   Future<Result<void, StorageFailure>> _update(
     List<Reminder> Function(List<Reminder> current) change,

@@ -5,6 +5,7 @@ import 'package:fasomo/core/calendar/hijri_converter.dart';
 import 'package:fasomo/core/calendar/hijri_offset.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/sync_notifications.dart';
 import 'package:fasomo/core/push/push_messaging.dart';
 import 'package:fasomo/core/push/sync_announcement_topic.dart';
@@ -30,9 +31,12 @@ import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_s
 import 'package:fasomo/features/reminders/data/repositories/reminder_repository_impl.dart';
 import 'package:fasomo/features/reminders/domain/fasting_reminder_source.dart';
 import 'package:fasomo/features/reminders/domain/repositories/reminder_repository.dart';
+import 'package:fasomo/features/reminders/domain/usecases/get_notification_tone.dart';
 import 'package:fasomo/features/reminders/domain/usecases/get_reminders.dart';
 import 'package:fasomo/features/reminders/domain/usecases/prompt_notification_permission_once.dart';
+import 'package:fasomo/features/reminders/domain/usecases/save_notification_tone.dart';
 import 'package:fasomo/features/reminders/domain/usecases/save_reminder.dart';
+import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:fasomo/features/settings/domain/repositories/settings_repository.dart';
@@ -76,11 +80,13 @@ final class PlatformServices {
   const new({
     required this.notifications,
     required this.notificationPermission,
+    required this.tonePreview,
     required this.push,
   });
 
   final NotificationGateway notifications;
   final NotificationPermission notificationPermission;
+  final NotificationTonePreview tonePreview;
   final PushMessaging push;
 }
 
@@ -141,8 +147,24 @@ Future<void> init({PlatformServices? platform}) async {
       () =>
           PromptNotificationPermissionOnce(repository: sl(), permission: sl()),
     )
-    ..registerLazySingleton<ReminderRepository>(
+    ..registerFactory(
+      () => NotificationToneBloc(
+        getNotificationTone: sl(),
+        saveNotificationTone: sl(),
+        permission: sl(),
+        tonePreview: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => GetNotificationTone(sl()))
+    ..registerLazySingleton(() => SaveNotificationTone(sl()))
+    // One instance is both the reminder store and the tone the notification
+    // sync reads, so a saved tone applies at the next sync.
+    ..registerLazySingleton(
       () => ReminderRepositoryImpl(localDataSource: sl()),
+    )
+    ..registerLazySingleton<ReminderRepository>(sl.get<ReminderRepositoryImpl>)
+    ..registerLazySingleton<NotificationToneSource>(
+      sl.get<ReminderRepositoryImpl>,
     )
     ..registerLazySingleton<ReminderLocalDataSource>(
       () => ReminderLocalDataSourceImpl(sharedPreferences: sl()),
@@ -233,6 +255,9 @@ Future<void> init({PlatformServices? platform}) async {
     ..registerLazySingleton<NotificationPermission>(
       () => services.notificationPermission,
     )
+    ..registerLazySingleton<NotificationTonePreview>(
+      () => services.tonePreview,
+    )
     ..registerLazySingleton(() => NotificationReconciler(sl()))
     // Every feature that schedules notifications is a source of the one sync,
     // because the reconciler owns the whole OS pending set.
@@ -240,6 +265,7 @@ Future<void> init({PlatformServices? platform}) async {
       () => SyncNotifications(
         sources: [sl<FastingReminderSource>(), sl<QadaReminderSource>()],
         reconciler: sl(),
+        toneSource: sl(),
         clock: sl(),
       ),
     )
@@ -256,6 +282,7 @@ Future<PlatformServices> _devicePlatformServices() async {
   return PlatformServices(
     notifications: notifications,
     notificationPermission: notifications,
+    tonePreview: notifications,
     push: push,
   );
 }

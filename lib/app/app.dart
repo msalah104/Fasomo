@@ -4,6 +4,7 @@ import 'package:fasomo/core/di/injection_container.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
@@ -31,6 +32,7 @@ class FasomoApp extends StatelessWidget {
         BlocProvider(
           create: (_) => sl<ReminderBloc>()..add(const LoadReminders()),
         ),
+        BlocProvider(create: (_) => sl<NotificationToneBloc>()),
         BlocProvider(
           create: (_) => sl<TrackerBloc>()..add(const LoadTracker()),
         ),

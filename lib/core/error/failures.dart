@@ -94,7 +94,7 @@ sealed class NotificationFailure extends Failure {
 final class NotificationPlatformFailed extends NotificationFailure {
   const new(this.operation);
 
-  /// `schedule`, `cancel`, `cancelAll` or `getPending`.
+  /// `schedule`, `cancel`, `cancelAll`, `getPending` or `preview`.
   final String operation;
 
   @override

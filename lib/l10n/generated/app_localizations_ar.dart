@@ -718,4 +718,44 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get settingsNotifications => 'الإشعارات';
+
+  @override
+  String get notificationTone => 'صوت التذكير';
+
+  @override
+  String get notificationToneSystem => 'صوت النظام الافتراضي';
+
+  @override
+  String get notificationToneSoftChime => 'رنين هادئ';
+
+  @override
+  String get notificationToneBell => 'جرس';
+
+  @override
+  String get notificationToneGentle => 'نغمة لطيفة';
+
+  @override
+  String get notificationToneVibrateOnly => 'اهتزاز فقط';
+
+  @override
+  String get notificationToneSilent => 'صامت';
+
+  @override
+  String notificationTonePlay(String tone) {
+    return 'تجربة $tone';
+  }
+
+  @override
+  String get notificationTonePreviewTitle => 'هكذا ستبدو تذكيراتك';
+
+  @override
+  String notificationTonePreviewBody(String tone) {
+    return 'صوت التذكير: $tone';
+  }
+
+  @override
+  String get notificationTonePreviewFailed => 'تعذّر تشغيل الصوت.';
 }

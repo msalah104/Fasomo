@@ -4,6 +4,7 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/notifications/notification_copy.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/reminder_composer.dart';
 import 'package:fasomo/core/notifications/reminder_occurrence.dart';
 import 'package:fasomo/core/notifications/reminder_scheduler.dart';
@@ -14,8 +15,8 @@ import 'package:fasomo/core/usecases/usecase.dart';
 /// [ReminderSource], composes the notifications (merging same-day ones),
 /// keeps the nearest within the budget and reconciles the OS pending set.
 ///
-/// Run it after any reminder or fasting-log change, when the language
-/// changes, and on every app start and resume (which also refills the
+/// Run it after any reminder or fasting-log change, when the language or
+/// the reminder tone changes, and on every app start and resume (which also refills the
 /// rolling window). If any source fails, nothing is changed, so a read error
 /// never cancels the notifications already scheduled.
 class SyncNotifications
@@ -23,6 +24,7 @@ class SyncNotifications
   const new({
     required this.sources,
     required this.reconciler,
+    required this.toneSource,
     required this.clock,
   });
 
@@ -31,6 +33,9 @@ class SyncNotifications
 
   final List<ReminderSource> sources;
   final NotificationReconciler reconciler;
+
+  /// The sound every notification plays; read on each run.
+  final NotificationToneSource toneSource;
   final Clock clock;
 
   @override
@@ -50,6 +55,7 @@ class SyncNotifications
     final desired = ReminderScheduler.compute(
       requests: ReminderComposer.compose(occurrences, copy),
       now: now,
+      tone: toneSource.notificationTone,
     );
     return switch (await reconciler.reconcile(desired)) {
       Ok() => const Ok(null),

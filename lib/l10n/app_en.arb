@@ -494,5 +494,62 @@
         "type": "int"
       }
     }
-  }
+  },
+  "settingsNotifications": "Notifications",
+  "@settingsNotifications": {
+    "description": "Settings section header for notification options."
+  },
+  "notificationTone": "Reminder sound",
+  "@notificationTone": {
+    "description": "Settings tile and dialog title for the sound reminders play."
+  },
+  "notificationToneSystem": "System default",
+  "@notificationToneSystem": {
+    "description": "Reminder sound choice: the device's own notification sound."
+  },
+  "notificationToneSoftChime": "Soft chime",
+  "@notificationToneSoftChime": {
+    "description": "Reminder sound choice: two soft notes, like a doorbell chime."
+  },
+  "notificationToneBell": "Bell",
+  "@notificationToneBell": {
+    "description": "Reminder sound choice: a small struck bell."
+  },
+  "notificationToneGentle": "Gentle",
+  "@notificationToneGentle": {
+    "description": "Reminder sound choice: a quiet rising three-note tune."
+  },
+  "notificationToneVibrateOnly": "Vibrate only",
+  "@notificationToneVibrateOnly": {
+    "description": "Reminder sound choice: no sound, vibration only."
+  },
+  "notificationToneSilent": "Silent",
+  "@notificationToneSilent": {
+    "description": "The vibrate-only reminder sound choice as named on iPhone and iPad, where an app's notification can't vibrate without a sound."
+  },
+  "notificationTonePlay": "Try {tone}",
+  "@notificationTonePlay": {
+    "description": "Tooltip and screen-reader label of the button that previews a reminder sound (or, for vibrate only, the vibration).",
+    "placeholders": {
+      "tone": {
+        "type": "String",
+        "example": "Soft chime"
+      }
+    }
+  },
+  "notificationTonePreviewTitle": "This is how reminders will sound",
+  "@notificationTonePreviewTitle": {
+    "description": "Title of the test notification shown when previewing a reminder sound."
+  },
+  "notificationTonePreviewBody": "Reminder sound: {tone}",
+  "@notificationTonePreviewBody": {
+    "description": "Body of the test notification shown when previewing a reminder sound.",
+    "placeholders": {
+      "tone": {
+        "type": "String",
+        "example": "Soft chime"
+      }
+    }
+  },
+  "notificationTonePreviewFailed": "Could not play the sound."
 }

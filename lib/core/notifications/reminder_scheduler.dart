@@ -1,4 +1,5 @@
 import 'package:fasomo/core/notifications/deterministic_id.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/reminder_timing.dart';
 import 'package:fasomo/core/notifications/scheduled_notification.dart';
 
@@ -39,9 +40,14 @@ abstract final class ReminderScheduler {
   /// win; later ones are added by the next foreground sync.
   static const int defaultBudget = 50;
 
+  /// Every notification plays [tone]. The tone is part of each id, so
+  /// choosing another one replaces every pending notification: on Android
+  /// the sound belongs to the channel, which a pending notification can't
+  /// change.
   static List<ScheduledNotification> compute({
     required List<ReminderRequest> requests,
     required DateTime now,
+    required NotificationTone tone,
     int budget = defaultBudget,
   }) {
     final upcoming =
@@ -56,13 +62,14 @@ abstract final class ReminderScheduler {
 
     return [
       for (final entry in upcoming.take(budget))
-        _toNotification(entry.request, entry.fireAt),
+        _toNotification(entry.request, entry.fireAt, tone),
     ];
   }
 
   static ScheduledNotification _toNotification(
     ReminderRequest request,
     DateTime fireAt,
+    NotificationTone tone,
   ) {
     final day = _isoDate(request.fastingDate);
     return ScheduledNotification(
@@ -72,11 +79,13 @@ abstract final class ReminderScheduler {
         fireAt.toIso8601String(),
         request.title,
         request.body,
+        tone.name,
       ]),
       fireAt: fireAt,
       title: request.title,
       body: request.body,
       payload: 'reminder/${request.reminderId}/$day',
+      tone: tone,
     );
   }
 

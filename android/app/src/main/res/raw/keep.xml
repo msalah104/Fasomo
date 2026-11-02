@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The reminder tones are referenced only by name from Dart (through
+     flutter_local_notifications), so resource shrinking would otherwise
+     strip them from release builds. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@raw/*" />

@@ -6,11 +6,14 @@ import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
+import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
+import 'package:fasomo/features/reminders/presentation/widgets/notification_tone_tile.dart';
 import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
 import 'package:fasomo/features/settings/presentation/pages/settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_button.dart';
+import 'package:fasomo/features/settings/presentation/widgets/settings_section.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/fasted_toggle.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/qada_reminder_tile.dart';
@@ -123,6 +126,14 @@ class _AppShellState extends State<AppShell> {
             context.read<ReminderBloc>().add(const SyncRequested());
           },
         ),
+        // On Android the sound belongs to the notification channel, so a
+        // new tone means rescheduling every pending reminder. The tone is
+        // part of each notification id, so the sync does exactly that.
+        BlocListener<NotificationToneBloc, NotificationToneState>(
+          listenWhen: (previous, current) => previous.tone != current.tone,
+          listener: (context, _) =>
+              context.read<ReminderBloc>().add(const SyncRequested()),
+        ),
       ],
       child: Scaffold(
         // Home draws its own sky header in place of the app bar.
@@ -180,7 +191,16 @@ void _openSettings(BuildContext context) {
   // "Today" may have moved on since the adjustment preview was computed.
   context.read<HijriAdjustmentBloc>().add(const HijriPreviewRefreshed());
   Navigator.of(context).push(
-    MaterialPageRoute<void>(builder: (_) => const SettingsPage()),
+    MaterialPageRoute<void>(
+      builder: (context) => SettingsPage(
+        extraSections: [
+          SettingsSection(
+            title: AppLocalizations.of(context).settingsNotifications,
+            children: const [NotificationToneTile()],
+          ),
+        ],
+      ),
+    ),
   );
 }
 

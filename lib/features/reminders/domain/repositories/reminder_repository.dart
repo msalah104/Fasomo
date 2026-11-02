@@ -1,5 +1,6 @@
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 
 /// The single write path for reminders.
@@ -17,4 +18,13 @@ abstract interface class ReminderRepository {
   /// Records that notification permission has been asked for, so the app
   /// doesn't prompt again on every launch.
   Future<Result<void, StorageFailure>> markPermissionAsked();
+
+  /// The sound reminders play, or [NotificationTone.systemDefault] when none
+  /// was chosen.
+  Result<NotificationTone, StorageFailure> getNotificationTone();
+
+  /// Saves the sound reminders play. Takes effect at the next sync.
+  Future<Result<void, StorageFailure>> saveNotificationTone(
+    NotificationTone tone,
+  );
 }

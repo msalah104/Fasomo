@@ -184,5 +184,17 @@
   "hijriAdjustmentToday": "اليوم: {date}",
   "hijriOffsetNone": "دون تعديل",
   "hijriOffsetAdd": "{days, plural, =1{إضافة يوم واحد} =2{إضافة يومين} few{إضافة {days} أيام} other{إضافة {days} يومًا}}",
-  "hijriOffsetSubtract": "{days, plural, =1{طرح يوم واحد} =2{طرح يومين} few{طرح {days} أيام} other{طرح {days} يومًا}}"
+  "hijriOffsetSubtract": "{days, plural, =1{طرح يوم واحد} =2{طرح يومين} few{طرح {days} أيام} other{طرح {days} يومًا}}",
+  "settingsNotifications": "الإشعارات",
+  "notificationTone": "صوت التذكير",
+  "notificationToneSystem": "صوت النظام الافتراضي",
+  "notificationToneSoftChime": "رنين هادئ",
+  "notificationToneBell": "جرس",
+  "notificationToneGentle": "نغمة لطيفة",
+  "notificationToneVibrateOnly": "اهتزاز فقط",
+  "notificationToneSilent": "صامت",
+  "notificationTonePlay": "تجربة {tone}",
+  "notificationTonePreviewTitle": "هكذا ستبدو تذكيراتك",
+  "notificationTonePreviewBody": "صوت التذكير: {tone}",
+  "notificationTonePreviewFailed": "تعذّر تشغيل الصوت."
 }

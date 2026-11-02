@@ -1,4 +1,5 @@
 import 'package:fasomo/core/notifications/deterministic_id.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/reminder_scheduler.dart';
 import 'package:fasomo/core/notifications/reminder_timing.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,6 +27,7 @@ void main() {
         request(DateTime(2026, 11, 2)), // fires tonight
       ],
       now: now,
+      tone: NotificationTone.systemDefault,
     );
     expect(result.map((n) => n.fireAt), [DateTime(2026, 11, 1, 20)]);
   });
@@ -34,6 +36,7 @@ void main() {
     final result = ReminderScheduler.compute(
       requests: [request(DateTime(2026, 11, 2))],
       now: DateTime(2026, 11, 1, 20),
+      tone: NotificationTone.systemDefault,
     );
     expect(result, isEmpty);
   });
@@ -45,6 +48,7 @@ void main() {
     final result = ReminderScheduler.compute(
       requests: requests,
       now: now,
+      tone: NotificationTone.systemDefault,
       budget: 5,
     );
     expect(result.map((n) => n.fireAt.day), [1, 2, 3, 4, 5]);
@@ -54,7 +58,11 @@ void main() {
     final requests = [
       for (var day = 0; day < 80; day++) request(DateTime(2026, 11, 2 + day)),
     ];
-    final result = ReminderScheduler.compute(requests: requests, now: now);
+    final result = ReminderScheduler.compute(
+      requests: requests,
+      now: now,
+      tone: NotificationTone.systemDefault,
+    );
     expect(result, hasLength(ReminderScheduler.defaultBudget));
     expect(ReminderScheduler.defaultBudget, lessThan(64));
   });
@@ -63,15 +71,23 @@ void main() {
     final n = ReminderScheduler.compute(
       requests: [request(DateTime(2026, 11, 2))],
       now: now,
+      tone: NotificationTone.bell,
     ).single;
     expect(n.title, 'Tomorrow: White Days');
     expect(n.body, 'Fast tomorrow');
     expect(n.payload, 'reminder/whiteDays/2026-11-02');
+    expect(n.tone, NotificationTone.bell);
   });
 
   group('deterministic ids', () {
-    int idFor(ReminderRequest r) =>
-        ReminderScheduler.compute(requests: [r], now: now).single.id;
+    int idFor(
+      ReminderRequest r, {
+      NotificationTone tone = NotificationTone.systemDefault,
+    }) => ReminderScheduler.compute(
+      requests: [r],
+      now: now,
+      tone: tone,
+    ).single.id;
 
     test('are stable for the same input', () {
       expect(
@@ -91,6 +107,14 @@ void main() {
         isNot(base),
       );
       expect(idFor(request(DateTime(2026, 11, 2), title: 'غداً')), isNot(base));
+    });
+
+    test('change with the tone, so a new tone replaces every reminder', () {
+      final ids = {
+        for (final tone in NotificationTone.values)
+          idFor(request(DateTime(2026, 11, 2)), tone: tone),
+      };
+      expect(ids, hasLength(NotificationTone.values.length));
     });
 
     test('are unique and positive 31-bit ints across a year of reminders', () {

@@ -1207,6 +1207,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{days, plural, =1{Subtract 1 day} other{Subtract {days} days}}'**
   String hijriOffsetSubtract(int days);
+
+  /// Settings section header for notification options.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get settingsNotifications;
+
+  /// Settings tile and dialog title for the sound reminders play.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder sound'**
+  String get notificationTone;
+
+  /// Reminder sound choice: the device's own notification sound.
+  ///
+  /// In en, this message translates to:
+  /// **'System default'**
+  String get notificationToneSystem;
+
+  /// Reminder sound choice: two soft notes, like a doorbell chime.
+  ///
+  /// In en, this message translates to:
+  /// **'Soft chime'**
+  String get notificationToneSoftChime;
+
+  /// Reminder sound choice: a small struck bell.
+  ///
+  /// In en, this message translates to:
+  /// **'Bell'**
+  String get notificationToneBell;
+
+  /// Reminder sound choice: a quiet rising three-note tune.
+  ///
+  /// In en, this message translates to:
+  /// **'Gentle'**
+  String get notificationToneGentle;
+
+  /// Reminder sound choice: no sound, vibration only.
+  ///
+  /// In en, this message translates to:
+  /// **'Vibrate only'**
+  String get notificationToneVibrateOnly;
+
+  /// The vibrate-only reminder sound choice as named on iPhone and iPad, where an app's notification can't vibrate without a sound.
+  ///
+  /// In en, this message translates to:
+  /// **'Silent'**
+  String get notificationToneSilent;
+
+  /// Tooltip and screen-reader label of the button that previews a reminder sound (or, for vibrate only, the vibration).
+  ///
+  /// In en, this message translates to:
+  /// **'Try {tone}'**
+  String notificationTonePlay(String tone);
+
+  /// Title of the test notification shown when previewing a reminder sound.
+  ///
+  /// In en, this message translates to:
+  /// **'This is how reminders will sound'**
+  String get notificationTonePreviewTitle;
+
+  /// Body of the test notification shown when previewing a reminder sound.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder sound: {tone}'**
+  String notificationTonePreviewBody(String tone);
+
+  /// No description provided for @notificationTonePreviewFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not play the sound.'**
+  String get notificationTonePreviewFailed;
 }
 
 class _AppLocalizationsDelegate

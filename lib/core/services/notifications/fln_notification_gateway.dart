@@ -3,8 +3,10 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/logging/app_log.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/scheduled_notification.dart';
 import 'package:fasomo/core/push/push_messaging.dart';
+import 'package:fasomo/core/services/notifications/notification_tone_channel.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -14,6 +16,7 @@ class FlnNotificationGateway
     implements
         NotificationGateway,
         NotificationPermission,
+        NotificationTonePreview,
         AnnouncementPresenter {
   /// [plugin] is injectable for tests; production uses the default.
   new([FlutterLocalNotificationsPlugin? plugin])
@@ -21,17 +24,30 @@ class FlnNotificationGateway
 
   final FlutterLocalNotificationsPlugin _plugin;
 
-  static const NotificationDetails _details = NotificationDetails(
-    android: AndroidNotificationDetails(
-      AppConstants.notificationChannelId,
-      AppConstants.notificationChannelName,
-      channelDescription: AppConstants.notificationChannelDescription,
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-    ),
-    iOS: DarwinNotificationDetails(),
-  );
+  /// Reminder details for [tone]. Android creates the tone's channel the
+  /// first time a notification is posted to it.
+  static NotificationDetails _details(NotificationTone tone) {
+    final channel = NotificationToneChannel.of(tone);
+    return NotificationDetails(
+      android: AndroidNotificationDetails(
+        channel.androidChannelId,
+        channel.androidChannelName,
+        channelDescription: AppConstants.notificationChannelDescription,
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+        playSound: channel.playsSound,
+        sound: switch (channel.androidSound) {
+          final name? => RawResourceAndroidNotificationSound(name),
+          null => null,
+        },
+      ),
+      iOS: DarwinNotificationDetails(
+        presentSound: channel.playsSound,
+        sound: channel.iosSound,
+      ),
+    );
+  }
 
   static const AndroidNotificationChannel _announcementChannel =
       AndroidNotificationChannel(
@@ -89,6 +105,21 @@ class FlnNotificationGateway
   );
 
   @override
+  Future<Result<void, NotificationFailure>> preview(
+    NotificationTone tone, {
+    required String title,
+    required String body,
+  }) => _guard(
+    'preview',
+    () => _plugin.show(
+      id: AppConstants.tonePreviewNotificationId,
+      title: title,
+      body: body,
+      notificationDetails: _details(tone),
+    ),
+  );
+
+  @override
   Future<bool> request() async {
     try {
       final ios = _plugin
@@ -128,7 +159,7 @@ class FlnNotificationGateway
         fireAt.hour,
         fireAt.minute,
       ),
-      notificationDetails: _details,
+      notificationDetails: _details(notification.tone),
       androidScheduleMode: await _scheduleMode(),
     );
   });

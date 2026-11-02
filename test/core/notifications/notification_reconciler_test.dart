@@ -1,6 +1,7 @@
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/scheduled_notification.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,6 +13,7 @@ ScheduledNotification notification(int id) => ScheduledNotification(
   title: 't',
   body: 'b',
   payload: 'p',
+  tone: NotificationTone.systemDefault,
 );
 
 void main() {

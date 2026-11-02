@@ -2,6 +2,7 @@ import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fasomo/features/reminders/data/repositories/reminder_repository_impl.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
@@ -85,5 +86,46 @@ void main() {
         isA<StorageReadFailed>(),
       ),
     );
+  });
+
+  group('notification tone', () {
+    test('is the system default until one is chosen', () async {
+      final repository = await repositoryWith({});
+      expect(
+        repository.getNotificationTone(),
+        isA<Ok<NotificationTone, StorageFailure>>().having(
+          (ok) => ok.value,
+          'value',
+          NotificationTone.systemDefault,
+        ),
+      );
+      expect(repository.notificationTone, NotificationTone.systemDefault);
+    });
+
+    test('is saved by name and read back', () async {
+      final repository = await repositoryWith({});
+
+      await repository.saveNotificationTone(NotificationTone.bell);
+
+      expect(repository.notificationTone, NotificationTone.bell);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString(AppConstants.notificationToneKey), 'bell');
+    });
+
+    test('an unknown stored tone is a read failure; the sync falls back '
+        'to the system default', () async {
+      final repository = await repositoryWith({
+        AppConstants.notificationToneKey: 'trumpet',
+      });
+      expect(
+        repository.getNotificationTone(),
+        isA<Err<NotificationTone, StorageFailure>>().having(
+          (e) => e.failure,
+          'failure',
+          isA<StorageReadFailed>(),
+        ),
+      );
+      expect(repository.notificationTone, NotificationTone.systemDefault);
+    });
   });
 }

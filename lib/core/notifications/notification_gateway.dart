@@ -2,6 +2,7 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart'
     show NotificationReconciler;
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/scheduled_notification.dart';
 
 /// The port to the OS notification scheduler. The OS pending set is a cache;
@@ -22,4 +23,16 @@ abstract interface class NotificationGateway {
 abstract interface class NotificationPermission {
   /// Whether notifications may be shown after the request.
   Future<bool> request();
+}
+
+/// Lets the user hear a [NotificationTone] before choosing it, by showing a
+/// notification with that tone straight away.
+///
+/// Not part of [NotificationGateway]: it never touches the scheduled set.
+abstract interface class NotificationTonePreview {
+  Future<Result<void, NotificationFailure>> preview(
+    NotificationTone tone, {
+    required String title,
+    required String body,
+  });
 }

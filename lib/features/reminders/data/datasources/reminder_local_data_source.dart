@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/error/storage_write_exception.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/features/reminders/domain/entities/reminder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,10 @@ abstract interface class ReminderLocalDataSource {
 
   bool getPermissionAsked();
   Future<void> setPermissionAsked();
+
+  /// The chosen tone, or `null` when none was chosen.
+  NotificationTone? getNotificationTone();
+  Future<void> saveNotificationTone(NotificationTone tone);
 }
 
 class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
@@ -58,6 +63,27 @@ class ReminderLocalDataSourceImpl implements ReminderLocalDataSource {
     );
     if (!saved) {
       throw const StorageWriteException(AppConstants.permissionAskedKey);
+    }
+  }
+
+  @override
+  NotificationTone? getNotificationTone() {
+    final stored = sharedPreferences.get(AppConstants.notificationToneKey);
+    if (stored == null) return null;
+    for (final tone in NotificationTone.values) {
+      if (tone.name == stored) return tone;
+    }
+    throw FormatException('Unknown notification tone', stored);
+  }
+
+  @override
+  Future<void> saveNotificationTone(NotificationTone tone) async {
+    final saved = await sharedPreferences.setString(
+      AppConstants.notificationToneKey,
+      tone.name,
+    );
+    if (!saved) {
+      throw const StorageWriteException(AppConstants.notificationToneKey);
     }
   }
 }

@@ -707,4 +707,44 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get settingsNotifications => 'Notifications';
+
+  @override
+  String get notificationTone => 'Reminder sound';
+
+  @override
+  String get notificationToneSystem => 'System default';
+
+  @override
+  String get notificationToneSoftChime => 'Soft chime';
+
+  @override
+  String get notificationToneBell => 'Bell';
+
+  @override
+  String get notificationToneGentle => 'Gentle';
+
+  @override
+  String get notificationToneVibrateOnly => 'Vibrate only';
+
+  @override
+  String get notificationToneSilent => 'Silent';
+
+  @override
+  String notificationTonePlay(String tone) {
+    return 'Try $tone';
+  }
+
+  @override
+  String get notificationTonePreviewTitle => 'This is how reminders will sound';
+
+  @override
+  String notificationTonePreviewBody(String tone) {
+    return 'Reminder sound: $tone';
+  }
+
+  @override
+  String get notificationTonePreviewFailed => 'Could not play the sound.';
 }

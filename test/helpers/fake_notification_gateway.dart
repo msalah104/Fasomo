@@ -1,11 +1,16 @@
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/scheduled_notification.dart';
 
 /// In-memory OS pending set that records every call.
-class FakeNotificationGateway implements NotificationGateway {
+class FakeNotificationGateway
+    implements NotificationGateway, NotificationTonePreview {
   final Map<int, ScheduledNotification> pending = {};
+
+  /// Every tone previewed, in order.
+  final List<NotificationTone> previewed = [];
   final List<int> scheduledIds = [];
   final List<int> cancelledIds = [];
 
@@ -42,6 +47,17 @@ class FakeNotificationGateway implements NotificationGateway {
   Future<Result<Set<int>, NotificationFailure>> getPending() async {
     if (failWith case final failure?) return Err(failure);
     return Ok(pending.keys.toSet());
+  }
+
+  @override
+  Future<Result<void, NotificationFailure>> preview(
+    NotificationTone tone, {
+    required String title,
+    required String body,
+  }) async {
+    if (failWith case final failure?) return Err(failure);
+    previewed.add(tone);
+    return const Ok(null);
   }
 
   void clearLog() {

@@ -42,6 +42,7 @@ const _screens = <String, List<Object>>{
   'about': [Icons.info_outlined],
   'settings': [Icons.settings_outlined],
   'calendar_year': [Icons.calendar_today_outlined, ('Year', 'سنة')],
+  'tone-picker': [Icons.settings_outlined, Icons.music_note_outlined],
 };
 
 Finder _finderFor(Object tap, String language) => switch (tap) {
@@ -131,11 +132,13 @@ Future<void> _bootApp(
     AppConstants.languageKey: language == 'ar' ? 'arabic' : 'english',
   });
   await di.sl.reset();
+  final notifications = FakeNotificationGateway();
   await tester.runAsync(
     () => di.init(
       platform: di.PlatformServices(
-        notifications: FakeNotificationGateway(),
+        notifications: notifications,
         notificationPermission: _GrantedPermission(),
+        tonePreview: notifications,
         push: FakePushMessaging(),
       ),
     ),

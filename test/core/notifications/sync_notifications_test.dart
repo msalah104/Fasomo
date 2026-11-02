@@ -5,6 +5,7 @@ import 'package:fasomo/core/calendar/hijri_converter.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
+import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/reminder_occurrence.dart';
 import 'package:fasomo/core/notifications/reminder_source.dart';
 import 'package:fasomo/core/notifications/reminder_timing.dart';
@@ -36,6 +37,7 @@ void main() {
         qada,
       ],
       reconciler: NotificationReconciler(gateway),
+      toneSource: repository,
       clock: Clock(() => now),
     );
 
@@ -82,6 +84,46 @@ void main() {
         gateway.pending.values.map((n) => n.fireAt.hour).toSet(),
         {7},
       );
+    });
+
+    test('plays the saved tone', () async {
+      repository.tone = NotificationTone.softChime;
+      await sync()(const TestCopy());
+      expect(
+        gateway.pending.values.map((n) => n.tone).toSet(),
+        {NotificationTone.softChime},
+      );
+    });
+
+    test(
+      'a new tone replaces every pending notification with the new tone',
+      () async {
+        await sync()(const TestCopy());
+        final before = gateway.pending.keys.toSet();
+        gateway.clearLog();
+
+        repository.tone = NotificationTone.vibrateOnly;
+        await sync()(const TestCopy());
+
+        expect(gateway.cancelledIds.toSet(), before);
+        expect(gateway.scheduledIds, hasLength(before.length));
+        expect(gateway.pending.keys.toSet().intersection(before), isEmpty);
+        expect(
+          gateway.pending.values.map((n) => n.tone).toSet(),
+          {NotificationTone.vibrateOnly},
+        );
+        // Same reminders, same times: only the sound changed.
+        expect(gateway.pending, hasLength(before.length));
+      },
+    );
+
+    test('the same tone again changes nothing', () async {
+      repository.tone = NotificationTone.bell;
+      await sync()(const TestCopy());
+      gateway.clearLog();
+      await sync()(const TestCopy());
+      expect(gateway.scheduledIds, isEmpty);
+      expect(gateway.cancelledIds, isEmpty);
     });
 
     test('disabling a reminder cancels its notifications', () async {
