@@ -1,4 +1,5 @@
 import 'package:fasomo/core/theme/app_colors.dart';
+import 'package:fasomo/core/theme/app_fonts.dart';
 import 'package:fasomo/core/theme/app_shapes.dart';
 import 'package:flutter/material.dart';
 
@@ -73,11 +74,10 @@ ThemeData buildAppTheme(Brightness brightness) {
       foregroundColor: colors.onBrand,
       elevation: 0,
       centerTitle: true,
-      titleTextStyle: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: colors.onBrand,
-      ),
+      titleTextStyle: _heading(
+        size: 20,
+        weight: FontWeight.w600,
+      ).copyWith(color: colors.onBrand),
     ),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: colors.card,
@@ -99,18 +99,26 @@ ThemeData buildAppTheme(Brightness brightness) {
   );
 }
 
-// The platform font is used so the app works fully offline and renders
-// Arabic with a font that has complete glyph coverage.
+// Headings (display, headline, title) are set in El Messiri and everything
+// else (body, label) in IBM Plex Sans Arabic. Both are bundled, so the app
+// renders the same type offline. Slots without a size keep Material's.
 TextTheme _textTheme(AppColors colors) {
-  const base = TextTheme(
-    displayLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-    displayMedium: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-    displaySmall: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-    headlineMedium: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-    titleLarge: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-    titleMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-    bodyLarge: TextStyle(fontSize: 16),
-    bodyMedium: TextStyle(fontSize: 14),
+  final base = TextTheme(
+    displayLarge: _heading(size: 32, weight: FontWeight.bold),
+    displayMedium: _heading(size: 28, weight: FontWeight.bold),
+    displaySmall: _heading(size: 24, weight: FontWeight.bold),
+    headlineLarge: _heading(),
+    headlineMedium: _heading(size: 20, weight: FontWeight.w600),
+    headlineSmall: _heading(),
+    titleLarge: _heading(size: 18, weight: FontWeight.w600),
+    titleMedium: _heading(size: 16, weight: FontWeight.w500),
+    titleSmall: _heading(),
+    bodyLarge: _body(size: 16),
+    bodyMedium: _body(size: 14),
+    bodySmall: _body(),
+    labelLarge: _body(),
+    labelMedium: _body(),
+    labelSmall: _body(),
   );
   final themed = base.apply(
     bodyColor: colors.onSurface,
@@ -120,3 +128,13 @@ TextTheme _textTheme(AppColors colors) {
     bodyMedium: themed.bodyMedium?.copyWith(color: colors.onSurfaceMuted),
   );
 }
+
+TextStyle _heading({double? size, FontWeight? weight}) => TextStyle(
+  fontFamily: AppFonts.heading,
+  fontFamilyFallback: AppFonts.headingFallback,
+  fontSize: size,
+  fontWeight: weight,
+);
+
+TextStyle _body({double? size}) =>
+    TextStyle(fontFamily: AppFonts.body, fontSize: size);
