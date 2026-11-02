@@ -127,6 +127,14 @@ flutter build ios --release      # iOS (macOS only)
 
 Release builds are still signed with the debug key. Add your own signing config before you publish.
 
+### Screenshots
+
+`tool/screenshots/app_screenshots_test.dart` boots the real app with fake OS notifications and push, the bundled fonts loaded, and saves every tab in English and Arabic, light and dark, as phone-sized PNGs. It sits outside `test/`, so the normal `flutter test` run skips it.
+
+```bash
+flutter test tool/screenshots/app_screenshots_test.dart --dart-define=SHOT_DIR=build/screenshots
+```
+
 ### Testing reminders on a device
 
 Reminders need a real fasting day ahead, so the quickest check is to enable **Monday & Thursday** with a **Custom** time a few minutes from now on the day before a Monday or Thursday. Android emulators and iOS simulators deliver scheduled notifications, but survival across reboot and battery optimisation can only be confirmed on real devices.

@@ -53,8 +53,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt sl = GetIt.instance;
 
+/// The services that need a real device: OS notifications and push.
+///
+/// [init] builds the real ones by default; a harness that runs the app
+/// without a device (e.g. the screenshot tool) passes fakes instead.
+final class PlatformServices {
+  const new({
+    required this.notifications,
+    required this.notificationPermission,
+    required this.push,
+  });
+
+  final NotificationGateway notifications;
+  final NotificationPermission notificationPermission;
+  final PushMessaging push;
+}
+
 /// The composition root: the only place concrete implementations are chosen.
-Future<void> init() async {
+Future<void> init({PlatformServices? platform}) async {
   // ============ Features ============
 
   // --- Home ---
@@ -159,11 +175,12 @@ Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
 
-  final notifications = FlnNotificationGateway();
-  await notifications.initialize();
+  final services = platform ?? await _devicePlatformServices();
   sl
-    ..registerLazySingleton<NotificationGateway>(() => notifications)
-    ..registerLazySingleton<NotificationPermission>(() => notifications)
+    ..registerLazySingleton<NotificationGateway>(() => services.notifications)
+    ..registerLazySingleton<NotificationPermission>(
+      () => services.notificationPermission,
+    )
     ..registerLazySingleton(() => NotificationReconciler(sl()))
     // Every feature that schedules notifications is a source of the one sync,
     // because the reconciler owns the whole OS pending set.
@@ -173,12 +190,20 @@ Future<void> init() async {
         reconciler: sl(),
         clock: sl(),
       ),
-    );
+    )
+    ..registerLazySingleton<PushMessaging>(() => services.push)
+    ..registerLazySingleton(() => SyncAnnouncementTopic(sl()));
+}
 
+Future<PlatformServices> _devicePlatformServices() async {
+  final notifications = FlnNotificationGateway();
+  await notifications.initialize();
   // Requires Firebase.initializeApp to have run (see main.dart).
   final push = FcmPushMessaging(presenter: notifications);
   await push.initialize();
-  sl
-    ..registerLazySingleton<PushMessaging>(() => push)
-    ..registerLazySingleton(() => SyncAnnouncementTopic(sl()));
+  return PlatformServices(
+    notifications: notifications,
+    notificationPermission: notifications,
+    push: push,
+  );
 }
