@@ -45,7 +45,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// The bottom-navigation shell. It is the one place that composes features,
 /// so features never import each other.
 class AppShell extends StatefulWidget {
-  const new({this.showHomeRequests, super.key});
+  const new({
+    this.promptForNotifications = true,
+    this.showHomeRequests,
+    super.key,
+  });
+
+  /// Whether to ask for notification permission once the app shows, on the
+  /// first launch only. Off when onboarding has just dealt with it.
+  final bool promptForNotifications;
 
   /// Each event brings the user back to the Home tab, e.g. a tap on the
   /// home-screen widget while the app is open on another screen.
@@ -77,11 +85,13 @@ class _AppShellState extends State<AppShell> {
     );
     // Every reminder starts out on, so permission is asked once the app is
     // showing, on the first launch only.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        context.read<ReminderBloc>().add(const PermissionPromptRequested());
-      }
-    });
+    if (widget.promptForNotifications) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<ReminderBloc>().add(const PermissionPromptRequested());
+        }
+      });
+    }
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:clock/clock.dart';
+import 'package:fasomo/app/reminder_onboarding_handoff.dart';
 import 'package:fasomo/core/backup/backup_file_gateway.dart';
 import 'package:fasomo/core/backup/backup_service.dart';
 import 'package:fasomo/core/backup/backup_snapshot_store.dart';
@@ -60,6 +61,14 @@ import 'package:fasomo/features/home/domain/usecases/get_sky_scene.dart';
 import 'package:fasomo/features/home/domain/usecases/get_upcoming_fasting_days.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
+import 'package:fasomo/features/onboarding/data/datasources/onboarding_local_data_source.dart';
+import 'package:fasomo/features/onboarding/data/repositories/onboarding_repository_impl.dart';
+import 'package:fasomo/features/onboarding/domain/onboarding_handoff.dart';
+import 'package:fasomo/features/onboarding/domain/repositories/onboarding_repository.dart';
+import 'package:fasomo/features/onboarding/domain/usecases/complete_onboarding.dart';
+import 'package:fasomo/features/onboarding/domain/usecases/is_onboarding_completed.dart';
+import 'package:fasomo/features/onboarding/domain/usecases/start_onboarding.dart';
+import 'package:fasomo/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:fasomo/features/reminders/data/backup/reminders_backup_section.dart';
 import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fasomo/features/reminders/data/repositories/reminder_repository_impl.dart';
@@ -310,6 +319,33 @@ Future<void> init({PlatformServices? platform}) async {
     )
     ..registerLazySingleton<BackupFileGateway>(
       () => const PlatformBackupFileGateway(),
+    )
+    // --- Onboarding ---
+    ..registerFactory(
+      () => OnboardingBloc(
+        startOnboarding: sl(),
+        completeOnboarding: sl(),
+        useDeviceLocation: sl(),
+        chooseCity: sl(),
+        handoff: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => IsOnboardingCompleted(sl()))
+    ..registerLazySingleton(() => StartOnboarding(sl()))
+    ..registerLazySingleton(() => CompleteOnboarding(sl()))
+    // Composed in the app layer from the reminders feature's use cases.
+    ..registerLazySingleton<OnboardingHandoff>(
+      () => ReminderOnboardingHandoff(
+        getReminders: sl(),
+        saveReminder: sl(),
+        promptPermissionOnce: sl(),
+      ),
+    )
+    ..registerLazySingleton<OnboardingRepository>(
+      () => OnboardingRepositoryImpl(localDataSource: sl()),
+    )
+    ..registerLazySingleton<OnboardingLocalDataSource>(
+      () => OnboardingLocalDataSourceImpl(sharedPreferences: sl()),
     )
     // ============ Core ============
     ..registerLazySingleton<Clock>(() => const Clock())

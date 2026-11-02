@@ -1180,4 +1180,90 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get backupErrorExport =>
       'تعذّر إنشاء النسخة الاحتياطية. حاول مرة أخرى.';
+
+  @override
+  String get onboardingSkip => 'تخطي';
+
+  @override
+  String get onboardingNext => 'التالي';
+
+  @override
+  String get onboardingBack => 'السابق';
+
+  @override
+  String get onboardingLater => 'لاحقًا';
+
+  @override
+  String onboardingStepOf(int current, int total) {
+    return 'الخطوة $current من $total';
+  }
+
+  @override
+  String get onboardingWelcomeTitle => 'أهلًا بك في فاصومو';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'يعرض فاصومو أيام الصيام المستحبة والواجبة في العام الهجري، ويذكّرك قبل كل منها.';
+
+  @override
+  String get onboardingLanguageTitle => 'اختر لغتك';
+
+  @override
+  String get onboardingFastsTitle => 'أيّ أيام الصيام تهمّك؟';
+
+  @override
+  String get onboardingFastsBody =>
+      'سيصلك تذكير قبل كل يوم تختاره، ويمكنك تغيير ذلك في أي وقت من التذكيرات.';
+
+  @override
+  String get onboardingFastsNone =>
+      'لن تُضبط أي تذكيرات. يمكنك تفعيلها لاحقًا من التذكيرات.';
+
+  @override
+  String get onboardingSpecialDays => 'عرفة وعاشوراء وتاسوعاء';
+
+  @override
+  String get onboardingTimeTitle => 'متى نذكّرك؟';
+
+  @override
+  String get onboardingTimeBody =>
+      'ينطبق هذا على كل التذكيرات التي اخترتها، ويمكنك تغيير كل منها لاحقًا.';
+
+  @override
+  String get onboardingEveningBefore => 'مساء اليوم السابق';
+
+  @override
+  String get onboardingMorningOf => 'صباح يوم الصيام';
+
+  @override
+  String get onboardingPickTime => 'تغيير وقت التذكير';
+
+  @override
+  String get onboardingLocationTitle => 'أين أنت؟';
+
+  @override
+  String get onboardingLocationBody =>
+      'يرسم موقعك السماء الحقيقية في الرئيسية، وسيحدد لاحقًا مواقيت الصلاة. ويبقى على هذا الجهاز.';
+
+  @override
+  String onboardingLocationSet(String place) {
+    return 'تم تحديد الموقع: $place';
+  }
+
+  @override
+  String get onboardingNotificationsTitle => 'لا يفوتك صيام';
+
+  @override
+  String get onboardingNotificationsBody =>
+      'يحتاج فاصومو إلى إذن الإشعارات لتصلك التذكيرات قبل كل صيام.';
+
+  @override
+  String get onboardingAllowNotifications => 'السماح بالإشعارات';
+
+  @override
+  String get onboardingNotNow => 'ليس الآن';
+
+  @override
+  String get onboardingSaveFailed =>
+      'تعذّر حفظ اختياراتك. حاول مرة أخرى، أو تخطَّ.';
 }

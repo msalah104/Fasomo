@@ -7,6 +7,8 @@
 //
 // Each case boots the app through the real composition root with fake OS
 // notifications and push, opens one tab, and saves `<name>-<locale>-<theme>.png`.
+// The `onboarding-*` cases boot a first run instead, and step through the
+// first-run flow.
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -16,6 +18,7 @@ import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/di/injection_container.dart' as di;
 import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/presentation/numerals.dart';
+import 'package:fasomo/features/onboarding/data/datasources/onboarding_local_data_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -47,6 +50,17 @@ const _screens = <String, List<Object>>{
   'tone-picker': [Icons.settings_outlined, Icons.music_note_outlined],
   'progress': [('Your fasting', 'صيامك')],
   'duas': [Icons.info_outlined, ('Duas and intentions', 'الأدعية والنية')],
+};
+
+const _next = ('Next', 'التالي');
+
+/// The first-run flow, one capture per step.
+const _onboardingScreens = <String, List<Object>>{
+  'onboarding-welcome': [],
+  'onboarding-fasts': [_next],
+  'onboarding-time': [_next, _next],
+  'onboarding-location': [_next, _next, _next],
+  'onboarding-notifications': [_next, _next, _next, ('Later', 'لاحقًا')],
 };
 
 Finder _finderFor(Object tap, String language) => switch (tap) {
@@ -121,6 +135,7 @@ Future<void> _bootApp(
   WidgetTester tester, {
   required String language,
   required Brightness brightness,
+  required bool onboarded,
 }) async {
   tester.view
     ..physicalSize = _screen * _pixelRatio
@@ -137,6 +152,7 @@ Future<void> _bootApp(
     // A little history, so streaks, totals and the make-up pace show.
     AppConstants.fastLogKey: ['2026-10-22', '2026-10-26', '2026-10-29'],
     AppConstants.extraOwedKey: ['1447:6'],
+    OnboardingLocalDataSourceImpl.completedKey: onboarded,
   });
   await di.sl.reset();
   final notifications = FakeNotificationGateway();
@@ -166,6 +182,31 @@ Future<void> _bootApp(
   }
 }
 
+Future<void> _tapThrough(
+  WidgetTester tester,
+  List<Object> taps,
+  String language,
+) async {
+  for (final tap in taps) {
+    final matches = _finderFor(tap, language);
+    final target = matches.first;
+    if (matches.evaluate().isEmpty) {
+      // Lazy lists build only what is on screen: scroll to it.
+      await tester.dragUntilVisible(
+        matches,
+        find.byType(Scrollable).hitTestable().first,
+        const Offset(0, -300),
+      );
+    }
+    await tester.ensureVisible(target);
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(target);
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+  }
+}
+
 void main() {
   setUpAll(() async {
     pinWesternDigits();
@@ -174,30 +215,23 @@ void main() {
 
   for (final language in ['en', 'ar']) {
     for (final brightness in Brightness.values) {
-      for (final MapEntry(key: screen, value: taps) in _screens.entries) {
-        final name = '$screen-$language-${brightness.name}';
-        testWidgets(name, (tester) async {
-          await _bootApp(tester, language: language, brightness: brightness);
-          for (final tap in taps) {
-            final matches = _finderFor(tap, language);
-            final target = matches.first;
-            if (matches.evaluate().isEmpty) {
-              // Lazy lists build only what is on screen: scroll to it.
-              await tester.dragUntilVisible(
-                matches,
-                find.byType(Scrollable).hitTestable().first,
-                const Offset(0, -300),
-              );
-            }
-            await tester.ensureVisible(target);
-            await tester.pump(const Duration(milliseconds: 300));
-            await tester.tap(target);
-            for (var i = 0; i < 10; i++) {
-              await tester.pump(const Duration(milliseconds: 100));
-            }
-          }
-          await _capture(tester, name);
-        });
+      for (final (screens, onboarded) in [
+        (_screens, true),
+        (_onboardingScreens, false),
+      ]) {
+        for (final MapEntry(key: screen, value: taps) in screens.entries) {
+          final name = '$screen-$language-${brightness.name}';
+          testWidgets(name, (tester) async {
+            await _bootApp(
+              tester,
+              language: language,
+              brightness: brightness,
+              onboarded: onboarded,
+            );
+            await _tapThrough(tester, taps, language);
+            await _capture(tester, name);
+          });
+        }
       }
     }
   }
