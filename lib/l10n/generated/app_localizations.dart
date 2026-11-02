@@ -1506,6 +1506,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t share this day. Please try again.'**
   String get shareDayFailed;
+
+  /// No description provided for @cityPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a city'**
+  String get cityPickerTitle;
+
+  /// Hint in the search field of the city picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by city or country'**
+  String get cityPickerSearchHint;
+
+  /// No description provided for @cityPickerClearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get cityPickerClearSearch;
+
+  /// Shown when the city search finds nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'No city matches “{query}”. Try a nearby big city.'**
+  String cityPickerNoResults(String query);
 }
 
 class _AppLocalizationsDelegate

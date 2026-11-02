@@ -796,5 +796,21 @@
   "shareDayFailed": "Couldn't share this day. Please try again.",
   "@shareDayFailed": {
     "description": "Shown when a fasting day could not be shared."
+  },
+  "cityPickerTitle": "Choose a city",
+  "cityPickerSearchHint": "Search by city or country",
+  "@cityPickerSearchHint": {
+    "description": "Hint in the search field of the city picker."
+  },
+  "cityPickerClearSearch": "Clear search",
+  "cityPickerNoResults": "No city matches “{query}”. Try a nearby big city.",
+  "@cityPickerNoResults": {
+    "description": "Shown when the city search finds nothing.",
+    "placeholders": {
+      "query": {
+        "type": "String",
+        "example": "Springfield"
+      }
+    }
   }
 }

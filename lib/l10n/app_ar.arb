@@ -233,5 +233,9 @@
   "shareDayTooltip": "مشاركة {type} صورةً",
   "shareDayHeadline": "{days, plural, =0{صيام اليوم: {type}} =1{صيام الغد: {type}} =2{صيام بعد يومين: {type}} few{صيام بعد {days} أيام: {type}} other{صيام بعد {days} يومًا: {type}}}",
   "shareDayText": "{headline}، {hijriDate} ({gregorianDate}). مشاركة من تطبيق {appName}.",
-  "shareDayFailed": "تعذّرت مشاركة هذا اليوم. حاول مرة أخرى."
+  "shareDayFailed": "تعذّرت مشاركة هذا اليوم. حاول مرة أخرى.",
+  "cityPickerTitle": "اختر مدينة",
+  "cityPickerSearchHint": "ابحث باسم المدينة أو الدولة",
+  "cityPickerClearSearch": "مسح البحث",
+  "cityPickerNoResults": "لا توجد مدينة تطابق «{query}». جرّب مدينة كبيرة قريبة."
 }

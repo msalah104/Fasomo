@@ -5,6 +5,9 @@
     <!-- Opt-in only: the app falls back to inexact alarms when the user has not
          granted it. USE_EXACT_ALARM is deliberately absent (Play policy). -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <!-- Coarse only: the Home sky needs about a kilometre, and asks only when
+         the user taps "Use my location". No fine or background location. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:label="Fasomo"

@@ -934,4 +934,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shareDayFailed => 'Couldn\'t share this day. Please try again.';
+
+  @override
+  String get cityPickerTitle => 'Choose a city';
+
+  @override
+  String get cityPickerSearchHint => 'Search by city or country';
+
+  @override
+  String get cityPickerClearSearch => 'Clear search';
+
+  @override
+  String cityPickerNoResults(String query) {
+    return 'No city matches “$query”. Try a nearby big city.';
+  }
 }

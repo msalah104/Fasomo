@@ -961,4 +961,18 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get shareDayFailed => 'تعذّرت مشاركة هذا اليوم. حاول مرة أخرى.';
+
+  @override
+  String get cityPickerTitle => 'اختر مدينة';
+
+  @override
+  String get cityPickerSearchHint => 'ابحث باسم المدينة أو الدولة';
+
+  @override
+  String get cityPickerClearSearch => 'مسح البحث';
+
+  @override
+  String cityPickerNoResults(String query) {
+    return 'لا توجد مدينة تطابق «$query». جرّب مدينة كبيرة قريبة.';
+  }
 }

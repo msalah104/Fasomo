@@ -20,6 +20,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_timezone: ^5.1.1
+  geolocator: ^14.0.1
   get_it: ^9.3.0
   hijri: ^3.0.1
   intl: ^0.20.2

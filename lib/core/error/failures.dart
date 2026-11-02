@@ -137,3 +137,37 @@ final class SharePlatformFailed extends ShareFailure {
   @override
   String get code => 'share.platform_failed';
 }
+
+/// Failures getting a fix from the device's location service.
+sealed class LocationFailure extends Failure {
+  const new();
+}
+
+/// The user refused location permission. When [permanently], the system no
+/// longer asks, so only the app's system settings can grant it.
+final class LocationPermissionDenied extends LocationFailure {
+  const new({required this.permanently});
+
+  final bool permanently;
+
+  @override
+  String get code => permanently
+      ? 'location.permission_denied_forever'
+      : 'location.permission_denied';
+}
+
+/// Location services are switched off for the whole device.
+final class LocationServiceDisabled extends LocationFailure {
+  const new();
+
+  @override
+  String get code => 'location.service_disabled';
+}
+
+/// No fix arrived in time and the device has no recent one.
+final class LocationUnavailable extends LocationFailure {
+  const new();
+
+  @override
+  String get code => 'location.unavailable';
+}

@@ -3,6 +3,13 @@ import 'package:fasomo/core/calendar/adjusted_hijri_converter.dart';
 import 'package:fasomo/core/calendar/fasting_calendar.dart';
 import 'package:fasomo/core/calendar/hijri_converter.dart';
 import 'package:fasomo/core/calendar/hijri_offset.dart';
+import 'package:fasomo/core/location/device_location_gateway.dart';
+import 'package:fasomo/core/location/geolocator_location_gateway.dart';
+import 'package:fasomo/core/location/location_repository.dart';
+import 'package:fasomo/core/location/location_repository_impl.dart';
+import 'package:fasomo/core/location/usecases/choose_city.dart';
+import 'package:fasomo/core/location/usecases/open_location_settings.dart';
+import 'package:fasomo/core/location/usecases/use_device_location.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
 import 'package:fasomo/core/notifications/notification_tone.dart';
@@ -277,6 +284,18 @@ Future<void> init({PlatformServices? platform}) async {
 
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => sharedPreferences);
+
+  // --- Location (shared by the sky and, later, prayer times) ---
+  sl
+    ..registerLazySingleton<DeviceLocationGateway>(
+      () => const GeolocatorLocationGateway(),
+    )
+    ..registerLazySingleton<LocationRepository>(
+      () => LocationRepositoryImpl(sharedPreferences: sl(), gateway: sl()),
+    )
+    ..registerLazySingleton(() => UseDeviceLocation(sl()))
+    ..registerLazySingleton(() => ChooseCity(sl()))
+    ..registerLazySingleton(() => OpenLocationSettings(sl()));
 
   final services = platform ?? await _devicePlatformServices();
   sl
