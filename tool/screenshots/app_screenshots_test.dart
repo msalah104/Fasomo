@@ -43,6 +43,7 @@ const _screens = <String, List<Object>>{
   'settings': [Icons.settings_outlined],
   'calendar_year': [Icons.calendar_today_outlined, ('Year', 'سنة')],
   'tone-picker': [Icons.settings_outlined, Icons.music_note_outlined],
+  'progress': [('Your fasting', 'صيامك')],
 };
 
 Finder _finderFor(Object tap, String language) => switch (tap) {
@@ -130,6 +131,9 @@ Future<void> _bootApp(
   // ignore: invalid_use_of_visible_for_testing_member
   SharedPreferences.setMockInitialValues({
     AppConstants.languageKey: language == 'ar' ? 'arabic' : 'english',
+    // A little history, so streaks, totals and the make-up pace show.
+    AppConstants.fastLogKey: ['2026-10-22', '2026-10-26', '2026-10-29'],
+    AppConstants.extraOwedKey: ['1447:6'],
   });
   await di.sl.reset();
   final notifications = FakeNotificationGateway();

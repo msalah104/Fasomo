@@ -54,7 +54,9 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
   - **Weekly** on the days you pick (Saturday by default).
   - **Monthly** on a Hijri day you pick (the 13th, first of the White Days, by default).
   - **Before Ramadan**: a countdown any number of days before it (30 and 7 by default). On a day that already has a notification, the countdown is added to its text.
+  - **Suggested pace** (off by default): from the days owed and the days left before Ramadan, works out a pace ("fast 1 make-up day a week", "every day you can", or an honest "fewer days left than you owe") and schedules those days, Mondays and Thursdays first. It is re-planned as the balance changes, and the progress page shows it ("Suggested pace: 1 day a week · Next: Thu, Nov 5").
   - At 8:00 PM the evening before or 7:00 AM on the day. They skip Ramadan, the Eids, Tashreeq and days already fasted, and stop once nothing is owed.
+- **Reminder sound**: Settings › Notifications lets you pick the system default, one of three bundled tones (Soft chime, Bell, Gentle) or vibrate only (silent on iPhone, which can't vibrate without a sound). Each option can be tried first. On Android each tone has its own notification channel, and changing the tone reschedules every pending reminder. The tones are synthesized by `tool/tones/generate_tones.py`.
 - **Reliable scheduling**: reminders are re-synced whenever the app opens or returns to the foreground, after every change and when the language changes. Up to 50 upcoming reminders (60 days ahead) are kept scheduled, which stays under the iOS limit of 64.
 - Since reminders start on, notification permission is asked once, when the app first opens. Turning a reminder back on asks again if it was refused.
 
@@ -211,8 +213,6 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 |---|---|---|---|
 | P1 | [Home sky header](#home-sky-header-p1) | `dart_suncalc`, `geolocator` (optional) | No |
 | P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | `adhan`, `geolocator` | No |
-| P3 | [Qada suggested pace](#qada-suggested-pace-p3) | — | No |
-| P2 | [Notification tones](#notification-tones-p2) | — (bundled sounds) | No |
 | P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
 | P2 | [Onboarding](#onboarding-p2) | — | No |
 | P3 | [Duas and intentions for fasting](#duas-and-intentions-for-fasting-p3) | — | No |
@@ -238,11 +238,6 @@ During Ramadan (and optionally on any fasting day), Home switches to a Ramadan v
 - **Reminders:** new reminder timings relative to prayer times, e.g. "30 minutes before Fajr" for suhoor and "at Maghrib" for iftar, instead of fixed clock times.
 - **How:** the `adhan` package computes prayer times offline from coordinates and a calculation method (Umm al-Qura, Egyptian, MWL, ISNA, …, chosen in settings, with a sensible default per country). Location comes from `geolocator` or a manually picked city, so the app still works with location permission denied. Prayer-time math stays pure and clock-injected; the reminder scheduler gains a "relative to prayer" timing.
 
-### Notification tones (P2)
-
-- Pick a reminder sound from a few bundled tones (e.g. a soft chime or a short adhan clip) or the system default, plus vibrate-only.
-- **How:** sounds are bundled assets (`res/raw` on Android, the app bundle on iOS). On Android the sound belongs to the notification channel, so each tone gets its own channel; changing the tone re-syncs pending reminders.
-
 ### Home-screen widget (P2)
 
 - Shows today's Hijri date and the next fasting day ("White Days in 3 days"); tapping it opens the app on that day.
@@ -251,10 +246,6 @@ During Ramadan (and optionally on any fasting day), Home switches to a Ramadan v
 ### Onboarding (P2)
 
 A short first-run flow: choose language, choose which fasting types interest you, set a default reminder time, and only then ask for notification permission (and location, if Ramadan mode or the sky header needs it), with a sentence explaining why.
-
-### Qada suggested pace (P3)
-
-A make-up reminder that plans the pace for you: from the days owed and the weeks left before Ramadan it works out something like "1 a week" and schedules those days. See [`docs/plans/qada-reminders.md`](docs/plans/qada-reminders.md).
 
 ### Duas and intentions for fasting (P3)
 
