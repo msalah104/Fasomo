@@ -62,12 +62,17 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - Shown by the system while the app is in the background, and as a local notification on the Announcements channel while it is open.
 - No account: the app only joins a topic. Firebase still issues the device a push token and an installation ID.
 
+### ⚙️ Settings
+- A gear in the top bar, and on Home's sky, opens Settings. Options are grouped under **Appearance** (language, theme) and **Calendar** (Hijri date adjustment). Every choice is saved.
+- **Theme**: follow the phone's light or dark setting, or always use Light or Dark. The app opens straight in the chosen theme, with no flash of the other one.
+- **Hijri date adjustment**: if your country starts months by local moon sighting, shift the Hijri date by −2 to +2 days (+1 moves the Hijri date one day forward). A preview shows today's date as it will appear. The calendar, fasting days, progress and reminders all move together right away.
+
 ### 🌐 Language
 - Arabic and English, with full right-to-left layout in Arabic.
-- Choose **System default**, **English** or **العربية** from the language menu. The choice is saved.
+- Choose **System default**, **English** or **العربية** in Settings. The choice is saved.
 
 ### 🎨 Look
-- **Hilal theme**: night blue and moon gold on warm ivory, with a hand-tuned dark theme. The app follows the system light or dark setting.
+- **Hilal theme**: night blue and moon gold on warm ivory, with a hand-tuned dark theme. By default the app follows the system light or dark setting; see Settings.
 - Every text colour pair passes WCAG AA contrast, checked by a unit test.
 - **Hilal fonts**: El Messiri for headings and IBM Plex Sans Arabic for body text, bundled as static weights 400–700, so the app looks the same fully offline. Their OFL licences are listed on the licence page.
 - **App icon**: the gold ف mark (the letter Fa with the new moon as its dot) on night blue, with an adaptive icon on Android. Regenerate with `dart run flutter_launcher_icons` after changing `design/art/app_icon.svg` and its render in `assets/icon/`.
@@ -205,8 +210,6 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 | P1 | [Home sky header](#home-sky-header-p1) | `dart_suncalc`, `geolocator` (optional) | No |
 | P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | `adhan`, `geolocator` | No |
 | P3 | [Qada suggested pace](#qada-suggested-pace-p3) | — | No |
-| P2 | [Hijri date adjustment](#hijri-date-adjustment-p2) | — | No |
-| P2 | [Theme switch](#theme-switch-p2) | — | No |
 | P2 | [Notification tones](#notification-tones-p2) | — (bundled sounds) | No |
 | P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
 | P2 | [Onboarding](#onboarding-p2) | — | No |
@@ -233,17 +236,6 @@ During Ramadan (and optionally on any fasting day), Home switches to a Ramadan v
 - **What it shows:** a countdown to Ramadan before it starts; during it, today's **suhoor (Fajr)** and **iftar (Maghrib)** times, a countdown to the next one, the day number ("Day 12 of 30"), and a simple daily checklist (fasted, Taraweeh, Quran pages).
 - **Reminders:** new reminder timings relative to prayer times, e.g. "30 minutes before Fajr" for suhoor and "at Maghrib" for iftar, instead of fixed clock times.
 - **How:** the `adhan` package computes prayer times offline from coordinates and a calculation method (Umm al-Qura, Egyptian, MWL, ISNA, …, chosen in settings, with a sensible default per country). Location comes from `geolocator` or a manually picked city, so the app still works with location permission denied. Prayer-time math stays pure and clock-injected; the reminder scheduler gains a "relative to prayer" timing.
-
-### Hijri date adjustment (P2)
-
-A setting to shift the Hijri calendar by −2 to +2 days.
-
-- **Why:** the app uses the Umm al-Qura table, but many countries start months by local moon sighting, so the date can be a day off. This is the most common correctness complaint in Hijri apps.
-- **How:** one offset stored in settings and applied inside the Hijri converter, so the calendar, fasting rules and reminders all move together. Reminders re-sync when it changes. Later, the default could come from a remote config per country (see backend).
-
-### Theme switch (P2)
-
-- The Hilal dark theme is done and the app follows the system setting. What's left is a **System / Light / Dark** choice in settings, saved and restored before the first frame, like the language choice.
 
 ### Notification tones (P2)
 

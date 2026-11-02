@@ -33,12 +33,13 @@ const _outDir = String.fromEnvironment(
 const _screen = Size(390, 844);
 const _pixelRatio = 2.0;
 
-/// Which bottom-navigation tab to open, by its unselected icon.
-const _tabs = <String, IconData?>{
-  'home': null,
-  'calendar': Icons.calendar_today_outlined,
-  'reminders': Icons.notifications_outlined,
-  'about': Icons.info_outlined,
+/// Each screen to capture, and the icons to tap in order to reach it.
+const _screens = <String, List<IconData>>{
+  'home': [],
+  'calendar': [Icons.calendar_today_outlined],
+  'reminders': [Icons.notifications_outlined],
+  'about': [Icons.info_outlined],
+  'settings': [Icons.settings_outlined],
 };
 
 class _GrantedPermission implements NotificationPermission {
@@ -151,12 +152,12 @@ void main() {
 
   for (final language in ['en', 'ar']) {
     for (final brightness in Brightness.values) {
-      for (final MapEntry(key: tab, value: icon) in _tabs.entries) {
-        final name = '$tab-$language-${brightness.name}';
+      for (final MapEntry(key: screen, value: taps) in _screens.entries) {
+        final name = '$screen-$language-${brightness.name}';
         testWidgets(name, (tester) async {
           await _bootApp(tester, language: language, brightness: brightness);
-          if (icon != null) {
-            await tester.tap(find.byIcon(icon));
+          for (final icon in taps) {
+            await tester.tap(find.byIcon(icon).first);
             for (var i = 0; i < 10; i++) {
               await tester.pump(const Duration(milliseconds: 100));
             }
