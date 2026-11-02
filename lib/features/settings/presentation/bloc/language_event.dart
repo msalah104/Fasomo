@@ -15,3 +15,9 @@ final class LanguageChanged extends LanguageEvent {
   @override
   List<Object> get props => [language];
 }
+
+/// The saved language may have changed outside this bloc, e.g. by a
+/// restore: read it again.
+final class LanguageReloaded extends LanguageEvent {
+  const new();
+}

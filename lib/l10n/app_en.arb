@@ -950,5 +950,77 @@
   "openSettings": "Settings",
   "@openSettings": {
     "description": "Snackbar action that opens the system settings for this app."
+  },
+  "settingsBackup": "Backup",
+  "@settingsBackup": {
+    "description": "Title of the settings section for exporting and restoring a backup file."
+  },
+  "backupExport": "Export backup",
+  "@backupExport": {
+    "description": "Settings action that saves reminders, settings and the fasting log to a file and opens the share sheet."
+  },
+  "backupExportSubtitle": "Save your reminders, settings and fasting log to a file. The file is not encrypted.",
+  "@backupExportSubtitle": {
+    "description": "Explains what the export contains, and that the file is plain text."
+  },
+  "backupRestore": "Restore from file",
+  "@backupRestore": {
+    "description": "Settings action that replaces this phone's data with a backup file the user picks."
+  },
+  "backupRestoreSubtitle": "Bring back a backup, for example on a new phone",
+  "@backupRestoreSubtitle": {
+    "description": "Explains when to restore a backup."
+  },
+  "backupInProgress": "Working on the backup…",
+  "@backupInProgress": {
+    "description": "Screen-reader label of the progress indicator while a backup is exported or restored."
+  },
+  "backupRestoreConfirmTitle": "Restore from a backup?",
+  "@backupRestoreConfirmTitle": {
+    "description": "Title of the dialog that confirms a restore before the file is picked."
+  },
+  "backupRestoreConfirmBody": "Your reminders, settings and fasting log will be replaced by the ones in the backup you choose. Anything the backup does not include stays as it is. This cannot be undone.",
+  "@backupRestoreConfirmBody": {
+    "description": "Body of the restore confirmation dialog: names the replace policy."
+  },
+  "backupRestoreConfirmAction": "Choose file",
+  "@backupRestoreConfirmAction": {
+    "description": "Button in the restore confirmation dialog that opens the file picker."
+  },
+  "backupExported": "Backup ready",
+  "@backupExported": {
+    "description": "Shown after the backup file was handed to the share sheet."
+  },
+  "backupRestored": "Backup restored",
+  "@backupRestored": {
+    "description": "Shown after a backup was restored."
+  },
+  "backupRestoredWithSkipped": "Backup restored. Some parts from a newer version of Fasomo were skipped.",
+  "@backupRestoredWithSkipped": {
+    "description": "Shown after a restore that ignored parts of the file this version does not know."
+  },
+  "backupErrorNewerVersion": "This backup was made by a newer version of Fasomo. Update the app, then try again.",
+  "@backupErrorNewerVersion": {
+    "description": "Restore refused: the file's format is newer than this app."
+  },
+  "backupErrorCorrupt": "This file is not a Fasomo backup, or it is damaged. Nothing was changed.",
+  "@backupErrorCorrupt": {
+    "description": "Restore refused: the file could not be read as a backup."
+  },
+  "backupErrorChecksum": "This backup was changed or damaged after it was made. Nothing was changed.",
+  "@backupErrorChecksum": {
+    "description": "Restore refused: the file's checksum does not match its contents."
+  },
+  "backupErrorRestoreStorage": "Could not save the restored data, so nothing was changed.",
+  "@backupErrorRestoreStorage": {
+    "description": "Restore failed while writing and was rolled back."
+  },
+  "backupErrorFile": "Could not read that file. Nothing was changed.",
+  "@backupErrorFile": {
+    "description": "Restore failed: the picked file could not be opened."
+  },
+  "backupErrorExport": "Could not create the backup. Please try again.",
+  "@backupErrorExport": {
+    "description": "Export failed: the data could not be read or the file could not be written or shared."
   }
 }

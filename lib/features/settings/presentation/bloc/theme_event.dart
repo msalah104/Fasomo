@@ -15,3 +15,9 @@ final class ThemeModeChanged extends ThemeEvent {
   @override
   List<Object> get props => [mode];
 }
+
+/// The saved theme mode may have changed outside this bloc, e.g. by a
+/// restore: read it again.
+final class ThemeReloaded extends ThemeEvent {
+  const new();
+}

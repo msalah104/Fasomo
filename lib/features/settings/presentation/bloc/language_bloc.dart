@@ -14,19 +14,23 @@ part 'language_state.dart';
 class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
   /// Starts from the saved language, read synchronously so the first frame
   /// already renders in the right language and direction.
-  new({required GetLanguage getLanguage, required this.saveLanguage})
-    : super(
-        LanguageState(
-          language: switch (getLanguage(const NoParams())) {
-            Ok(:final value) => value,
-            Err() => AppLanguage.system,
-          },
-        ),
-      ) {
+  new({required this.getLanguage, required this.saveLanguage})
+    : super(LanguageState(language: _savedLanguage(getLanguage))) {
     on<LanguageChanged>(_onLanguageChanged);
+    on<LanguageReloaded>(
+      (event, emit) =>
+          emit(LanguageState(language: _savedLanguage(getLanguage))),
+    );
   }
 
+  final GetLanguage getLanguage;
   final SaveLanguage saveLanguage;
+
+  static AppLanguage _savedLanguage(GetLanguage getLanguage) =>
+      switch (getLanguage(const NoParams())) {
+        Ok(:final value) => value,
+        Err() => AppLanguage.system,
+      };
 
   Future<void> _onLanguageChanged(
     LanguageChanged event,

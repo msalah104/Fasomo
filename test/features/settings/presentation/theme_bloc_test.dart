@@ -81,4 +81,16 @@ void main() {
       ),
     ],
   );
+
+  blocTest<ThemeBloc, ThemeState>(
+    'ThemeReloaded reads the saved mode again, e.g. after a restore',
+    build: build,
+    setUp: () =>
+        when(() => getThemeMode(any()))
+            .thenReturn(const Ok(AppThemeMode.light)),
+    seed: () => const ThemeState(mode: AppThemeMode.dark),
+    act: (bloc) => bloc.add(const ThemeReloaded()),
+    expect: () => [const ThemeState(mode: AppThemeMode.light)],
+    verify: (_) => verifyNever(() => saveThemeMode(any())),
+  );
 }

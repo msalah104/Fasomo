@@ -14,19 +14,22 @@ part 'theme_state.dart';
 class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   /// Starts from the saved theme mode, read synchronously so the first frame
   /// already paints light or dark as chosen, with no flash of the other.
-  new({required GetThemeMode getThemeMode, required this.saveThemeMode})
-    : super(
-        ThemeState(
-          mode: switch (getThemeMode(const NoParams())) {
-            Ok(:final value) => value,
-            Err() => AppThemeMode.system,
-          },
-        ),
-      ) {
+  new({required this.getThemeMode, required this.saveThemeMode})
+    : super(ThemeState(mode: _savedMode(getThemeMode))) {
     on<ThemeModeChanged>(_onThemeModeChanged);
+    on<ThemeReloaded>(
+      (event, emit) => emit(ThemeState(mode: _savedMode(getThemeMode))),
+    );
   }
 
+  final GetThemeMode getThemeMode;
   final SaveThemeMode saveThemeMode;
+
+  static AppThemeMode _savedMode(GetThemeMode getThemeMode) =>
+      switch (getThemeMode(const NoParams())) {
+        Ok(:final value) => value,
+        Err() => AppThemeMode.system,
+      };
 
   Future<void> _onThemeModeChanged(
     ThemeModeChanged event,

@@ -187,3 +187,73 @@ final class HomeWidgetPlatformFailed extends HomeWidgetFailure {
   @override
   String get code => 'home_widget.platform_failed';
 }
+
+/// Failures from backing up to, or restoring from, a backup file.
+sealed class BackupFailure extends Failure {
+  const new();
+}
+
+/// The user closed the file picker or the share sheet. Nothing changed, and
+/// nothing is reported.
+final class BackupCancelled extends BackupFailure {
+  const new();
+
+  @override
+  String get code => 'backup.cancelled';
+}
+
+/// The file was written by a newer app, in a format this one cannot read.
+final class BackupFormatTooNew extends BackupFailure {
+  const new({required this.found, required this.supported});
+
+  /// The file's `formatVersion`.
+  final int found;
+
+  /// The newest `formatVersion` this app reads.
+  final int supported;
+
+  @override
+  String get code => 'backup.format_too_new';
+}
+
+/// The file is not a backup, or a part of it holds invalid data.
+final class BackupMalformed extends BackupFailure {
+  const new({this.sectionId});
+
+  /// The invalid section, or `null` when the file itself is unreadable.
+  final String? sectionId;
+
+  @override
+  String get code => 'backup.malformed';
+}
+
+/// The contents do not match the checksum written with them: the file was
+/// edited or damaged after it was made.
+final class BackupChecksumMismatch extends BackupFailure {
+  const new();
+
+  @override
+  String get code => 'backup.checksum_mismatch';
+}
+
+/// The app's own data could not be read for an export, or written during a
+/// restore (which was then rolled back).
+final class BackupStorageFailed extends BackupFailure {
+  const new(this.sectionId);
+
+  final String sectionId;
+
+  @override
+  String get code => 'backup.storage_failed';
+}
+
+/// The backup file could not be written, shared or read.
+final class BackupFileFailed extends BackupFailure {
+  const new(this.operation);
+
+  /// `write`, `share`, `pick` or `read`.
+  final String operation;
+
+  @override
+  String get code => 'backup.file_failed';
+}

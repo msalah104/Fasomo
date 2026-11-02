@@ -4,6 +4,7 @@ import 'package:fasomo/app/home_widget_sync.dart';
 import 'package:fasomo/core/di/injection_container.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/core/widget/home_widget_gateway.dart';
+import 'package:fasomo/features/backup/presentation/bloc/backup_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
@@ -38,6 +39,7 @@ class FasomoApp extends StatelessWidget {
         BlocProvider(
           create: (_) => sl<TrackerBloc>()..add(const LoadTracker()),
         ),
+        BlocProvider(create: (_) => sl<BackupBloc>()),
       ],
       child: Builder(
         builder: (context) {

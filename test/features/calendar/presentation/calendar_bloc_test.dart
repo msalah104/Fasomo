@@ -126,6 +126,16 @@ void main() {
     );
 
     blocTest<CalendarBloc, CalendarState>(
+      'LoadCalendar reads the Gregorian choice again, e.g. after a restore',
+      build: build,
+      act: (bloc) {
+        when(() => getShowGregorianDays(any())).thenReturn(const Ok(true));
+        bloc.add(const LoadCalendar());
+      },
+      verify: (bloc) => expect(bloc.state.showGregorianDays, isTrue),
+    );
+
+    blocTest<CalendarBloc, CalendarState>(
       'a failure resolving today is an error state',
       setUp: () => when(
         () => getCurrentHijriMonth(any()),

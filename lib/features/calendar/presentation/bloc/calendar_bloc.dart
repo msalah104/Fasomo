@@ -56,8 +56,17 @@ class CalendarBloc extends Bloc<CalendarEvent, CalendarState> {
   final GetShowGregorianDays getShowGregorianDays;
   final SaveShowGregorianDays saveShowGregorianDays;
 
+  /// Also reads the display preferences again, since a restore may have
+  /// changed them.
   void _onLoadCalendar(LoadCalendar event, Emitter<CalendarState> emit) {
-    emit(state.copyWith(status: CalendarStatus.loading));
+    emit(
+      state.copyWith(
+        status: CalendarStatus.loading,
+        showGregorianDays: getShowGregorianDays(
+          const NoParams(),
+        ).fold((show) => show, (_) => state.showGregorianDays),
+      ),
+    );
     _showToday(emit);
   }
 

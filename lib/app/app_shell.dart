@@ -8,6 +8,8 @@ import 'package:fasomo/core/di/injection_container.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/presentation/localized_notification_copy.dart';
 import 'package:fasomo/features/about/presentation/pages/about_page.dart';
+import 'package:fasomo/features/backup/presentation/bloc/backup_bloc.dart';
+import 'package:fasomo/features/backup/presentation/widgets/backup_tiles.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:fasomo/features/duas/domain/usecases/get_fasting_hadith.dart';
@@ -23,6 +25,8 @@ import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
 import 'package:fasomo/features/reminders/presentation/widgets/notification_tone_tile.dart';
 import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/settings/presentation/pages/settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_button.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_section.dart';
@@ -163,6 +167,15 @@ class _AppShellState extends State<AppShell> {
           listener: (context, _) =>
               context.read<ReminderBloc>().add(const SyncRequested()),
         ),
+        // A restore may have replaced any stored data: every bloc reads it
+        // again (language and theme apply at once) and the reminders are
+        // rescheduled from what was restored.
+        BlocListener<BackupBloc, BackupState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status &&
+              current.status == BackupStatus.restored,
+          listener: (context, _) => _reloadAfterRestore(context),
+        ),
       ],
       child: Scaffold(
         // Home draws its own sky header in place of the app bar.
@@ -215,6 +228,18 @@ class _AppShellState extends State<AppShell> {
   }
 }
 
+void _reloadAfterRestore(BuildContext context) {
+  context.read<LanguageBloc>().add(const LanguageReloaded());
+  context.read<ThemeBloc>().add(const ThemeReloaded());
+  context.read<HijriAdjustmentBloc>().add(const HijriOffsetReloaded());
+  context.read<NotificationToneBloc>().add(const NotificationToneReloaded());
+  context.read<HomeBloc>().add(const RefreshHomeData());
+  context.read<CalendarBloc>().add(const LoadCalendar());
+  context.read<TrackerBloc>().add(const LoadTracker());
+  // Reloads the reminders, then syncs the notifications.
+  context.read<ReminderBloc>().add(const LoadReminders());
+}
+
 /// Opens the settings page, with the sections other features contribute.
 void _openSettings(BuildContext context) {
   // "Today" may have moved on since the adjustment preview was computed.
@@ -226,6 +251,10 @@ void _openSettings(BuildContext context) {
           SettingsSection(
             title: AppLocalizations.of(context).settingsNotifications,
             children: const [NotificationToneTile()],
+          ),
+          SettingsSection(
+            title: AppLocalizations.of(context).settingsBackup,
+            children: const [BackupTiles()],
           ),
         ],
       ),

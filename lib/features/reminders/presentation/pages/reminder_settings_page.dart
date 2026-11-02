@@ -36,6 +36,7 @@ class ReminderSettingsPage extends StatelessWidget {
                 ShareFailure() ||
                 LocationFailure() ||
                 HomeWidgetFailure() ||
+                BackupFailure() ||
                 null => localization.reminderSaveFailed,
               };
         ScaffoldMessenger.of(context).showSnackBar(

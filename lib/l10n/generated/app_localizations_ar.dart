@@ -1117,4 +1117,67 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get openSettings => 'الإعدادات';
+
+  @override
+  String get settingsBackup => 'النسخ الاحتياطي';
+
+  @override
+  String get backupExport => 'تصدير نسخة احتياطية';
+
+  @override
+  String get backupExportSubtitle =>
+      'احفظ تذكيراتك وإعداداتك وسجل صيامك في ملف. الملف غير مشفّر.';
+
+  @override
+  String get backupRestore => 'الاستعادة من ملف';
+
+  @override
+  String get backupRestoreSubtitle =>
+      'استرجع نسخة احتياطية، على هاتف جديد مثلًا';
+
+  @override
+  String get backupInProgress => 'جارٍ العمل على النسخة الاحتياطية…';
+
+  @override
+  String get backupRestoreConfirmTitle => 'الاستعادة من نسخة احتياطية؟';
+
+  @override
+  String get backupRestoreConfirmBody =>
+      'ستُستبدل تذكيراتك وإعداداتك وسجل صيامك بما في النسخة الاحتياطية التي تختارها، ويبقى ما لا تتضمنه النسخة كما هو. لا يمكن التراجع عن ذلك.';
+
+  @override
+  String get backupRestoreConfirmAction => 'اختيار ملف';
+
+  @override
+  String get backupExported => 'النسخة الاحتياطية جاهزة';
+
+  @override
+  String get backupRestored => 'تمت استعادة النسخة الاحتياطية';
+
+  @override
+  String get backupRestoredWithSkipped =>
+      'تمت استعادة النسخة الاحتياطية، مع تجاوز أجزاء من إصدار أحدث من فاصومو.';
+
+  @override
+  String get backupErrorNewerVersion =>
+      'أُنشئت هذه النسخة بإصدار أحدث من فاصومو. حدّث التطبيق ثم حاول مرة أخرى.';
+
+  @override
+  String get backupErrorCorrupt =>
+      'هذا الملف ليس نسخة احتياطية من فاصومو، أو أنه تالف. لم يتغيّر شيء.';
+
+  @override
+  String get backupErrorChecksum =>
+      'تغيّرت هذه النسخة أو تلفت بعد إنشائها. لم يتغيّر شيء.';
+
+  @override
+  String get backupErrorRestoreStorage =>
+      'تعذّر حفظ البيانات المستعادة، لذا لم يتغيّر شيء.';
+
+  @override
+  String get backupErrorFile => 'تعذّرت قراءة هذا الملف. لم يتغيّر شيء.';
+
+  @override
+  String get backupErrorExport =>
+      'تعذّر إنشاء النسخة الاحتياطية. حاول مرة أخرى.';
 }

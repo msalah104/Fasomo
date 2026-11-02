@@ -34,6 +34,14 @@ class HijriAdjustmentBloc
     // One change at a time, so rapid taps save and apply in order.
     on<HijriOffsetChanged>(_onOffsetChanged, transformer: sequential());
     on<HijriPreviewRefreshed>(_onPreviewRefreshed);
+    on<HijriOffsetReloaded>(
+      (event, emit) => emit(
+        HijriAdjustmentState(
+          offset: _offsetFrom(getHijriOffset),
+          today: getTodayHijriDate(const NoParams()),
+        ),
+      ),
+    );
   }
 
   final GetHijriOffset getHijriOffset;

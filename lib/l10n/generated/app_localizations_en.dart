@@ -1089,4 +1089,68 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get openSettings => 'Settings';
+
+  @override
+  String get settingsBackup => 'Backup';
+
+  @override
+  String get backupExport => 'Export backup';
+
+  @override
+  String get backupExportSubtitle =>
+      'Save your reminders, settings and fasting log to a file. The file is not encrypted.';
+
+  @override
+  String get backupRestore => 'Restore from file';
+
+  @override
+  String get backupRestoreSubtitle =>
+      'Bring back a backup, for example on a new phone';
+
+  @override
+  String get backupInProgress => 'Working on the backup…';
+
+  @override
+  String get backupRestoreConfirmTitle => 'Restore from a backup?';
+
+  @override
+  String get backupRestoreConfirmBody =>
+      'Your reminders, settings and fasting log will be replaced by the ones in the backup you choose. Anything the backup does not include stays as it is. This cannot be undone.';
+
+  @override
+  String get backupRestoreConfirmAction => 'Choose file';
+
+  @override
+  String get backupExported => 'Backup ready';
+
+  @override
+  String get backupRestored => 'Backup restored';
+
+  @override
+  String get backupRestoredWithSkipped =>
+      'Backup restored. Some parts from a newer version of Fasomo were skipped.';
+
+  @override
+  String get backupErrorNewerVersion =>
+      'This backup was made by a newer version of Fasomo. Update the app, then try again.';
+
+  @override
+  String get backupErrorCorrupt =>
+      'This file is not a Fasomo backup, or it is damaged. Nothing was changed.';
+
+  @override
+  String get backupErrorChecksum =>
+      'This backup was changed or damaged after it was made. Nothing was changed.';
+
+  @override
+  String get backupErrorRestoreStorage =>
+      'Could not save the restored data, so nothing was changed.';
+
+  @override
+  String get backupErrorFile =>
+      'Could not read that file. Nothing was changed.';
+
+  @override
+  String get backupErrorExport =>
+      'Could not create the backup. Please try again.';
 }

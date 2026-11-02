@@ -73,4 +73,16 @@ void main() {
       ),
     ],
   );
+
+  blocTest<LanguageBloc, LanguageState>(
+    'LanguageReloaded reads the saved language again, e.g. after a restore',
+    build: build,
+    setUp: () => when(
+      () => getLanguage(any()),
+    ).thenReturn(const Ok(AppLanguage.english)),
+    seed: () => const LanguageState(language: AppLanguage.arabic),
+    act: (bloc) => bloc.add(const LanguageReloaded()),
+    expect: () => [const LanguageState(language: AppLanguage.english)],
+    verify: (_) => verifyNever(() => saveLanguage(any())),
+  );
 }

@@ -21,22 +21,16 @@ class NotificationToneBloc
     extends Bloc<NotificationToneEvent, NotificationToneState> {
   /// Starts from the saved tone, read synchronously.
   new({
-    required GetNotificationTone getNotificationTone,
+    required this.getNotificationTone,
     required this.saveNotificationTone,
     required this.permission,
     required this.tonePreview,
-  }) : super(
-         NotificationToneState(
-           tone: switch (getNotificationTone(const NoParams())) {
-             Ok(:final value) => value,
-             Err() => NotificationTone.systemDefault,
-           },
-         ),
-       ) {
+  }) : super(NotificationToneState(tone: _savedTone(getNotificationTone))) {
     // In order, so a save and a preview never interleave.
     on<NotificationToneEvent>(_onEvent, transformer: sequential());
   }
 
+  final GetNotificationTone getNotificationTone;
   final SaveNotificationTone saveNotificationTone;
   final NotificationPermission permission;
   final NotificationTonePreview tonePreview;
@@ -58,8 +52,16 @@ class NotificationToneBloc
         :final body,
       ):
         await _preview(tone, title: title, body: body, emit: emit);
+      case NotificationToneReloaded():
+        emit(NotificationToneState(tone: _savedTone(getNotificationTone)));
     }
   }
+
+  static NotificationTone _savedTone(GetNotificationTone getNotificationTone) =>
+      switch (getNotificationTone(const NoParams())) {
+        Ok(:final value) => value,
+        Err() => NotificationTone.systemDefault,
+      };
 
   /// Saves first and switches only once saved, because the sync reads the
   /// saved tone: an unsaved choice would never reach the notifications.

@@ -1752,6 +1752,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get openSettings;
+
+  /// Title of the settings section for exporting and restoring a backup file.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup'**
+  String get settingsBackup;
+
+  /// Settings action that saves reminders, settings and the fasting log to a file and opens the share sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Export backup'**
+  String get backupExport;
+
+  /// Explains what the export contains, and that the file is plain text.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your reminders, settings and fasting log to a file. The file is not encrypted.'**
+  String get backupExportSubtitle;
+
+  /// Settings action that replaces this phone's data with a backup file the user picks.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from file'**
+  String get backupRestore;
+
+  /// Explains when to restore a backup.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring back a backup, for example on a new phone'**
+  String get backupRestoreSubtitle;
+
+  /// Screen-reader label of the progress indicator while a backup is exported or restored.
+  ///
+  /// In en, this message translates to:
+  /// **'Working on the backup…'**
+  String get backupInProgress;
+
+  /// Title of the dialog that confirms a restore before the file is picked.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from a backup?'**
+  String get backupRestoreConfirmTitle;
+
+  /// Body of the restore confirmation dialog: names the replace policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reminders, settings and fasting log will be replaced by the ones in the backup you choose. Anything the backup does not include stays as it is. This cannot be undone.'**
+  String get backupRestoreConfirmBody;
+
+  /// Button in the restore confirmation dialog that opens the file picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose file'**
+  String get backupRestoreConfirmAction;
+
+  /// Shown after the backup file was handed to the share sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup ready'**
+  String get backupExported;
+
+  /// Shown after a backup was restored.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored'**
+  String get backupRestored;
+
+  /// Shown after a restore that ignored parts of the file this version does not know.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored. Some parts from a newer version of Fasomo were skipped.'**
+  String get backupRestoredWithSkipped;
+
+  /// Restore refused: the file's format is newer than this app.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup was made by a newer version of Fasomo. Update the app, then try again.'**
+  String get backupErrorNewerVersion;
+
+  /// Restore refused: the file could not be read as a backup.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is not a Fasomo backup, or it is damaged. Nothing was changed.'**
+  String get backupErrorCorrupt;
+
+  /// Restore refused: the file's checksum does not match its contents.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup was changed or damaged after it was made. Nothing was changed.'**
+  String get backupErrorChecksum;
+
+  /// Restore failed while writing and was rolled back.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the restored data, so nothing was changed.'**
+  String get backupErrorRestoreStorage;
+
+  /// Restore failed: the picked file could not be opened.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read that file. Nothing was changed.'**
+  String get backupErrorFile;
+
+  /// Export failed: the data could not be read or the file could not be written or shared.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create the backup. Please try again.'**
+  String get backupErrorExport;
 }
 
 class _AppLocalizationsDelegate
