@@ -29,7 +29,9 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - Missed days carry a ✗ badge in the calendar and make-up fasts a ↺ badge.
 
 ### 📅 Calendar
-- **Full Hijri month view** for any month from 1356 to 1500 AH, with month navigation.
+- **Full Hijri month view** for any month from 1356 to 1500 AH. Swipe between months (in Arabic it follows reading direction; with reduced motion the month changes without sliding) or use the arrows, and tap **Today** to jump back.
+- **Gregorian day numbers**: a toggle shows the Gregorian day under each Hijri day. The choice is remembered.
+- **Year view**: all twelve Hijri months at once with fasting days marked in colour; tap a month to open it. It shows 2 to 4 columns depending on screen width.
 - **Colour- and icon-coded fasting days**, in the Hilal palette:
   - Pale moon: White Days (13th, 14th, 15th)
   - Gold: Monday & Thursday
@@ -213,7 +215,6 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 | P2 | [Notification tones](#notification-tones-p2) | — (bundled sounds) | No |
 | P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
 | P2 | [Onboarding](#onboarding-p2) | — | No |
-| P3 | [Calendar extras](#calendar-extras-p3) | — | No |
 | P3 | [Duas and intentions for fasting](#duas-and-intentions-for-fasting-p3) | — | No |
 | P3 | [Share a fasting day](#share-a-fasting-day-p3) | `share_plus` | No |
 | P3 | [Backup and restore](#backup-and-restore-p3) | `share_plus`, `file_picker` | No |
@@ -254,13 +255,6 @@ A short first-run flow: choose language, choose which fasting types interest you
 ### Qada suggested pace (P3)
 
 A make-up reminder that plans the pace for you: from the days owed and the weeks left before Ramadan it works out something like "1 a week" and schedules those days. See [`docs/plans/qada-reminders.md`](docs/plans/qada-reminders.md).
-
-### Calendar extras (P3)
-
-- A **Today** button to jump back to the current month.
-- A **year view** showing all twelve Hijri months with fasting days marked.
-- A **Gregorian toggle** to show the Gregorian day number in each cell.
-- Swipe between months.
 
 ### Duas and intentions for fasting (P3)
 

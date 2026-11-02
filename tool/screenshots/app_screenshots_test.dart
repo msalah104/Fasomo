@@ -33,13 +33,21 @@ const _outDir = String.fromEnvironment(
 const _screen = Size(390, 844);
 const _pixelRatio = 2.0;
 
-/// Each screen to capture, and the icons to tap in order to reach it.
-const _screens = <String, List<IconData>>{
+/// Each screen to capture, and what to tap in order to reach it: an icon, or
+/// the English or Arabic label of a control.
+const _screens = <String, List<Object>>{
   'home': [],
   'calendar': [Icons.calendar_today_outlined],
   'reminders': [Icons.notifications_outlined],
   'about': [Icons.info_outlined],
   'settings': [Icons.settings_outlined],
+  'calendar_year': [Icons.calendar_today_outlined, ('Year', 'سنة')],
+};
+
+Finder _finderFor(Object tap, String language) => switch (tap) {
+  final IconData icon => find.byIcon(icon),
+  (final String en, final String ar) => find.text(language == 'ar' ? ar : en),
+  _ => throw ArgumentError.value(tap, 'tap'),
 };
 
 class _GrantedPermission implements NotificationPermission {
@@ -156,8 +164,8 @@ void main() {
         final name = '$screen-$language-${brightness.name}';
         testWidgets(name, (tester) async {
           await _bootApp(tester, language: language, brightness: brightness);
-          for (final icon in taps) {
-            await tester.tap(find.byIcon(icon).first);
+          for (final tap in taps) {
+            await tester.tap(_finderFor(tap, language).first);
             for (var i = 0; i < 10; i++) {
               await tester.pump(const Duration(milliseconds: 100));
             }
