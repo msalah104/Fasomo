@@ -152,7 +152,8 @@ forward from sunset for Isha, as PrayTimes.org does:
 
 The cap applies only when it is earlier (Fajr) or later (Isha) than the true
 time, so at ordinary latitudes nothing changes. On polar days or nights with
-no sunrise or sunset, every time but Dhuhr is `null` and the UI shows "—".
+no sunrise or sunset, Fajr, sunrise, Maghrib and Isha are `null` (Asr too
+when the sun stays down at noon) and the UI shows "—".
 
 ### Validation
 
