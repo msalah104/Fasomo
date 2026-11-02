@@ -54,6 +54,39 @@ final class QadaOccurrence extends ReminderOccurrence {
   List<Object?> get props => [date, timing, remaining, pace];
 }
 
+/// Which meal a [SuhoorIftarOccurrence] is about.
+enum FastingMeal {
+  /// The pre-dawn meal, which ends at Fajr.
+  suhoor,
+
+  /// Breaking the fast, at Maghrib.
+  iftar,
+}
+
+/// A reminder timed from a prayer: before Fajr for suhoor, at or before
+/// Maghrib for iftar. Its [timing] is the resolved local minute it fires,
+/// on its [date]; it is never merged with another notification.
+final class SuhoorIftarOccurrence extends ReminderOccurrence {
+  const new({
+    required super.date,
+    required super.timing,
+    required this.meal,
+    required this.prayerTime,
+    required this.minutesBefore,
+  });
+
+  final FastingMeal meal;
+
+  /// Fajr for suhoor, Maghrib for iftar (UTC).
+  final DateTime prayerTime;
+
+  /// How long before [prayerTime] it fires; 0 for at the time.
+  final int minutesBefore;
+
+  @override
+  List<Object> get props => [date, timing, meal, prayerTime, minutesBefore];
+}
+
 /// A countdown to Ramadan while make-up days are still owed.
 final class RamadanCountdownOccurrence extends ReminderOccurrence {
   const new({

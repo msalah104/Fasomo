@@ -11,6 +11,8 @@ import 'package:fasomo/core/notifications/reminder_scheduler.dart';
 /// - A make-up day planned by the suggested pace also says the pace.
 /// - A Ramadan countdown that fires on the same day as another notification
 ///   is appended to that notification's text instead of firing on its own.
+/// - Suhoor and iftar reminders fire at their own minute and are never
+///   merged, nor host a countdown.
 abstract final class ReminderComposer {
   static List<ReminderRequest> compose(
     List<ReminderOccurrence> occurrences,
@@ -19,6 +21,7 @@ abstract final class ReminderComposer {
     final fasting = <DateTime, FastingOccurrence>{};
     final qada = <DateTime, QadaOccurrence>{};
     final countdowns = <RamadanCountdownOccurrence>[];
+    final meals = <SuhoorIftarOccurrence>[];
     for (final occurrence in occurrences) {
       switch (occurrence) {
         case FastingOccurrence():
@@ -27,6 +30,8 @@ abstract final class ReminderComposer {
           qada[occurrence.date] = occurrence;
         case RamadanCountdownOccurrence():
           countdowns.add(occurrence);
+        case SuhoorIftarOccurrence():
+          meals.add(occurrence);
       }
     }
 
@@ -89,6 +94,23 @@ abstract final class ReminderComposer {
         requests[sameDay] = host.withBody('${host.body}\n$line');
       }
     }
-    return requests;
+    return [...requests, for (final meal in meals) _mealRequest(meal, copy)];
   }
+
+  static ReminderRequest _mealRequest(
+    SuhoorIftarOccurrence meal,
+    NotificationCopy copy,
+  ) => ReminderRequest(
+    reminderId: meal.meal.name,
+    fastingDate: meal.date,
+    timing: meal.timing,
+    title: switch (meal.meal) {
+      FastingMeal.suhoor => copy.suhoorTitle(meal.minutesBefore),
+      FastingMeal.iftar => copy.iftarTitle(meal.minutesBefore),
+    },
+    body: switch (meal.meal) {
+      FastingMeal.suhoor => copy.suhoorBody(meal.prayerTime),
+      FastingMeal.iftar => copy.iftarBody(meal.prayerTime),
+    },
+  );
 }

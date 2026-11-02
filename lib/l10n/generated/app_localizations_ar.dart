@@ -1339,4 +1339,88 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get ramadanChecklistSaveFailed => 'تعذّر حفظ قائمة اليوم.';
+
+  @override
+  String suhoorNotificationTitle(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'ينتهي السحور بعد $minutes دقيقة',
+      many: 'ينتهي السحور بعد $minutes دقيقة',
+      few: 'ينتهي السحور بعد $minutes دقائق',
+      two: 'ينتهي السحور بعد دقيقتين',
+      one: 'ينتهي السحور بعد دقيقة',
+      zero: 'انتهى وقت السحور',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String suhoorNotificationBody(String time) {
+    return 'يؤذَّن للفجر عند $time. أتمّ سحورك وانوِ الصيام.';
+  }
+
+  @override
+  String iftarNotificationTitle(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'الإفطار بعد $minutes دقيقة',
+      many: 'الإفطار بعد $minutes دقيقة',
+      few: 'الإفطار بعد $minutes دقائق',
+      two: 'الإفطار بعد دقيقتين',
+      one: 'الإفطار بعد دقيقة',
+      zero: 'حان وقت الإفطار',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String iftarNotificationBody(String time) {
+    return 'يؤذَّن للمغرب عند $time. تقبّل الله صيامك.';
+  }
+
+  @override
+  String get suhoorIftarReminders => 'السحور والإفطار';
+
+  @override
+  String get suhoorIftarHint =>
+      'في رمضان، بحسب وقتَي الفجر والمغرب كل يوم في موقعك.';
+
+  @override
+  String get suhoorReminder => 'السحور';
+
+  @override
+  String get iftarReminder => 'الإفطار';
+
+  @override
+  String suhoorMinutesBefore(int minutes) {
+    return 'قبل الفجر بـ$minutes د';
+  }
+
+  @override
+  String iftarMinutesBefore(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'قبل المغرب بـ$minutes د',
+      zero: 'عند المغرب',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get suhoorIftarOtherDays => 'في أيام الصيام الأخرى أيضًا';
+
+  @override
+  String get suhoorIftarOtherDaysDetail =>
+      'الاثنين والخميس والأيام البيض وعرفة وغيرها';
+
+  @override
+  String get suhoorIftarOff => 'متوقفة';
+
+  @override
+  String suhoorIftarSummaryItem(String meal, String when) {
+    return '$meal: $when';
+  }
 }

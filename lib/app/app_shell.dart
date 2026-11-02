@@ -17,7 +17,9 @@ import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
 import 'package:fasomo/features/ramadan/presentation/bloc/ramadan_bloc.dart';
+import 'package:fasomo/features/ramadan/presentation/bloc/suhoor_iftar_bloc.dart';
 import 'package:fasomo/features/ramadan/presentation/widgets/ramadan_spotlight.dart';
+import 'package:fasomo/features/ramadan/presentation/widgets/suhoor_iftar_reminders.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
@@ -142,12 +144,21 @@ class _AppShellState extends State<AppShell> {
             context.read<ReminderBloc>().add(const SyncRequested());
           },
         ),
-        // New prayer settings move the Ramadan times.
+        // New prayer settings move the Ramadan times and the suhoor and
+        // iftar reminders.
         BlocListener<PrayerSettingsBloc, PrayerSettingsState>(
           listenWhen: (previous, current) =>
               previous.settings != current.settings,
+          listener: (context, _) {
+            context.read<RamadanBloc>().add(const RamadanRefreshed());
+            context.read<ReminderBloc>().add(const SyncRequested());
+          },
+        ),
+        BlocListener<SuhoorIftarBloc, SuhoorIftarState>(
+          listenWhen: (previous, current) =>
+              previous.settings != current.settings,
           listener: (context, _) =>
-              context.read<RamadanBloc>().add(const RamadanRefreshed()),
+              context.read<ReminderBloc>().add(const SyncRequested()),
         ),
         // On Android the sound belongs to the notification channel, so a
         // new tone means rescheduling every pending reminder. The tone is
@@ -173,7 +184,13 @@ class _AppShellState extends State<AppShell> {
           children: const [
             _HomeTab(),
             _CalendarTab(),
-            ReminderSettingsPage(extraSection: QadaReminderCard()),
+            ReminderSettingsPage(
+              extraSection: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 16,
+                children: [QadaReminderCard(), SuhoorIftarReminderCard()],
+              ),
+            ),
             _AboutTab(),
           ],
         ),
@@ -306,12 +323,15 @@ class _HomeTab extends StatelessWidget {
     final reminders = context.watch<ReminderBloc>().state;
     return BlocProvider(
       create: (_) => sl<SkyBloc>()..add(const SkyStarted()),
-      // A new location moves the prayer times.
+      // A new location moves the prayer times, and so the Ramadan card and
+      // the suhoor and iftar reminders.
       child: BlocListener<SkyBloc, SkyState>(
         listenWhen: (previous, current) =>
             previous.scene.location != current.scene.location,
-        listener: (context, _) =>
-            context.read<RamadanBloc>().add(const RamadanRefreshed()),
+        listener: (context, _) {
+          context.read<RamadanBloc>().add(const RamadanRefreshed());
+          context.read<ReminderBloc>().add(const SyncRequested());
+        },
         child: _HomeWithSlots(reminders: reminders),
       ),
     );

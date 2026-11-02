@@ -1,7 +1,19 @@
 # Ramadan mode with prayer times — implementation plan
 
-**Status:** planned (P1 on the roadmap). Built on a separate review branch,
-`claude/ramadan-mode-prayer-times`, in the commits listed in section 8.
+**Status:** built on the review branch `claude/ramadan-mode-prayer-times`,
+in the commits listed in section 8. As built:
+
+- Everything in sections 1 to 4 shipped, with the defaults in section 7
+  (open decisions are still open).
+- The Ramadan card does not repeat the month bar's progress bar; the bar
+  just above it already shows Ramadan and the day.
+- Notification text uses the locale's usual clock format (there is no
+  device 12/24-hour setting outside a widget).
+- `DateFormat` writes Western digits in Arabic, set once at startup, so the
+  times match the rest of the app (this also changed the sky header's
+  times and dates, which were in Arabic-Indic digits).
+- A suhoor and iftar settings change that can't be saved is undone (the
+  notifications follow what is saved).
 
 During Ramadan the hardest thing to keep in your head is the clock: when
 suhoor ends and when iftar is. This adds prayer times computed on the phone

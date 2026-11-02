@@ -1153,5 +1153,81 @@
   "ramadanQuranPageRemove": "Remove a page",
   "ramadanPrayerTimesToday": "Today's prayer times",
   "ramadanChecklistLoadFailed": "Couldn't load today's checklist.",
-  "ramadanChecklistSaveFailed": "Couldn't save today's checklist."
+  "ramadanChecklistSaveFailed": "Couldn't save today's checklist.",
+  "suhoorNotificationTitle": "{minutes, plural, =0{Suhoor ends now} =1{Suhoor ends in 1 minute} other{Suhoor ends in {minutes} minutes}}",
+  "@suhoorNotificationTitle": {
+    "description": "Title of the suhoor reminder, sent the chosen minutes before Fajr.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "suhoorNotificationBody": "Fajr is at {time}. Finish your suhoor and make your intention to fast.",
+  "@suhoorNotificationBody": {
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "5:16 AM"
+      }
+    }
+  },
+  "iftarNotificationTitle": "{minutes, plural, =0{It's time for iftar} =1{Iftar in 1 minute} other{Iftar in {minutes} minutes}}",
+  "@iftarNotificationTitle": {
+    "description": "Title of the iftar reminder, sent at Maghrib or the chosen minutes before.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "iftarNotificationBody": "Maghrib is at {time}. May Allah accept your fast.",
+  "@iftarNotificationBody": {
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "5:22 PM"
+      }
+    }
+  },
+  "suhoorIftarReminders": "Suhoor and iftar",
+  "@suhoorIftarReminders": {
+    "description": "Reminders tab card and sheet title for the prayer-timed reminders."
+  },
+  "suhoorIftarHint": "In Ramadan, timed from each day's Fajr and Maghrib where you are.",
+  "suhoorReminder": "Suhoor",
+  "iftarReminder": "Iftar",
+  "suhoorMinutesBefore": "{minutes} min before Fajr",
+  "@suhoorMinutesBefore": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "iftarMinutesBefore": "{minutes, plural, =0{At Maghrib} other{{minutes} min before Maghrib}}",
+  "@iftarMinutesBefore": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "suhoorIftarOtherDays": "Also on other fasting days",
+  "suhoorIftarOtherDaysDetail": "Mondays and Thursdays, the White Days, Arafah and more",
+  "suhoorIftarOff": "Off",
+  "suhoorIftarSummaryItem": "{meal}: {when}",
+  "@suhoorIftarSummaryItem": {
+    "description": "One part of the Suhoor and iftar summary, e.g. Suhoor: 45 min before Fajr.",
+    "placeholders": {
+      "meal": {
+        "type": "String",
+        "example": "Suhoor"
+      },
+      "when": {
+        "type": "String",
+        "example": "45 min before Fajr"
+      }
+    }
+  }
 }

@@ -5,6 +5,7 @@ import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
 import 'package:fasomo/core/presentation/qada_pace_text.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 /// [NotificationCopy] for one language. Equal per language, so re-sending it
 /// on every rebuild does not trigger a resync.
@@ -52,6 +53,27 @@ class LocalizedNotificationCopy extends Equatable implements NotificationCopy {
   @override
   String ramadanCountdownBody(int daysUntilRamadan, int remaining) =>
       _localization.ramadanCountdownBody(remaining);
+
+  @override
+  String suhoorTitle(int minutesBeforeFajr) =>
+      _localization.suhoorNotificationTitle(minutesBeforeFajr);
+
+  @override
+  String suhoorBody(DateTime fajr) =>
+      _localization.suhoorNotificationBody(_time(fajr));
+
+  @override
+  String iftarTitle(int minutesBeforeMaghrib) =>
+      _localization.iftarNotificationTitle(minutesBeforeMaghrib);
+
+  @override
+  String iftarBody(DateTime maghrib) =>
+      _localization.iftarNotificationBody(_time(maghrib));
+
+  /// The locale's usual clock format: there is no device setting to read
+  /// here, outside a widget.
+  String _time(DateTime time) =>
+      DateFormat.jm(_localization.localeName).format(time.toLocal());
 
   @override
   List<Object> get props => [_localization.localeName];

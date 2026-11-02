@@ -32,4 +32,16 @@ abstract interface class NotificationCopy {
 
   /// e.g. "You still owe 4 make-up fasts before Ramadan."
   String ramadanCountdownBody(int daysUntilRamadan, int remaining);
+
+  /// e.g. "Suhoor ends in 45 minutes".
+  String suhoorTitle(int minutesBeforeFajr);
+
+  /// Says when Fajr ([fajr], UTC) is, in the local time.
+  String suhoorBody(DateTime fajr);
+
+  /// e.g. "It's time for iftar", or "Iftar in 5 minutes".
+  String iftarTitle(int minutesBeforeMaghrib);
+
+  /// Says when Maghrib ([maghrib], UTC) is, in the local time.
+  String iftarBody(DateTime maghrib);
 }

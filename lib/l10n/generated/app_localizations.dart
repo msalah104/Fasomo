@@ -2094,6 +2094,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t save today\'s checklist.'**
   String get ramadanChecklistSaveFailed;
+
+  /// Title of the suhoor reminder, sent the chosen minutes before Fajr.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =0{Suhoor ends now} =1{Suhoor ends in 1 minute} other{Suhoor ends in {minutes} minutes}}'**
+  String suhoorNotificationTitle(int minutes);
+
+  /// No description provided for @suhoorNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Fajr is at {time}. Finish your suhoor and make your intention to fast.'**
+  String suhoorNotificationBody(String time);
+
+  /// Title of the iftar reminder, sent at Maghrib or the chosen minutes before.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =0{It\'s time for iftar} =1{Iftar in 1 minute} other{Iftar in {minutes} minutes}}'**
+  String iftarNotificationTitle(int minutes);
+
+  /// No description provided for @iftarNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Maghrib is at {time}. May Allah accept your fast.'**
+  String iftarNotificationBody(String time);
+
+  /// Reminders tab card and sheet title for the prayer-timed reminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Suhoor and iftar'**
+  String get suhoorIftarReminders;
+
+  /// No description provided for @suhoorIftarHint.
+  ///
+  /// In en, this message translates to:
+  /// **'In Ramadan, timed from each day\'s Fajr and Maghrib where you are.'**
+  String get suhoorIftarHint;
+
+  /// No description provided for @suhoorReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Suhoor'**
+  String get suhoorReminder;
+
+  /// No description provided for @iftarReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Iftar'**
+  String get iftarReminder;
+
+  /// No description provided for @suhoorMinutesBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min before Fajr'**
+  String suhoorMinutesBefore(int minutes);
+
+  /// No description provided for @iftarMinutesBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes, plural, =0{At Maghrib} other{{minutes} min before Maghrib}}'**
+  String iftarMinutesBefore(int minutes);
+
+  /// No description provided for @suhoorIftarOtherDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Also on other fasting days'**
+  String get suhoorIftarOtherDays;
+
+  /// No description provided for @suhoorIftarOtherDaysDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Mondays and Thursdays, the White Days, Arafah and more'**
+  String get suhoorIftarOtherDaysDetail;
+
+  /// No description provided for @suhoorIftarOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get suhoorIftarOff;
+
+  /// One part of the Suhoor and iftar summary, e.g. Suhoor: 45 min before Fajr.
+  ///
+  /// In en, this message translates to:
+  /// **'{meal}: {when}'**
+  String suhoorIftarSummaryItem(String meal, String when);
 }
 
 class _AppLocalizationsDelegate

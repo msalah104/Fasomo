@@ -331,5 +331,19 @@
   "ramadanQuranPageRemove": "إزالة صفحة",
   "ramadanPrayerTimesToday": "مواقيت الصلاة اليوم",
   "ramadanChecklistLoadFailed": "تعذّر تحميل قائمة اليوم.",
-  "ramadanChecklistSaveFailed": "تعذّر حفظ قائمة اليوم."
+  "ramadanChecklistSaveFailed": "تعذّر حفظ قائمة اليوم.",
+  "suhoorNotificationTitle": "{minutes, plural, =0{انتهى وقت السحور} =1{ينتهي السحور بعد دقيقة} =2{ينتهي السحور بعد دقيقتين} few{ينتهي السحور بعد {minutes} دقائق} many{ينتهي السحور بعد {minutes} دقيقة} other{ينتهي السحور بعد {minutes} دقيقة}}",
+  "suhoorNotificationBody": "يؤذَّن للفجر عند {time}. أتمّ سحورك وانوِ الصيام.",
+  "iftarNotificationTitle": "{minutes, plural, =0{حان وقت الإفطار} =1{الإفطار بعد دقيقة} =2{الإفطار بعد دقيقتين} few{الإفطار بعد {minutes} دقائق} many{الإفطار بعد {minutes} دقيقة} other{الإفطار بعد {minutes} دقيقة}}",
+  "iftarNotificationBody": "يؤذَّن للمغرب عند {time}. تقبّل الله صيامك.",
+  "suhoorIftarReminders": "السحور والإفطار",
+  "suhoorIftarHint": "في رمضان، بحسب وقتَي الفجر والمغرب كل يوم في موقعك.",
+  "suhoorReminder": "السحور",
+  "iftarReminder": "الإفطار",
+  "suhoorMinutesBefore": "قبل الفجر بـ{minutes} د",
+  "iftarMinutesBefore": "{minutes, plural, =0{عند المغرب} other{قبل المغرب بـ{minutes} د}}",
+  "suhoorIftarOtherDays": "في أيام الصيام الأخرى أيضًا",
+  "suhoorIftarOtherDaysDetail": "الاثنين والخميس والأيام البيض وعرفة وغيرها",
+  "suhoorIftarOff": "متوقفة",
+  "suhoorIftarSummaryItem": "{meal}: {when}"
 }

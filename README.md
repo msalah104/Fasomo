@@ -17,6 +17,13 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - **I fasted today**: today's fasting-day card has a button to mark it as fasted.
 - **Your fasting**: a card with the current and longest streak and this month's count ("3 of 5 fasting days"). Tap it for the progress page.
 
+### 🌙 Ramadan mode and prayer times
+- **Before Ramadan**: in the 30 days before it, Home shows a countdown ("Ramadan in 12 days") with the expected first day by your adjusted calendar, and on the last day when the first suhoor ends.
+- **During Ramadan**: a Ramadan card on Home with the day ("Day 12 of 29"), a live countdown to the next moment ("Iftar in 3 h 42 min"; before Fajr "Suhoor ends in 45 min"; after Maghrib tomorrow's suhoor; "Eid Mubarak" after the last iftar), today's **suhoor end (Fajr)** and **iftar (Maghrib)**, where and how they were worked out ("London · Muslim World League"), and all six prayer times on request. It updates every minute while Home is showing.
+- **Daily checklist**: *I fasted today* (the same toggle as the tracker), Taraweeh, and a Quran pages counter (0–604). Kept per day on the device.
+- **Prayer times are computed on the phone** from the location the sky uses (`lib/core/prayer/`, on the in-house astronomy, no extra package), for the eleven common methods: Umm al-Qura (Isha 120 minutes after Maghrib in Ramadan), Egyptian General Authority, Muslim World League, ISNA, Karachi, Dubai, Kuwait, Qatar, Singapore, Turkey and Tehran. The method follows your country unless you choose one. Checked against the PrayTimes.org algorithm to within two minutes.
+- **Settings › Prayer times**: method (automatic by country, showing which), Standard or Hanafi Asr, the high-latitude rule (middle of the night, one-seventh, or twilight angle, for places where Fajr or Isha never comes in summer) and per-prayer adjustments of up to ±30 minutes to match your mosque.
+
 ### ✅ Fasting tracker
 - **Mark any day up to today** as fasted, from Home or from a day in the calendar. Future days and the forbidden days (the Eids and Tashreeq) can't be marked.
 - **Streaks** count fasting days only: a fasted fasting day extends the streak, a missed one before today resets it, and ordinary days never break it. Today counts once you mark it and never breaks the streak before then. A day with several types counts once.
@@ -57,6 +64,7 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
   - **Before Ramadan**: a countdown any number of days before it (30 and 7 by default). On a day that already has a notification, the countdown is added to its text.
   - **Suggested pace** (off by default): from the days owed and the days left before Ramadan, works out a pace ("fast 1 make-up day a week", "every day you can", or an honest "fewer days left than you owe") and schedules those days, Mondays and Thursdays first. It is re-planned as the balance changes, and the progress page shows it ("Suggested pace: 1 day a week · Next: Thu, Nov 5").
   - At 8:00 PM the evening before or 7:00 AM on the day. They skip Ramadan, the Eids, Tashreeq and days already fasted, and stop once nothing is owed.
+- **Suhoor and iftar**: on by default in Ramadan, timed from each day's prayer times where you are: suhoor 45 minutes before Fajr (15, 30, 45, 60 or 90) and iftar at Maghrib (or 5, 10 or 15 minutes before) — "Suhoor ends in 45 minutes · Fajr is at 5:16 AM". Optionally on every other recommended fasting day too. Set up from the Reminders tab; they follow a new location or prayer setting at once.
 - **Reminder sound**: Settings › Notifications lets you pick the system default, one of three bundled tones (Soft chime, Bell, Gentle) or vibrate only (silent on iPhone, which can't vibrate without a sound). Each option can be tried first. On Android each tone has its own notification channel, and changing the tone reschedules every pending reminder. The tones are synthesized by `tool/tones/generate_tones.py`.
 - **Reliable scheduling**: reminders are re-synced whenever the app opens or returns to the foreground, after every change and when the language changes. Up to 50 upcoming reminders (60 days ahead) are kept scheduled, which stays under the iOS limit of 64.
 - Since reminders start on, notification permission is asked once, when the app first opens. Turning a reminder back on asks again if it was refused.
@@ -68,13 +76,14 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - No account: the app only joins a topic. Firebase still issues the device a push token and an installation ID.
 
 ### ⚙️ Settings
-- A gear in the top bar, and on Home's sky, opens Settings. Options are grouped under **Appearance** (language, theme) and **Calendar** (Hijri date adjustment). Every choice is saved.
+- A gear in the top bar, and on Home's sky, opens Settings. Options are grouped under **Appearance** (language, theme), **Calendar** (Hijri date adjustment) and **Prayer times** (method, Asr, high latitudes, adjustments). Every choice is saved.
 - **Theme**: follow the phone's light or dark setting, or always use Light or Dark. The app opens straight in the chosen theme, with no flash of the other one.
 - **Hijri date adjustment**: if your country starts months by local moon sighting, shift the Hijri date by −2 to +2 days (+1 moves the Hijri date one day forward). A preview shows today's date as it will appear. The calendar, fasting days, progress and reminders all move together right away.
 
 ### 🌐 Language
 - Arabic and English, with full right-to-left layout in Arabic.
 - Choose **System default**, **English** or **العربية** in Settings. The choice is saved.
+- Numbers, times and dates use Western digits (0-9) in Arabic too.
 
 ### 🎨 Look
 - **Hilal theme**: night blue and moon gold on warm ivory, with a hand-tuned dark theme. By default the app follows the system light or dark setting; see Settings.
@@ -147,7 +156,7 @@ Release builds are still signed with the debug key. Add your own signing config 
 
 ### Screenshots
 
-`tool/screenshots/app_screenshots_test.dart` boots the real app with fake OS notifications and push, the bundled fonts loaded, and saves every tab in English and Arabic, light and dark, as phone-sized PNGs. It sits outside `test/`, so the normal `flutter test` run skips it.
+`tool/screenshots/app_screenshots_test.dart` boots the real app with fake OS notifications and push, the bundled fonts loaded, and saves every tab in English and Arabic, light and dark, as phone-sized PNGs. Home before and during Ramadan 1448 is rendered with a fixed clock (`ramadan-countdown`, `ramadan`, `ramadan-times`). It sits outside `test/`, so the normal `flutter test` run skips it.
 
 ```bash
 flutter test tool/screenshots/app_screenshots_test.dart --dart-define=SHOT_DIR=build/screenshots
@@ -165,7 +174,10 @@ Clean architecture, organised by feature, with **BLoC** for state and **GetIt** 
 lib/
 ├── app/                    # MaterialApp and the tab shell (the only place features meet)
 ├── core/
+│   ├── astronomy/          # Pure sun and moon positions, rises and sets
 │   ├── calendar/           # Pure Hijri dates, conversion, fasting rules
+│   ├── location/           # The saved location, bundled cities, device fix
+│   ├── prayer/             # Pure prayer times, methods, prayer settings
 │   ├── notifications/      # Pure reminder scheduling, the gateway port, reconcile
 │   ├── services/           # Platform adapters (flutter_local_notifications, time zone)
 │   ├── error/              # Result<T, F> and sealed Failure types
@@ -173,7 +185,7 @@ lib/
 │   ├── presentation/       # Shared labels, fasting-type colours and icons, date text
 │   └── theme/              # Hilal tokens: primitives, AppColors, AppShapes, buildAppTheme
 ├── features/
-│   ├── home/  calendar/  reminders/  tracker/  settings/  about/
+│   ├── home/  calendar/  reminders/  tracker/  ramadan/  settings/  about/
 │   │   ├── domain/         # Entities, repository interfaces, use cases (pure Dart)
 │   │   ├── data/           # Repository implementations
 │   │   └── presentation/   # Blocs, pages, widgets
@@ -183,7 +195,7 @@ lib/
 
 - **Typed errors**: repositories return `Result<T, Failure>` and never throw for expected failures. Blocs switch on the result exhaustively.
 - **Injected clock**: domain and data code read "now" from `package:clock`, so date logic is tested with fixed times.
-- **Notifications** follow one path: one core sync asks every reminder source (the fasting reminders and the make-up reminders) for its occurrences, composes them into notifications (merging same-day ones) and reconciles that desired set against the OS pending set. Ids are deterministic, so an unchanged sync does nothing and an edit reschedules. Only `fln_notification_gateway.dart` imports the plugin.
+- **Notifications** follow one path: one core sync asks every reminder source (the fasting reminders, the make-up reminders, and suhoor and iftar) for its occurrences, composes them into notifications (merging same-day ones) and reconciles that desired set against the OS pending set. Ids are deterministic, so an unchanged sync does nothing and an edit reschedules. Only `fln_notification_gateway.dart` imports the plugin.
 - **Push** goes through the `PushMessaging` port in `core/push/`; only `fcm_push_messaging.dart` imports `firebase_messaging`. `SyncAnnouncementTopic` keeps the device on one language topic.
 
 ## Tech Stack
@@ -195,7 +207,7 @@ lib/
 - **Notifications**: flutter_local_notifications, timezone, flutter_timezone
 - **Push**: firebase_core, firebase_messaging (Firebase Cloud Messaging)
 - **Storage**: shared_preferences
-- **Location**: geolocator (coarse, on request only); sun and moon positions are computed in-house in `lib/core/astronomy/`
+- **Location**: geolocator (coarse, on request only); sun and moon positions and prayer times are computed in-house in `lib/core/astronomy/` and `lib/core/prayer/`
 - **Sharing**: share_plus
 - **Fonts**: El Messiri and IBM Plex Sans Arabic, bundled
 - **Localization**: flutter_localizations, intl, gen-l10n (ARB)
@@ -226,19 +238,10 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 
 | Priority | Feature | New packages | Backend |
 |---|---|---|---|
-| P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | — (uses `lib/core/astronomy` and `lib/core/location`) | No |
 | P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
 | P2 | [Onboarding](#onboarding-p2) | — | No |
 | P3 | [Backup and restore](#backup-and-restore-p3) | `share_plus`, `file_picker` | No |
 | — | [Needs a backend](#needs-a-backend) | Firebase or Supabase | Yes |
-
-### Ramadan mode with prayer times (P1)
-
-During Ramadan (and optionally on any fasting day), Home switches to a Ramadan view.
-
-- **What it shows:** a countdown to Ramadan before it starts; during it, today's **suhoor (Fajr)** and **iftar (Maghrib)** times, a countdown to the next one, the day number ("Day 12 of 30"), and a simple daily checklist (fasted, Taraweeh, Quran pages).
-- **Reminders:** new reminder timings relative to prayer times, e.g. "30 minutes before Fajr" for suhoor and "at Maghrib" for iftar, instead of fixed clock times.
-- **How:** the `adhan` package computes prayer times offline from coordinates and a calculation method (Umm al-Qura, Egyptian, MWL, ISNA, …, chosen in settings, with a sensible default per country). Location comes from `geolocator` or a manually picked city, so the app still works with location permission denied. Prayer-time math stays pure and clock-injected; the reminder scheduler gains a "relative to prayer" timing.
 
 ### Home-screen widget (P2)
 

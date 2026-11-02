@@ -41,4 +41,16 @@ class TestCopy implements NotificationCopy {
   @override
   String ramadanCountdownBody(int daysUntilRamadan, int remaining) =>
       'countdown-$daysUntilRamadan-owe-$remaining';
+
+  @override
+  String suhoorTitle(int minutesBeforeFajr) => 'suhoor-$minutesBeforeFajr';
+
+  @override
+  String suhoorBody(DateTime fajr) => 'fajr-${fajr.toIso8601String()}';
+
+  @override
+  String iftarTitle(int minutesBeforeMaghrib) => 'iftar-$minutesBeforeMaghrib';
+
+  @override
+  String iftarBody(DateTime maghrib) => 'maghrib-${maghrib.toIso8601String()}';
 }

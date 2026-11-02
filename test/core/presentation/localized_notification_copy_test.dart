@@ -1,8 +1,11 @@
 import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 import 'package:fasomo/core/presentation/localized_notification_copy.dart';
+import 'package:fasomo/core/presentation/western_digits.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 
 void main() {
   Future<LocalizedNotificationCopy> copyFor(String language) async =>
@@ -56,6 +59,51 @@ void main() {
         copy.qadaPace(const NotEnoughDaysPace(0)),
         startsWith('لم يبقَ قبل رمضان يوم تقضي فيه ما عليك'),
       );
+    });
+  });
+
+  group('suhoor and iftar', () {
+    final fajr = DateTime.utc(2027, 2, 19, 5, 16);
+    final maghrib = DateTime.utc(2027, 2, 19, 17, 22);
+
+    setUpAll(() async {
+      // MaterialApp's localizations load these in the app.
+      await initializeDateFormatting();
+      useWesternDigitsInDates();
+    });
+
+    test('in English', () async {
+      final copy = await copyFor('en');
+      final fajrTime = DateFormat.jm('en').format(fajr.toLocal());
+      final maghribTime = DateFormat.jm('en').format(maghrib.toLocal());
+
+      expect(copy.suhoorTitle(45), 'Suhoor ends in 45 minutes');
+      expect(copy.suhoorTitle(1), 'Suhoor ends in 1 minute');
+      expect(
+        copy.suhoorBody(fajr),
+        'Fajr is at $fajrTime. Finish your suhoor and make your intention '
+        'to fast.',
+      );
+      expect(copy.iftarTitle(0), "It's time for iftar");
+      expect(copy.iftarTitle(5), 'Iftar in 5 minutes');
+      expect(
+        copy.iftarBody(maghrib),
+        'Maghrib is at $maghribTime. May Allah accept your fast.',
+      );
+    });
+
+    test('in Arabic, with its plural forms and Western digits', () async {
+      final copy = await copyFor('ar');
+
+      expect(copy.suhoorTitle(45), 'ينتهي السحور بعد 45 دقيقة');
+      expect(copy.suhoorTitle(2), 'ينتهي السحور بعد دقيقتين');
+      expect(copy.suhoorTitle(15), 'ينتهي السحور بعد 15 دقيقة');
+      expect(copy.iftarTitle(0), 'حان وقت الإفطار');
+      expect(copy.iftarTitle(5), 'الإفطار بعد 5 دقائق');
+      expect(copy.iftarTitle(10), 'الإفطار بعد 10 دقائق');
+      expect(copy.suhoorBody(fajr), startsWith('يؤذَّن للفجر عند '));
+      expect(copy.suhoorBody(fajr), contains(RegExp('[0-9]:[0-9]{2}')));
+      expect(copy.iftarBody(maghrib), endsWith('تقبّل الله صيامك.'));
     });
   });
 }

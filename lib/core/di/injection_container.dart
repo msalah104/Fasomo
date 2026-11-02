@@ -53,11 +53,17 @@ import 'package:fasomo/features/home/domain/usecases/get_upcoming_fasting_days.d
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
 import 'package:fasomo/features/ramadan/data/repositories/ramadan_checklist_repository_impl.dart';
+import 'package:fasomo/features/ramadan/data/repositories/suhoor_iftar_settings_repository_impl.dart';
 import 'package:fasomo/features/ramadan/domain/repositories/ramadan_checklist_repository.dart';
+import 'package:fasomo/features/ramadan/domain/repositories/suhoor_iftar_settings_repository.dart';
+import 'package:fasomo/features/ramadan/domain/suhoor_iftar_reminder_source.dart';
 import 'package:fasomo/features/ramadan/domain/usecases/get_ramadan_checklist.dart';
 import 'package:fasomo/features/ramadan/domain/usecases/get_ramadan_overview.dart';
+import 'package:fasomo/features/ramadan/domain/usecases/get_suhoor_iftar_settings.dart';
 import 'package:fasomo/features/ramadan/domain/usecases/save_ramadan_checklist.dart';
+import 'package:fasomo/features/ramadan/domain/usecases/save_suhoor_iftar_settings.dart';
 import 'package:fasomo/features/ramadan/presentation/bloc/ramadan_bloc.dart';
+import 'package:fasomo/features/ramadan/presentation/bloc/suhoor_iftar_bloc.dart';
 import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fasomo/features/reminders/data/repositories/reminder_repository_impl.dart';
 import 'package:fasomo/features/reminders/domain/fasting_reminder_source.dart';
@@ -360,6 +366,22 @@ Future<void> init({PlatformServices? platform}) async {
     ..registerLazySingleton(() => SaveRamadanChecklist(sl()))
     ..registerLazySingleton<RamadanChecklistRepository>(
       () => RamadanChecklistRepositoryImpl(sharedPreferences: sl()),
+    )
+    ..registerFactory(
+      () => SuhoorIftarBloc(getSettings: sl(), saveSettings: sl()),
+    )
+    ..registerLazySingleton(() => GetSuhoorIftarSettings(sl()))
+    ..registerLazySingleton(() => SaveSuhoorIftarSettings(sl()))
+    ..registerLazySingleton<SuhoorIftarSettingsRepository>(
+      () => SuhoorIftarSettingsRepositoryImpl(sharedPreferences: sl()),
+    )
+    ..registerLazySingleton(
+      () => SuhoorIftarReminderSource(
+        settings: sl(),
+        prayerSettings: sl(),
+        locationRepository: sl(),
+        calendar: sl(),
+      ),
     );
 
   final services = platform ?? await _devicePlatformServices();
@@ -376,7 +398,11 @@ Future<void> init({PlatformServices? platform}) async {
     // because the reconciler owns the whole OS pending set.
     ..registerLazySingleton(
       () => SyncNotifications(
-        sources: [sl<FastingReminderSource>(), sl<QadaReminderSource>()],
+        sources: [
+          sl<FastingReminderSource>(),
+          sl<QadaReminderSource>(),
+          sl<SuhoorIftarReminderSource>(),
+        ],
         reconciler: sl(),
         toneSource: sl(),
         clock: sl(),

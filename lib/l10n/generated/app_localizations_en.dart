@@ -1305,4 +1305,82 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ramadanChecklistSaveFailed => 'Couldn\'t save today\'s checklist.';
+
+  @override
+  String suhoorNotificationTitle(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'Suhoor ends in $minutes minutes',
+      one: 'Suhoor ends in 1 minute',
+      zero: 'Suhoor ends now',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String suhoorNotificationBody(String time) {
+    return 'Fajr is at $time. Finish your suhoor and make your intention to fast.';
+  }
+
+  @override
+  String iftarNotificationTitle(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: 'Iftar in $minutes minutes',
+      one: 'Iftar in 1 minute',
+      zero: 'It\'s time for iftar',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String iftarNotificationBody(String time) {
+    return 'Maghrib is at $time. May Allah accept your fast.';
+  }
+
+  @override
+  String get suhoorIftarReminders => 'Suhoor and iftar';
+
+  @override
+  String get suhoorIftarHint =>
+      'In Ramadan, timed from each day\'s Fajr and Maghrib where you are.';
+
+  @override
+  String get suhoorReminder => 'Suhoor';
+
+  @override
+  String get iftarReminder => 'Iftar';
+
+  @override
+  String suhoorMinutesBefore(int minutes) {
+    return '$minutes min before Fajr';
+  }
+
+  @override
+  String iftarMinutesBefore(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes min before Maghrib',
+      zero: 'At Maghrib',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get suhoorIftarOtherDays => 'Also on other fasting days';
+
+  @override
+  String get suhoorIftarOtherDaysDetail =>
+      'Mondays and Thursdays, the White Days, Arafah and more';
+
+  @override
+  String get suhoorIftarOff => 'Off';
+
+  @override
+  String suhoorIftarSummaryItem(String meal, String when) {
+    return '$meal: $when';
+  }
 }

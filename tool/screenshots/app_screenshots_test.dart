@@ -47,6 +47,10 @@ const _screens = <String, List<Object>>{
   'settings': [Icons.settings_outlined],
   'calendar_year': [Icons.calendar_today_outlined, ('Year', 'سنة')],
   'tone-picker': [Icons.settings_outlined, Icons.music_note_outlined],
+  'suhoor-iftar': [
+    Icons.notifications_outlined,
+    ('Suhoor and iftar', 'السحور والإفطار'),
+  ],
   'prayer-method': [
     Icons.settings_outlined,
     ('Calculation method', 'طريقة الحساب'),
