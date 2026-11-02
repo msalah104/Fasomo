@@ -4,6 +4,10 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 
 ## Features
 
+### 👋 First run
+- A short, skippable five-step welcome after the splash: language (switches live), which fasts interest you (sets the reminders), a default reminder time, an optional location for the sky, and notification permission, each with one sentence on why.
+- Pages turn in the reading direction, it respects reduced motion and large text, and it is shown only once. People updating from an earlier version skip it.
+
 ### ✨ Launch
 - **Animated splash**: the sun sets behind the dome, the sky turns through dusk to night and the stars come out. The new moon rises and settles as the dot of the ف logo, the letter draws itself around it, and the app name is typed out. Tap to skip; with reduced motion the finished scene shows briefly instead.
 
@@ -76,6 +80,10 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - A gear in the top bar, and on Home's sky, opens Settings. Options are grouped under **Appearance** (language, theme) and **Calendar** (Hijri date adjustment). Every choice is saved.
 - **Theme**: follow the phone's light or dark setting, or always use Light or Dark. The app opens straight in the chosen theme, with no flash of the other one.
 - **Hijri date adjustment**: if your country starts months by local moon sighting, shift the Hijri date by −2 to +2 days (+1 moves the Hijri date one day forward). A preview shows today's date as it will appear. The calendar, fasting days, progress and reminders all move together right away.
+
+### 💾 Backup and restore
+- **Export backup** in Settings saves your reminders, settings, location and fasting log (fasted days, make-up fasts, Ramadan days missed, days owed, make-up reminders) to a versioned JSON file through the share sheet; no account needed. The file is not encrypted.
+- **Restore from file** on another phone, after a confirmation. It is all or nothing: a file from a newer app version, a damaged file or a checksum mismatch is refused, every part is checked before anything is written, and if any write fails everything is put back. Language, theme and reminders apply at once.
 
 ### 🌐 Language
 - Arabic and English, with full right-to-left layout in Arabic.
@@ -201,7 +209,7 @@ lib/
 - **Push**: firebase_core, firebase_messaging (Firebase Cloud Messaging)
 - **Storage**: shared_preferences
 - **Location**: geolocator (coarse, on request only); sun and moon positions are computed in-house in `lib/core/astronomy/`
-- **Sharing**: share_plus
+- **Sharing and files**: share_plus, file_picker, crypto (backup checksum)
 - **Home-screen widget**: home_widget (Android `AppWidgetProvider`, iOS WidgetKit)
 - **Fonts**: El Messiri and IBM Plex Sans Arabic, bundled
 - **Localization**: flutter_localizations, intl, gen-l10n (ARB)
@@ -233,25 +241,17 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 | Priority | Feature | New packages | Backend |
 |---|---|---|---|
 | P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | — (uses `lib/core/astronomy` and `lib/core/location`) | No |
-| P2 | [Onboarding](#onboarding-p2) | — | No |
-| P3 | [Backup and restore](#backup-and-restore-p3) | `share_plus`, `file_picker` | No |
 | — | [Needs a backend](#needs-a-backend) | Firebase or Supabase | Yes |
 
 ### Ramadan mode with prayer times (P1)
 
 During Ramadan (and optionally on any fasting day), Home switches to a Ramadan view.
 
+- **Status:** built on the branch `claude/ramadan-mode-prayer-times`, waiting for review before it is merged. The plan and the open decisions are in `docs/plans/ramadan-mode.md` on that branch.
+
 - **What it shows:** a countdown to Ramadan before it starts; during it, today's **suhoor (Fajr)** and **iftar (Maghrib)** times, a countdown to the next one, the day number ("Day 12 of 30"), and a simple daily checklist (fasted, Taraweeh, Quran pages).
 - **Reminders:** new reminder timings relative to prayer times, e.g. "30 minutes before Fajr" for suhoor and "at Maghrib" for iftar, instead of fixed clock times.
-- **How:** the `adhan` package computes prayer times offline from coordinates and a calculation method (Umm al-Qura, Egyptian, MWL, ISNA, …, chosen in settings, with a sensible default per country). Location comes from `geolocator` or a manually picked city, so the app still works with location permission denied. Prayer-time math stays pure and clock-injected; the reminder scheduler gains a "relative to prayer" timing.
-
-### Onboarding (P2)
-
-A short first-run flow: choose language, choose which fasting types interest you, set a default reminder time, and only then ask for notification permission (and location, if Ramadan mode or the sky header needs it), with a sentence explaining why.
-
-### Backup and restore (P3)
-
-Export reminders, settings and the fasting log to a versioned JSON file and restore it on a new phone. This avoids accounts while still letting users keep their history.
+- **How:** prayer times are computed offline in `lib/core/prayer/` on top of the in-house astronomy, from the saved location and a calculation method (Umm al-Qura, Egyptian, MWL, ISNA and others, chosen in settings, with a default per country). Prayer-time math stays pure and clock-injected; a new reminder source schedules suhoor and iftar relative to Fajr and Maghrib.
 
 ### Needs a backend
 
