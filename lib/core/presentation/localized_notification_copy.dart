@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/notifications/notification_copy.dart';
+import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 import 'package:fasomo/core/presentation/fasting_type_text.dart';
+import 'package:fasomo/core/presentation/qada_pace_text.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 
 /// [NotificationCopy] for one language. Equal per language, so re-sending it
@@ -28,6 +30,9 @@ class LocalizedNotificationCopy extends Equatable implements NotificationCopy {
 
   @override
   String qadaBody(int remaining) => _localization.qadaReminderBody(remaining);
+
+  @override
+  String qadaPace(QadaPaceRate pace) => _localization.qadaPaceSentence(pace);
 
   @override
   String mergedTitle(FastingType type, {required int daysBefore}) =>

@@ -8,6 +8,7 @@ import 'package:fasomo/core/notifications/reminder_scheduler.dart';
 ///
 /// - A fasting day that is also a suggested make-up day becomes one merged
 ///   notification at the fasting reminder's time.
+/// - A make-up day planned by the suggested pace also says the pace.
 /// - A Ramadan countdown that fires on the same day as another notification
 ///   is appended to that notification's text instead of firing on its own.
 abstract final class ReminderComposer {
@@ -37,7 +38,12 @@ abstract final class ReminderComposer {
             fastingDate: date,
             timing: f.timing,
             title: copy.mergedTitle(f.type, daysBefore: f.timing.daysBefore),
-            body: f.customMessage ?? copy.mergedBody(f.type, q.remaining),
+            body:
+                f.customMessage ??
+                [
+                  copy.mergedBody(f.type, q.remaining),
+                  if (q.pace case final pace?) copy.qadaPace(pace),
+                ].join('\n'),
           ),
           (final f?, null) => ReminderRequest(
             reminderId: f.type.name,
@@ -51,7 +57,10 @@ abstract final class ReminderComposer {
             fastingDate: date,
             timing: q.timing,
             title: copy.qadaTitle(daysBefore: q.timing.daysBefore),
-            body: copy.qadaBody(q.remaining),
+            body: [
+              if (q.pace case final pace?) copy.qadaPace(pace),
+              copy.qadaBody(q.remaining),
+            ].join('\n'),
           ),
           (null, null) => throw StateError('unreachable: date from either map'),
         },

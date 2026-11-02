@@ -1,7 +1,7 @@
 # Qada reminders — plan
 
-**Status:** weekly, monthly and before-Ramadan reminders are built. Suggested
-pace is on the roadmap (P3). The decisions are in section 6.
+**Status:** all four kinds are built: weekly, monthly, before Ramadan and
+the suggested pace. The decisions are in section 6.
 
 Help the user pay off their make-up (Qada) days before the next Ramadan by
 letting them switch on one or more kinds of reminder. Every Qada reminder
@@ -18,7 +18,7 @@ The user can turn on any combination of these.
 | **Weekly** | On the chosen weekdays, defaulting to **Saturday**. On a Monday or Thursday it merges with that day's Sunnah reminder. | "Tomorrow: a day for a make-up fast. Make-up days left: 4" |
 | **Monthly** | Once a Hijri month, either on the **White Days** (13–15, again counting for both) or on a **Hijri day** the user picks. | "The White Days start tomorrow. Make up a fast? 4 days left." |
 | **Before Ramadan** | A countdown at chosen points before Ramadan, e.g. **60, 30, 14 and 7 days** before (multi-select). | "Ramadan starts in 30 days and you still owe 4 make-up fasts." |
-| **Suggested pace** *(later)* | Works out a weekly pace from the balance and the weeks left, e.g. 6 days owed and 20 weeks left gives "1 a week", and schedules that. Re-planned on every sync. | "To finish before Ramadan, fast 1 make-up day a week. This week's: Thursday?" |
+| **Suggested pace** | Works out a weekly pace from the balance and the weeks left, e.g. 6 days owed and 20 weeks left gives "1 a week", and schedules that. Re-planned on every sync. | "To finish before Ramadan, fast 1 make-up day a week. This week's: Thursday?" |
 
 Shared settings for every kind:
 - **Time**: the evening before (default 20:00, in time to plan suhoor) or the
@@ -122,7 +122,7 @@ the home-screen widget or a background fetch could address it later.
 2. **Weekly and before-Ramadan reminders**, with the settings sheet on the
    progress page and the card on the Reminders tab.
 3. **Monthly** (White Days or a Hijri day).
-4. **Suggested pace.**
+4. **Suggested pace.** Done.
 
 ---
 
@@ -147,7 +147,7 @@ the home-screen widget or a background fetch could address it later.
    that already has a notification is added to its text.
 3. **Before-Ramadan offsets**: any number of days, 1 to 354 (30 and 7 by
    default).
-4. **Suggested pace**: later.
+4. **Suggested pace**: built, off by default (see "As built").
 5. **Where to set it up**: both the progress page and the Reminders tab.
 6. **Everything on by default**: every fasting-type reminder and every
    make-up reminder kind starts on. Notification permission is asked once,
@@ -161,3 +161,36 @@ the home-screen widget or a background fetch could address it later.
   where the 13th is labelled White Days.
 - The make-up reminder timing is the evening before (20:00) or the morning of
   (07:00). There's no custom time or message yet.
+
+### Suggested pace, as built
+
+- **The maths.** A pure `QadaPacePlanner` counts the days from tomorrow (a
+  make-up fast needs its intention the night before) to the day before the
+  next Ramadan on which a make-up fast is allowed: not Ramadan, an Eid,
+  Tashreeq or a day already fasted. All dates go through the
+  `HijriConverter`, so the user's Hijri adjustment moves Ramadan and the
+  Eids with it.
+  - More owed than available: the pace says so ("Only 30 days are left
+    before Ramadan, fewer than you owe…") and suggests every available day.
+  - Exactly as many: "every day you can".
+  - Otherwise `ceil(owed × 7 / days left)` a week, at most 6; with under a
+    week left, the whole balance is this week's. 6 owed and 14 weeks left
+    gives "1 a week".
+- **The days.** Each 7-day block from tomorrow gets up to that many days,
+  Mondays and Thursdays first (a make-up fast on a Sunnah day counts for
+  both), earliest first. A block cut short by an Eid is made up from the
+  earliest days left. Ramadan in between (planning from inside Ramadan)
+  aims at the next one and starts after Eid.
+- **Re-planned on every read.** The tracker derives it with the summary
+  (`GetQadaPace`), and the sync derives it again, so it adapts as days are
+  made up or added. Only the days inside the 60-day horizon are scheduled.
+- **Settings.** `paceEnabled`, **off by default**: weekly and monthly days
+  are already on, and the pace would double them. Settings saved before
+  the pace existed read with it off. It combines with the other kinds; a
+  day that is both a pace day and a weekly or monthly day is suggested once.
+- **Text.** The sheet shows the pace even while it's off ("To finish before
+  Ramadan, fast 1 make-up day a week. Next: Thursday, November 5"), and the
+  Qada section has a short line ("Suggested pace: 1 day a week · Next: Thu,
+  Nov 5"). A notification for a pace day adds the pace sentence, also when
+  it merges with a Monday or Thursday reminder. Arabic uses every plural
+  form.

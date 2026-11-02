@@ -36,6 +36,7 @@ void main() {
       expect(value.monthlyHijriDay, 13);
       expect(value.daysBeforeRamadan, {30, 7});
       expect(value.time, QadaReminderTime.eveningBefore);
+      expect(value.paceEnabled, isFalse);
       expect(QadaReminderSettings.defaults.anyEnabled, isTrue);
     },
   );
@@ -48,11 +49,35 @@ void main() {
       monthlyHijriDay: 20,
       daysBeforeRamadan: {100, 3},
       time: QadaReminderTime.morningOf,
+      paceEnabled: true,
     );
 
     await repository.saveSettings(settings);
 
     expect((repository.getSettings() as Ok).value, settings);
+  });
+
+  test('settings saved before the pace existed read with it off', () async {
+    final old = QadaReminderSettings.defaults.toJson()..remove('paceEnabled');
+    final repository = await repositoryWith({
+      AppConstants.qadaRemindersKey: jsonEncode(old),
+    });
+
+    expect(
+      (repository.getSettings() as Ok).value,
+      QadaReminderSettings.defaults,
+    );
+  });
+
+  test('only the suggested pace on still counts as on', () {
+    const paceOnly = QadaReminderSettings(
+      weeklyEnabled: false,
+      monthlyEnabled: false,
+      beforeRamadanEnabled: false,
+      paceEnabled: true,
+    );
+    expect(paceOnly.anyEnabled, isTrue);
+    expect(paceOnly.copyWith(paceEnabled: false).anyEnabled, isFalse);
   });
 
   test('malformed settings are a read failure', () async {
@@ -64,6 +89,7 @@ void main() {
         'weekdays': [9],
       }),
       jsonEncode({...valid, 'time': 'noon'}),
+      jsonEncode({...valid, 'paceEnabled': 'yes'}),
       jsonEncode({
         ...valid,
         'daysBeforeRamadan': [0],

@@ -1124,6 +1124,60 @@ abstract class AppLocalizations {
   /// **'Make-up reminders skip Ramadan, the Eids and days you\'ve already fasted, and stop once nothing is owed. On a Sunnah fasting day they\'re merged into that day\'s reminder.'**
   String get qadaRemindersFootnote;
 
+  /// Make-up reminder kind that spreads the days owed over the weeks left before Ramadan.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested pace'**
+  String get suggestedPace;
+
+  /// No description provided for @suggestedPaceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Picks the make-up days for you, Mondays and Thursdays first, and adjusts as your balance changes.'**
+  String get suggestedPaceHint;
+
+  /// The suggested make-up pace when it is fewer than every day.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{To finish before Ramadan, fast 1 make-up day a week.} other{To finish before Ramadan, fast {count} make-up days a week.}}'**
+  String qadaPaceWeekly(int count);
+
+  /// No description provided for @qadaPaceEveryDay.
+  ///
+  /// In en, this message translates to:
+  /// **'To finish before Ramadan, fast a make-up day on every day you can.'**
+  String get qadaPaceEveryDay;
+
+  /// Said honestly when more make-up days are owed than there are days left before Ramadan.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No days are left before Ramadan to make up what you owe. The rest stays owed after it.} =1{Only 1 day is left before Ramadan, fewer than you owe. Fast it, and the rest stays owed after Ramadan.} other{Only {count} days are left before Ramadan, fewer than you owe. Fast every one you can, and the rest stays owed after Ramadan.}}'**
+  String qadaPaceNotEnough(int count);
+
+  /// The next day the suggested pace plans a make-up fast on.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {date}'**
+  String qadaPaceNext(String date);
+
+  /// Short pace line in the Qada section.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Suggested pace: 1 day a week} other{Suggested pace: {count} days a week}}'**
+  String qadaPaceLineWeekly(int count);
+
+  /// No description provided for @qadaPaceLineEveryDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested pace: every day you can'**
+  String get qadaPaceLineEveryDay;
+
+  /// Short pace line when more days are owed than are left before Ramadan.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No days left to make up before Ramadan} =1{Only 1 day left to make up before Ramadan} other{Only {count} days left to make up before Ramadan}}'**
+  String qadaPaceLineNotEnough(int count);
+
   /// No description provided for @settings.
   ///
   /// In en, this message translates to:

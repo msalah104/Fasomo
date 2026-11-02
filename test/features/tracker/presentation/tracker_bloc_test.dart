@@ -2,11 +2,14 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
+import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/entities/qada_pace.dart';
 import 'package:fasomo/features/tracker/domain/entities/qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/can_make_up_on.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/usecases/get_qada_pace.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/save_qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
@@ -35,6 +38,8 @@ class MockGetQadaReminderSettings extends Mock
 class MockSaveQadaReminderSettings extends Mock
     implements SaveQadaReminderSettings;
 
+class MockGetQadaPace extends Mock implements GetQadaPace;
+
 void main() {
   late MockGetFastLogSummary getSummary;
   late MockSetDayFasted setDayFasted;
@@ -44,6 +49,7 @@ void main() {
   late MockCanMakeUpOn canMakeUpOn;
   late MockGetQadaReminderSettings getQadaReminders;
   late MockSaveQadaReminderSettings saveQadaReminders;
+  late MockGetQadaPace getQadaPace;
 
   final monday = DateTime(2026, 10, 26);
   final withMonday = FastLogSummary(
@@ -57,6 +63,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(const NoParams());
     registerFallbackValue(QadaReminderSettings.defaults);
+    registerFallbackValue(FastLogSummary.empty);
     registerFallbackValue(SetDayFastedParams(date: monday, fasted: true));
     registerFallbackValue(
       SetRamadanDayMissedParams(date: monday, missed: true),
@@ -77,6 +84,8 @@ void main() {
     canMakeUpOn = MockCanMakeUpOn();
     getQadaReminders = MockGetQadaReminderSettings();
     saveQadaReminders = MockSaveQadaReminderSettings();
+    getQadaPace = MockGetQadaPace();
+    when(() => getQadaPace(any())).thenReturn(null);
     when(
       () => getQadaReminders(any()),
     ).thenReturn(const Ok(QadaReminderSettings.defaults));
@@ -100,6 +109,7 @@ void main() {
     canMakeUpOnDay: canMakeUpOn,
     getQadaReminders: getQadaReminders,
     saveQadaReminders: saveQadaReminders,
+    getQadaPace: getQadaPace,
   );
 
   test('starts in the initial state', () {
@@ -271,4 +281,97 @@ void main() {
       ),
     ).called(1),
   );
+
+  group('suggested pace', () {
+    const owing = FastLogSummary(
+      fastedDays: {},
+      currentStreak: 0,
+      longestStreak: 0,
+      month: PeriodTotals.empty,
+      year: PeriodTotals.empty,
+      qada: QadaSummary(
+        owed: 6,
+        madeUp: 0,
+        byYear: [],
+        latestOwableYear: 1447,
+      ),
+    );
+    final pace = QadaPace(
+      rate: const PerWeekPace(1),
+      days: [DateTime(2026, 11, 5)],
+      owed: 6,
+      availableDays: 97,
+      ramadanStart: DateTime(2027, 2, 8),
+    );
+
+    blocTest<TrackerBloc, TrackerState>(
+      'is planned from the loaded balance',
+      setUp: () {
+        when(() => getSummary(any())).thenReturn(const Ok(owing));
+        when(() => getQadaPace(owing)).thenReturn(pace);
+      },
+      build: build,
+      act: (bloc) => bloc.add(const LoadTracker()),
+      expect: () => [
+        const TrackerState(status: TrackerStatus.loading),
+        TrackerState(
+          status: TrackerStatus.success,
+          summary: owing,
+          qadaPace: pace,
+        ),
+      ],
+      verify: (_) => verify(() => getQadaPace(owing)).called(1),
+    );
+
+    blocTest<TrackerBloc, TrackerState>(
+      'is re-planned after every change, and clears once nothing is owed',
+      build: build,
+      seed: () => TrackerState(
+        status: TrackerStatus.success,
+        summary: owing,
+        qadaPace: pace,
+      ),
+      act: (bloc) => bloc.add(ToggleMakeUp(monday)),
+      expect: () => const [TrackerState(status: TrackerStatus.success)],
+      verify: (_) => verify(() => getQadaPace(FastLogSummary.empty)).called(1),
+    );
+
+    blocTest<TrackerBloc, TrackerState>(
+      'is kept through a failed change',
+      setUp: () => when(
+        () => setMakeUpFast(any()),
+      ).thenAnswer((_) async => const Err(RamadanDayNotMakeUp())),
+      build: build,
+      seed: () => TrackerState(
+        status: TrackerStatus.success,
+        summary: owing,
+        qadaPace: pace,
+      ),
+      act: (bloc) => bloc.add(ToggleMakeUp(monday)),
+      expect: () => [
+        TrackerState(
+          status: TrackerStatus.success,
+          summary: owing,
+          qadaPace: pace,
+          failure: const RamadanDayNotMakeUp(),
+        ),
+      ],
+    );
+
+    blocTest<TrackerBloc, TrackerState>(
+      'switching it on saves the setting',
+      build: build,
+      seed: () => const TrackerState(status: TrackerStatus.success),
+      act: (bloc) => bloc.add(
+        UpdateQadaReminders(
+          QadaReminderSettings.defaults.copyWith(paceEnabled: true),
+        ),
+      ),
+      verify: (_) => verify(
+        () => saveQadaReminders(
+          QadaReminderSettings.defaults.copyWith(paceEnabled: true),
+        ),
+      ).called(1),
+    );
+  });
 }

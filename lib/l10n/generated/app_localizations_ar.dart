@@ -654,6 +654,88 @@ class AppLocalizationsAr extends AppLocalizations {
       'تتجاوز تذكيرات القضاء رمضان والعيدين والأيام التي صمتها، وتتوقف عندما لا يبقى عليك قضاء. وفي أيام صيام السنة تُدمج مع تذكير ذلك اليوم.';
 
   @override
+  String get suggestedPace => 'الوتيرة المقترحة';
+
+  @override
+  String get suggestedPaceHint =>
+      'يختار لك أيام القضاء، مقدّمًا الاثنين والخميس، ويتكيّف كلما تغيّر ما عليك.';
+
+  @override
+  String qadaPaceWeekly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'لتُتمّ القضاء قبل رمضان، صُم $count يوم قضاء كل أسبوع.',
+      many: 'لتُتمّ القضاء قبل رمضان، صُم $count يومًا من القضاء كل أسبوع.',
+      few: 'لتُتمّ القضاء قبل رمضان، صُم $count أيام قضاء كل أسبوع.',
+      two: 'لتُتمّ القضاء قبل رمضان، صُم يومَي قضاء كل أسبوع.',
+      one: 'لتُتمّ القضاء قبل رمضان، صُم يوم قضاء واحدًا كل أسبوع.',
+      zero: 'لا يلزمك صيام قضاء هذا الأسبوع لتُتمّه قبل رمضان.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get qadaPaceEveryDay =>
+      'لتُتمّ القضاء قبل رمضان، صُم كل يوم يجوز فيه القضاء.';
+
+  @override
+  String qadaPaceNotEnough(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'لم يبقَ قبل رمضان إلا $count يوم، وهي أقل مما عليك. صُم ما استطعت منها، ويبقى الباقي عليك بعد رمضان.',
+      many:
+          'لم يبقَ قبل رمضان إلا $count يومًا، وهي أقل مما عليك. صُم ما استطعت منها، ويبقى الباقي عليك بعد رمضان.',
+      few:
+          'لم يبقَ قبل رمضان إلا $count أيام، وهي أقل مما عليك. صُم ما استطعت منها، ويبقى الباقي عليك بعد رمضان.',
+      two: 'لم يبقَ قبل رمضان إلا يومان، وهما أقل مما عليك. صُمهما، ويبقى الباقي عليك بعد رمضان.',
+      one: 'لم يبقَ قبل رمضان إلا يوم واحد، وهو أقل مما عليك. صُمه، ويبقى الباقي عليك بعد رمضان.',
+      zero: 'لم يبقَ قبل رمضان يوم تقضي فيه ما عليك، ويبقى القضاء عليك بعده.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String qadaPaceNext(String date) {
+    return 'التالي: $date';
+  }
+
+  @override
+  String qadaPaceLineWeekly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'الوتيرة المقترحة: $count يوم في الأسبوع',
+      many: 'الوتيرة المقترحة: $count يومًا في الأسبوع',
+      few: 'الوتيرة المقترحة: $count أيام في الأسبوع',
+      two: 'الوتيرة المقترحة: يومان في الأسبوع',
+      one: 'الوتيرة المقترحة: يوم واحد في الأسبوع',
+      zero: 'الوتيرة المقترحة: لا أيام هذا الأسبوع',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get qadaPaceLineEveryDay => 'الوتيرة المقترحة: كل يوم تستطيعه';
+
+  @override
+  String qadaPaceLineNotEnough(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'لم يبقَ للقضاء قبل رمضان إلا $count يوم',
+      many: 'لم يبقَ للقضاء قبل رمضان إلا $count يومًا',
+      few: 'لم يبقَ للقضاء قبل رمضان إلا $count أيام',
+      two: 'لم يبقَ للقضاء قبل رمضان إلا يومان',
+      one: 'لم يبقَ للقضاء قبل رمضان إلا يوم واحد',
+      zero: 'لم يبقَ يوم للقضاء قبل رمضان',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get settings => 'الإعدادات';
 
   @override

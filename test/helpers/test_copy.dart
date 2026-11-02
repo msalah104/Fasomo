@@ -1,5 +1,6 @@
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/notifications/notification_copy.dart';
+import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 
 /// Predictable notification text for tests.
 class TestCopy implements NotificationCopy {
@@ -17,6 +18,13 @@ class TestCopy implements NotificationCopy {
 
   @override
   String qadaBody(int remaining) => 'owe-$remaining';
+
+  @override
+  String qadaPace(QadaPaceRate pace) => switch (pace) {
+    PerWeekPace(:final daysPerWeek) => 'pace-$daysPerWeek',
+    EveryDayPace() => 'pace-daily',
+    NotEnoughDaysPace(:final availableDays) => 'pace-short-$availableDays',
+  };
 
   @override
   String mergedTitle(FastingType type, {required int daysBefore}) =>

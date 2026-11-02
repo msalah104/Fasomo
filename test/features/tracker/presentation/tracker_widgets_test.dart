@@ -2,10 +2,12 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:clock/clock.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
 import 'package:fasomo/core/calendar/hijri_date.dart';
+import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/features/calendar/domain/entities/calendar_day.dart';
 import 'package:fasomo/features/calendar/presentation/widgets/calendar_day_cell.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/entities/qada_pace.dart';
 import 'package:fasomo/features/tracker/domain/entities/qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/pages/tracker_page.dart';
@@ -474,6 +476,155 @@ void main() {
 
       expect(tester.takeException(), isNull);
       expect(find.text('تذكيرات القضاء'), findsWidgets);
+    });
+  });
+
+  group('suggested pace', () {
+    final owing = summary.withQada(
+      const QadaSummary(
+        owed: 6,
+        madeUp: 0,
+        byYear: [QadaYear(hijriYear: 1447, owed: 6, madeUp: 0, extraOwed: 6)],
+        latestOwableYear: 1447,
+        daysUntilRamadan: 103,
+      ),
+    );
+    final weekly = QadaPace(
+      rate: const PerWeekPace(1),
+      days: [DateTime(2026, 11, 5), DateTime(2026, 11, 12)],
+      owed: 6,
+      availableDays: 97,
+      ramadanStart: DateTime(2027, 2, 8),
+    );
+    TrackerState stateWith(
+      QadaPace pace, {
+      QadaReminderSettings settings = QadaReminderSettings.defaults,
+    }) => TrackerState(
+      status: TrackerStatus.success,
+      summary: owing,
+      qadaReminders: settings,
+      qadaPace: pace,
+    );
+
+    Future<void> openSheet(WidgetTester tester) async {
+      await tester.tap(find.byType(QadaReminderTile));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('the sheet shows the pace and the next day, and turns it on', (
+      tester,
+    ) async {
+      await pump(tester, const QadaReminderTile(), state: stateWith(weekly));
+      await openSheet(tester);
+
+      expect(find.text('Suggested pace'), findsOneWidget);
+      expect(
+        find.text(
+          'To finish before Ramadan, fast 1 make-up day a week. '
+          'Next: Thursday, November 5',
+        ),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.widgetWithText(SwitchListTile, 'Suggested pace'));
+      verify(
+        () => bloc.add(
+          UpdateQadaReminders(
+            QadaReminderSettings.defaults.copyWith(paceEnabled: true),
+          ),
+        ),
+      ).called(1);
+    });
+
+    testWidgets('says so honestly when there are not enough days', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const QadaReminderTile(),
+        state: stateWith(
+          QadaPace(
+            rate: const NotEnoughDaysPace(0),
+            days: const [],
+            owed: 6,
+            availableDays: 0,
+            ramadanStart: DateTime(2026, 10, 29),
+          ),
+        ),
+      );
+      await openSheet(tester);
+
+      expect(
+        find.text(
+          'No days are left before Ramadan to make up what you owe. '
+          'The rest stays owed after it.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('Next:'), findsNothing);
+    });
+
+    testWidgets('the tile summary names the pace once it is on', (
+      tester,
+    ) async {
+      await pump(
+        tester,
+        const QadaReminderTile(),
+        state: stateWith(
+          weekly,
+          settings: QadaReminderSettings.defaults.copyWith(paceEnabled: true),
+        ),
+      );
+
+      expect(find.textContaining('Suggested pace · Weekly: Sat'), findsOne);
+    });
+
+    testWidgets('the Qada section shows a short pace line', (tester) async {
+      await pump(
+        tester,
+        SingleChildScrollView(child: QadaSection(summary: owing)),
+        state: stateWith(weekly),
+      );
+
+      expect(
+        find.text('Suggested pace: 1 day a week · Next: Thu, Nov 5'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('no pace line while there is no pace', (tester) async {
+      await pump(
+        tester,
+        SingleChildScrollView(child: QadaSection(summary: owing)),
+        state: TrackerState(status: TrackerStatus.success, summary: owing),
+      );
+
+      expect(find.textContaining('Suggested pace'), findsNothing);
+    });
+
+    testWidgets('lays out in Arabic without overflow', (tester) async {
+      await pump(
+        tester,
+        const QadaReminderTile(),
+        state: stateWith(
+          QadaPace(
+            rate: const PerWeekPace(3),
+            days: [DateTime(2026, 11, 5)],
+            owed: 40,
+            availableDays: 97,
+            ramadanStart: DateTime(2027, 2, 8),
+          ),
+        ),
+        locale: const Locale('ar'),
+      );
+      await openSheet(tester);
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('الوتيرة المقترحة'), findsOneWidget);
+      expect(
+        find.textContaining('صُم 3 أيام قضاء كل أسبوع'),
+        findsOneWidget,
+      );
     });
   });
 }

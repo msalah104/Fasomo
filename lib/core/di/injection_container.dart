@@ -54,12 +54,14 @@ import 'package:fasomo/features/tracker/data/datasources/fast_log_local_data_sou
 import 'package:fasomo/features/tracker/data/datasources/qada_reminder_local_data_source.dart';
 import 'package:fasomo/features/tracker/data/repositories/fast_log_repository_impl.dart';
 import 'package:fasomo/features/tracker/data/repositories/qada_reminder_repository_impl.dart';
+import 'package:fasomo/features/tracker/domain/qada_pace_planner.dart';
 import 'package:fasomo/features/tracker/domain/qada_reminder_planner.dart';
 import 'package:fasomo/features/tracker/domain/qada_reminder_source.dart';
 import 'package:fasomo/features/tracker/domain/repositories/fast_log_repository.dart';
 import 'package:fasomo/features/tracker/domain/repositories/qada_reminder_repository.dart';
 import 'package:fasomo/features/tracker/domain/usecases/can_make_up_on.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/usecases/get_qada_pace.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/save_qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
@@ -180,12 +182,15 @@ Future<void> init({PlatformServices? platform}) async {
         canMakeUpOnDay: sl(),
         getQadaReminders: sl(),
         saveQadaReminders: sl(),
+        getQadaPace: sl(),
       ),
     )
     ..registerLazySingleton(
       () => QadaReminderSource(settings: sl(), fastLog: sl(), planner: sl()),
     )
-    ..registerLazySingleton(() => QadaReminderPlanner(sl()))
+    ..registerLazySingleton(() => QadaReminderPlanner(sl(), sl()))
+    ..registerLazySingleton(() => QadaPacePlanner(sl()))
+    ..registerLazySingleton(() => GetQadaPace(planner: sl(), clock: sl()))
     ..registerLazySingleton(() => GetQadaReminderSettings(sl()))
     ..registerLazySingleton(() => SaveQadaReminderSettings(sl()))
     ..registerLazySingleton<QadaReminderRepository>(

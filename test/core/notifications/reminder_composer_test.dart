@@ -1,4 +1,5 @@
 import 'package:fasomo/core/calendar/fasting_type.dart';
+import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 import 'package:fasomo/core/notifications/reminder_composer.dart';
 import 'package:fasomo/core/notifications/reminder_occurrence.dart';
 import 'package:fasomo/core/notifications/reminder_timing.dart';
@@ -38,6 +39,34 @@ void main() {
     expect(request.title, 'qada-0');
     expect(request.body, 'owe-4');
     expect(request.fireAt, DateTime(2026, 10, 31, 7));
+  });
+
+  test('a day planned by the suggested pace says the pace', () {
+    final request = ReminderComposer.compose([
+      QadaOccurrence(
+        date: saturday,
+        timing: ReminderTiming.morningOf,
+        remaining: 4,
+        pace: const PerWeekPace(2),
+      ),
+    ], const TestCopy()).single;
+    expect(request.reminderId, 'qada');
+    expect(request.title, 'qada-0');
+    expect(request.body, 'pace-2\nowe-4');
+  });
+
+  test('a pace day on a fasting day merges and still says the pace', () {
+    final request = ReminderComposer.compose([
+      fasting,
+      QadaOccurrence(
+        date: monday,
+        timing: ReminderTiming.dayBefore,
+        remaining: 4,
+        pace: const NotEnoughDaysPace(3),
+      ),
+    ], const TestCopy()).single;
+    expect(request.reminderId, 'merged.mondayThursday');
+    expect(request.body, 'both-mondayThursday-owe-4\npace-short-3');
   });
 
   test(

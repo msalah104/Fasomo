@@ -1,4 +1,5 @@
 import 'package:fasomo/core/calendar/fasting_type.dart';
+import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 
 /// Localized notification text. Implemented in the presentation layer for
 /// the app's current language.
@@ -14,6 +15,10 @@ abstract interface class NotificationCopy {
 
   /// e.g. "You have 4 make-up days left."
   String qadaBody(int remaining);
+
+  /// The suggested pace, added to a make-up day it planned, e.g. "To
+  /// finish before Ramadan, fast 1 make-up day a week."
+  String qadaPace(QadaPaceRate pace);
 
   /// A fasting day that is also a suggested make-up day, e.g.
   /// "Tomorrow: White Days and a make-up fast".

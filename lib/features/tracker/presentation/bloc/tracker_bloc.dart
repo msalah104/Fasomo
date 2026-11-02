@@ -4,9 +4,11 @@ import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/usecases/usecase.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/entities/qada_pace.dart';
 import 'package:fasomo/features/tracker/domain/entities/qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/can_make_up_on.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/usecases/get_qada_pace.dart';
 import 'package:fasomo/features/tracker/domain/usecases/get_qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/save_qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/domain/usecases/set_day_fasted.dart';
@@ -28,6 +30,7 @@ class TrackerBloc extends Bloc<TrackerEvent, TrackerState> {
     required this.canMakeUpOnDay,
     required this.getQadaReminders,
     required this.saveQadaReminders,
+    required this.getQadaPace,
   }) : super(const TrackerState()) {
     // One handler, processed in order, so quick double taps never interleave.
     on<TrackerEvent>(_onEvent, transformer: sequential());
@@ -41,6 +44,7 @@ class TrackerBloc extends Bloc<TrackerEvent, TrackerState> {
   final CanMakeUpOn canMakeUpOnDay;
   final GetQadaReminderSettings getQadaReminders;
   final SaveQadaReminderSettings saveQadaReminders;
+  final GetQadaPace getQadaPace;
 
   /// Whether [date] may be logged as a make-up fast. A synchronous query for
   /// the day picker's predicate; it changes no state.
@@ -111,11 +115,14 @@ class TrackerBloc extends Bloc<TrackerEvent, TrackerState> {
       getQadaReminders(const NoParams()),
     )) {
       case (Ok(value: final summary), Ok(value: final reminders)):
+        // Built whole, so the pace is re-planned from this balance and
+        // clears once nothing is owed.
         emit(
-          state.copyWith(
+          TrackerState(
             status: TrackerStatus.success,
             summary: summary,
             qadaReminders: reminders,
+            qadaPace: getQadaPace(summary),
           ),
         );
       case (Err(:final failure), _) || (_, Err(:final failure)):

@@ -4,6 +4,7 @@ import 'package:fasomo/core/theme/app_colors.dart';
 import 'package:fasomo/features/tracker/domain/entities/qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/qada_reminder_text.dart';
+import 'package:fasomo/features/tracker/presentation/widgets/suggested_pace_option.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,9 +30,12 @@ class QadaReminderSheet extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = AppColors.of(context);
 
-    return BlocSelector<TrackerBloc, TrackerState, QadaReminderSettings>(
-      selector: (state) => state.qadaReminders,
-      builder: (context, settings) {
+    return BlocBuilder<TrackerBloc, TrackerState>(
+      buildWhen: (previous, current) =>
+          previous.qadaReminders != current.qadaReminders ||
+          previous.qadaPace != current.qadaPace,
+      builder: (context, state) {
+        final settings = state.qadaReminders;
         void update(QadaReminderSettings next) =>
             context.read<TrackerBloc>().add(UpdateQadaReminders(next));
 
@@ -46,6 +50,11 @@ class QadaReminderSheet extends StatelessWidget {
                   style: theme.textTheme.titleLarge,
                 ),
                 const SizedBox(height: 8),
+                SuggestedPaceOption(
+                  enabled: settings.paceEnabled,
+                  pace: state.qadaPace,
+                  onChanged: (on) => update(settings.copyWith(paceEnabled: on)),
+                ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(localization.weeklyReminder),

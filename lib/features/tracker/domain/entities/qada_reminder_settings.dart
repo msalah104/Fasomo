@@ -25,6 +25,7 @@ class QadaReminderSettings extends Equatable {
     this.beforeRamadanEnabled = true,
     this.daysBeforeRamadan = const {30, 7},
     this.time = QadaReminderTime.eveningBefore,
+    this.paceEnabled = false,
   });
 
   static const defaults = QadaReminderSettings();
@@ -53,7 +54,13 @@ class QadaReminderSettings extends Equatable {
 
   final QadaReminderTime time;
 
+  /// Whether the suggested pace schedules its own days: the days owed spread
+  /// over the weeks left before Ramadan. Off by default, since the weekly
+  /// and monthly days are already on.
+  final bool paceEnabled;
+
   bool get anyEnabled =>
+      paceEnabled ||
       (weeklyEnabled && weekdays.isNotEmpty) ||
       monthlyEnabled ||
       (beforeRamadanEnabled && daysBeforeRamadan.isNotEmpty);
@@ -66,6 +73,7 @@ class QadaReminderSettings extends Equatable {
     bool? beforeRamadanEnabled,
     Set<int>? daysBeforeRamadan,
     QadaReminderTime? time,
+    bool? paceEnabled,
   }) {
     return QadaReminderSettings(
       weeklyEnabled: weeklyEnabled ?? this.weeklyEnabled,
@@ -75,6 +83,7 @@ class QadaReminderSettings extends Equatable {
       beforeRamadanEnabled: beforeRamadanEnabled ?? this.beforeRamadanEnabled,
       daysBeforeRamadan: daysBeforeRamadan ?? this.daysBeforeRamadan,
       time: time ?? this.time,
+      paceEnabled: paceEnabled ?? this.paceEnabled,
     );
   }
 
@@ -86,6 +95,7 @@ class QadaReminderSettings extends Equatable {
     'beforeRamadanEnabled': beforeRamadanEnabled,
     'daysBeforeRamadan': daysBeforeRamadan.toList()..sort(),
     'time': time.name,
+    'paceEnabled': paceEnabled,
   };
 
   /// Decodes [json], or returns `null` when it is not valid settings.
@@ -109,7 +119,8 @@ class QadaReminderSettings extends Equatable {
       final parsedTime = QadaReminderTime.values
           .where((t) => t.name == time)
           .firstOrNull;
-      if (parsedTime == null) return null;
+      final paceEnabled = _paceEnabledFrom(json);
+      if (parsedTime == null || paceEnabled == null) return null;
       return QadaReminderSettings(
         weeklyEnabled: weeklyEnabled,
         weekdays: weekdays.cast<int>().toSet(),
@@ -118,10 +129,19 @@ class QadaReminderSettings extends Equatable {
         beforeRamadanEnabled: beforeRamadanEnabled,
         daysBeforeRamadan: daysBeforeRamadan.cast<int>().toSet(),
         time: parsedTime,
+        paceEnabled: paceEnabled,
       );
     }
     return null;
   }
+
+  /// `paceEnabled` from [json]: off when missing (saved before the pace
+  /// existed), `null` when it isn't a bool.
+  static bool? _paceEnabledFrom(Object? json) => switch (json) {
+    {'paceEnabled': final bool on} => on,
+    {'paceEnabled': _} => null,
+    _ => false,
+  };
 
   @override
   List<Object> get props => [
@@ -132,5 +152,6 @@ class QadaReminderSettings extends Equatable {
     beforeRamadanEnabled,
     daysBeforeRamadan,
     time,
+    paceEnabled,
   ];
 }

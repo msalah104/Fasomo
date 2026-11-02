@@ -647,6 +647,72 @@ class AppLocalizationsEn extends AppLocalizations {
       'Make-up reminders skip Ramadan, the Eids and days you\'ve already fasted, and stop once nothing is owed. On a Sunnah fasting day they\'re merged into that day\'s reminder.';
 
   @override
+  String get suggestedPace => 'Suggested pace';
+
+  @override
+  String get suggestedPaceHint =>
+      'Picks the make-up days for you, Mondays and Thursdays first, and adjusts as your balance changes.';
+
+  @override
+  String qadaPaceWeekly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'To finish before Ramadan, fast $count make-up days a week.',
+      one: 'To finish before Ramadan, fast 1 make-up day a week.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get qadaPaceEveryDay =>
+      'To finish before Ramadan, fast a make-up day on every day you can.';
+
+  @override
+  String qadaPaceNotEnough(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Only $count days are left before Ramadan, fewer than you owe. Fast every one you can, and the rest stays owed after Ramadan.',
+      one: 'Only 1 day is left before Ramadan, fewer than you owe. Fast it, and the rest stays owed after Ramadan.',
+      zero: 'No days are left before Ramadan to make up what you owe. The rest stays owed after it.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String qadaPaceNext(String date) {
+    return 'Next: $date';
+  }
+
+  @override
+  String qadaPaceLineWeekly(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Suggested pace: $count days a week',
+      one: 'Suggested pace: 1 day a week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get qadaPaceLineEveryDay => 'Suggested pace: every day you can';
+
+  @override
+  String qadaPaceLineNotEnough(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Only $count days left to make up before Ramadan',
+      one: 'Only 1 day left to make up before Ramadan',
+      zero: 'No days left to make up before Ramadan',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get settings => 'Settings';
 
   @override

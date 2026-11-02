@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
+import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 import 'package:fasomo/core/notifications/reminder_timing.dart';
 
 /// One dated thing a reminder source wants to announce. Sources say *what*
@@ -39,13 +40,18 @@ final class QadaOccurrence extends ReminderOccurrence {
     required super.date,
     required super.timing,
     required this.remaining,
+    this.pace,
   });
 
   /// Make-up days still owed.
   final int remaining;
 
+  /// The suggested pace this day was planned for, so the text can say it;
+  /// `null` for a weekly or monthly day.
+  final QadaPaceRate? pace;
+
   @override
-  List<Object> get props => [date, timing, remaining];
+  List<Object?> get props => [date, timing, remaining, pace];
 }
 
 /// A countdown to Ramadan while make-up days are still owed.

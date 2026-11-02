@@ -3,7 +3,9 @@ import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/presentation/date_formatter.dart';
 import 'package:fasomo/core/theme/app_colors.dart';
 import 'package:fasomo/features/tracker/domain/entities/fast_log_summary.dart';
+import 'package:fasomo/features/tracker/domain/entities/qada_pace.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
+import 'package:fasomo/features/tracker/presentation/qada_reminder_text.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/owed_days_dialog.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/qada_reminder_tile.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/streak_stat.dart';
@@ -60,6 +62,7 @@ class QadaSection extends StatelessWidget {
                       ),
                     ),
                   ],
+                  if (qada.remaining > 0) const _QadaPaceLine(),
                   const Divider(height: 24),
                   for (final year in qada.byYear) _QadaYearRow(year: year),
                 ],
@@ -150,6 +153,33 @@ class QadaSection extends StatelessWidget {
     );
     if (picked == null) return;
     bloc.add(SetExtraOwed(hijriYear: picked.hijriYear, days: picked.days));
+  }
+}
+
+/// The suggested pace in one line, e.g. "Suggested pace: 1 day a week ·
+/// Next: Thu, Nov 5". Nothing while there's no pace.
+class _QadaPaceLine extends StatelessWidget {
+  const new();
+
+  @override
+  Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final colors = AppColors.of(context);
+    return BlocSelector<TrackerBloc, TrackerState, QadaPace?>(
+      selector: (state) => state.qadaPace,
+      builder: (context, pace) => pace == null
+          ? const SizedBox.shrink()
+          : Padding(
+              padding: const EdgeInsetsDirectional.only(top: 4),
+              child: Text(
+                localization.qadaPaceShortLine(pace),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colors.onSurfaceMuted,
+                ),
+              ),
+            ),
+    );
   }
 }
 
