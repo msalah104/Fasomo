@@ -1051,6 +1051,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Make-up reminders skip Ramadan, the Eids and days you\'ve already fasted, and stop once nothing is owed. On a Sunnah fasting day they\'re merged into that day\'s reminder.'**
   String get qadaRemindersFootnote;
+
+  /// No description provided for @settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// Settings section header for language and theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearance;
+
+  /// No description provided for @settingSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save this setting. It applies until the app is closed.'**
+  String get settingSaveFailed;
 }
 
 class _AppLocalizationsDelegate

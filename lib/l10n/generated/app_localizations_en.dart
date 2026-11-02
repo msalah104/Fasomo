@@ -599,4 +599,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get qadaRemindersFootnote =>
       'Make-up reminders skip Ramadan, the Eids and days you\'ve already fasted, and stop once nothing is owed. On a Sunnah fasting day they\'re merged into that day\'s reminder.';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get settingsAppearance => 'Appearance';
+
+  @override
+  String get settingSaveFailed =>
+      'Could not save this setting. It applies until the app is closed.';
 }

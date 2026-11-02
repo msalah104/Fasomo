@@ -407,5 +407,11 @@
       }
     }
   },
-  "qadaRemindersFootnote": "Make-up reminders skip Ramadan, the Eids and days you've already fasted, and stop once nothing is owed. On a Sunnah fasting day they're merged into that day's reminder."
+  "qadaRemindersFootnote": "Make-up reminders skip Ramadan, the Eids and days you've already fasted, and stop once nothing is owed. On a Sunnah fasting day they're merged into that day's reminder.",
+  "settings": "Settings",
+  "settingsAppearance": "Appearance",
+  "@settingsAppearance": {
+    "description": "Settings section header for language and theme."
+  },
+  "settingSaveFailed": "Could not save this setting. It applies until the app is closed."
 }

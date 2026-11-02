@@ -604,4 +604,14 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get qadaRemindersFootnote =>
       'تتجاوز تذكيرات القضاء رمضان والعيدين والأيام التي صمتها، وتتوقف عندما لا يبقى عليك قضاء. وفي أيام صيام السنة تُدمج مع تذكير ذلك اليوم.';
+
+  @override
+  String get settings => 'الإعدادات';
+
+  @override
+  String get settingsAppearance => 'المظهر';
+
+  @override
+  String get settingSaveFailed =>
+      'تعذّر حفظ هذا الإعداد. سيبقى مطبّقًا حتى إغلاق التطبيق.';
 }

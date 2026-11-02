@@ -6,7 +6,8 @@ import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
-import 'package:fasomo/features/settings/presentation/widgets/language_menu_button.dart';
+import 'package:fasomo/features/settings/presentation/pages/settings_page.dart';
+import 'package:fasomo/features/settings/presentation/widgets/settings_button.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/fasted_toggle.dart';
 import 'package:fasomo/features/tracker/presentation/widgets/qada_reminder_tile.dart';
@@ -115,7 +116,9 @@ class _AppShellState extends State<AppShell> {
             ? null
             : AppBar(
                 title: Text(titles[_selectedIndex]),
-                actions: const [LanguageMenuButton()],
+                actions: [
+                  SettingsButton(onPressed: () => _openSettings(context)),
+                ],
               ),
         body: IndexedStack(
           index: _selectedIndex,
@@ -158,6 +161,13 @@ class _AppShellState extends State<AppShell> {
   }
 }
 
+/// Opens the settings page, with the sections other features contribute.
+void _openSettings(BuildContext context) {
+  Navigator.of(context).push(
+    MaterialPageRoute<void>(builder: (_) => const SettingsPage()),
+  );
+}
+
 /// Home wired to the reminders and tracker features.
 class _HomeTab extends StatelessWidget {
   const new();
@@ -169,7 +179,8 @@ class _HomeTab extends StatelessWidget {
       isReminderOn: reminders.isEnabledFor,
       onToggleReminder: (type) =>
           context.read<ReminderBloc>().add(ToggleReminder(type)),
-      headerActionBuilder: (color) => LanguageMenuButton(color: color),
+      headerActionBuilder: (color) =>
+          SettingsButton(color: color, onPressed: () => _openSettings(context)),
       progressSection: const TrackerSummaryCard(),
       todayActionBuilder: (date, hijri) =>
           FastedToggle(date: date, hijri: hijri),
