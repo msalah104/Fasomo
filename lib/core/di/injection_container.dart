@@ -16,6 +16,7 @@ import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/sync_notifications.dart';
 import 'package:fasomo/core/push/push_messaging.dart';
 import 'package:fasomo/core/push/sync_announcement_topic.dart';
+import 'package:fasomo/core/services/home_widget/home_widget_plugin_gateway.dart';
 import 'package:fasomo/core/services/notifications/fln_notification_gateway.dart';
 import 'package:fasomo/core/services/push/fcm_push_messaging.dart';
 import 'package:fasomo/core/services/share/overlay_widget_image_renderer.dart';
@@ -24,6 +25,8 @@ import 'package:fasomo/core/share/share_service.dart';
 import 'package:fasomo/core/share/share_widget_image.dart';
 import 'package:fasomo/core/share/widget_image_renderer.dart';
 import 'package:fasomo/core/time/minute_ticker.dart';
+import 'package:fasomo/core/widget/home_widget_gateway.dart';
+import 'package:fasomo/core/widget/sync_home_widget.dart';
 import 'package:fasomo/features/calendar/data/datasources/calendar_local_data_source.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_preferences_repository_impl.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
@@ -94,7 +97,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt sl = GetIt.instance;
 
-/// The services that need a real device: OS notifications and push.
+/// The services that need a real device: OS notifications, push and the
+/// home-screen widget.
 ///
 /// [init] builds the real ones by default; a harness that runs the app
 /// without a device (e.g. the screenshot tool) passes fakes instead.
@@ -104,12 +108,14 @@ final class PlatformServices {
     required this.notificationPermission,
     required this.tonePreview,
     required this.push,
+    required this.homeWidget,
   });
 
   final NotificationGateway notifications;
   final NotificationPermission notificationPermission;
   final NotificationTonePreview tonePreview;
   final PushMessaging push;
+  final HomeWidgetGateway homeWidget;
 }
 
 /// The composition root: the only place concrete implementations are chosen.
@@ -335,7 +341,11 @@ Future<void> init({PlatformServices? platform}) async {
       ),
     )
     ..registerLazySingleton<PushMessaging>(() => services.push)
-    ..registerLazySingleton(() => SyncAnnouncementTopic(sl()));
+    ..registerLazySingleton(() => SyncAnnouncementTopic(sl()))
+    ..registerLazySingleton<HomeWidgetGateway>(() => services.homeWidget)
+    ..registerLazySingleton(
+      () => SyncHomeWidget(calendar: sl(), gateway: sl(), clock: sl()),
+    );
 }
 
 Future<PlatformServices> _devicePlatformServices() async {
@@ -344,10 +354,13 @@ Future<PlatformServices> _devicePlatformServices() async {
   // Requires Firebase.initializeApp to have run (see main.dart).
   final push = FcmPushMessaging(presenter: notifications);
   await push.initialize();
+  final homeWidget = HomeWidgetPluginGateway();
+  await homeWidget.initialize();
   return PlatformServices(
     notifications: notifications,
     notificationPermission: notifications,
     tonePreview: notifications,
     push: push,
+    homeWidget: homeWidget,
   );
 }

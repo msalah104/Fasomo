@@ -147,6 +147,23 @@
       }
     }
   },
+  "homeWidgetNextFast": "{days, plural, =0{Today: {type}} =1{Tomorrow: {type}} other{{type} in {days} days}}",
+  "@homeWidgetNextFast": {
+    "description": "Home-screen widget line naming the next fasting day and how far away it is.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "type": {
+        "type": "String",
+        "example": "White Days"
+      }
+    }
+  },
+  "homeWidgetOpenApp": "Open Fasomo to update",
+  "@homeWidgetOpenApp": {
+    "description": "Home-screen widget text shown when its dates are out of date because the app has not been opened for over a week."
+  },
   "hijriMonth1": "Muharram",
   "hijriMonth2": "Safar",
   "hijriMonth3": "Rabi' al-Awwal",

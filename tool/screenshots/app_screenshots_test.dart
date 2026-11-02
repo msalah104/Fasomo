@@ -22,6 +22,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../test/helpers/fake_home_widget_gateway.dart';
 import '../../test/helpers/fake_notification_gateway.dart';
 import '../../test/helpers/fake_push_messaging.dart';
 
@@ -146,6 +147,7 @@ Future<void> _bootApp(
         notificationPermission: _GrantedPermission(),
         tonePreview: notifications,
         push: FakePushMessaging(),
+        homeWidget: FakeHomeWidgetGateway(),
       ),
     ),
   );

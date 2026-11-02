@@ -60,6 +60,7 @@ void _showProblem(BuildContext context, NotificationToneState state) {
           PushFailure() ||
           ShareFailure() ||
           LocationFailure() ||
+          HomeWidgetFailure() ||
           null => localization.settingSaveFailed,
         };
   ScaffoldMessenger.of(context).showSnackBar(

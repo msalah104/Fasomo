@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A fasting day: the night background with a moon-gold outline. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/fasomo_widget_night" />
+    <stroke
+        android:width="2dp"
+        android:color="@color/fasomo_widget_gold" />
+    <corners android:radius="@dimen/fasomo_widget_radius" />
+</shape>

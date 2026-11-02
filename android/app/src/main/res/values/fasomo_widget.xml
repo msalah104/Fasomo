@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Hilal palette (lib/core/theme/primitives.dart): night blue indigo27,
+         moon gold gold80, ivory96 text and slate74 for the secondary line. -->
+    <color name="fasomo_widget_night">#1E2A4A</color>
+    <color name="fasomo_widget_gold">#E6B85C</color>
+    <color name="fasomo_widget_ivory">#F6F2E9</color>
+    <color name="fasomo_widget_muted">#A9AEBD</color>
+
+    <dimen name="fasomo_widget_radius">16dp</dimen>
+    <dimen name="fasomo_widget_padding_horizontal">16dp</dimen>
+    <dimen name="fasomo_widget_padding_vertical">12dp</dimen>
+    <dimen name="fasomo_widget_padding_vertical_compact">6dp</dimen>
+
+    <!-- Start-aligned in the direction of the text itself (see
+         layout/fasomo_widget.xml). -->
+    <style name="FasomoWidgetText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textDirection">firstStrong</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="FasomoWidgetText.Hijri">
+        <item name="android:textColor">@color/fasomo_widget_ivory</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="FasomoWidgetText.Gregorian">
+        <item name="android:textColor">@color/fasomo_widget_muted</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="FasomoWidgetText.NextFast">
+        <item name="android:textColor">@color/fasomo_widget_gold</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+</resources>

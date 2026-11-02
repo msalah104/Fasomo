@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The widget's name and description in the widget picker. -->
+    <string name="fasomo_widget_name">Hijri date and next fast</string>
+    <string name="fasomo_widget_description">Today\'s Hijri date and your next fasting day.</string>
+    <!-- Shown until the app has been opened once after adding the widget. -->
+    <string name="fasomo_widget_placeholder">Open Fasomo to see today\'s Hijri date</string>
+    <!-- Sample text for the widget picker preview. -->
+    <string name="fasomo_widget_preview_hijri">13 Jumada al-Akhirah 1448 AH</string>
+    <string name="fasomo_widget_preview_gregorian">Monday, November 23</string>
+    <string name="fasomo_widget_preview_next_fast">Today: White Days</string>
+</resources>

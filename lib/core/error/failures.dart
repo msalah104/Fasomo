@@ -171,3 +171,19 @@ final class LocationUnavailable extends LocationFailure {
   @override
   String get code => 'location.unavailable';
 }
+
+/// Failures from the home-screen widget bridge.
+sealed class HomeWidgetFailure extends Failure {
+  const new();
+}
+
+/// The platform rejected saving the widget's data or redrawing it.
+final class HomeWidgetPlatformFailed extends HomeWidgetFailure {
+  const new(this.operation);
+
+  /// `setAppGroupId`, `save`, `update` or `schedule`.
+  final String operation;
+
+  @override
+  String get code => 'home_widget.platform_failed';
+}

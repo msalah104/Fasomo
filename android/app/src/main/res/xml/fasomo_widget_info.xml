@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 2x1 by default, resizable in both directions (to 4x1, 4x2 and beyond).
+     The app schedules a redraw at each midnight through home_widget; the
+     three-hourly period is only a fallback for a lost alarm or a time-zone
+     change. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/fasomo_widget_description"
+    android:initialLayout="@layout/fasomo_widget"
+    android:minWidth="110dp"
+    android:minHeight="40dp"
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="40dp"
+    android:previewImage="@mipmap/ic_launcher"
+    android:previewLayout="@layout/fasomo_widget_preview"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="2"
+    android:targetCellHeight="1"
+    android:updatePeriodMillis="10800000"
+    android:widgetCategory="home_screen" />

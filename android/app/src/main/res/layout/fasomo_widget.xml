@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The home-screen widget at two rows or more. Each text takes its direction
+     from its own first strong character, so an Arabic snapshot reads right to
+     left even on a device set to a left-to-right language. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fasomo_widget_background"
+    android:clipToOutline="true"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/fasomo_widget_padding_horizontal"
+    android:paddingTop="@dimen/fasomo_widget_padding_vertical"
+    android:paddingEnd="@dimen/fasomo_widget_padding_horizontal"
+    android:paddingBottom="@dimen/fasomo_widget_padding_vertical">
+
+    <TextView
+        android:id="@+id/fasomo_widget_hijri"
+        style="@style/FasomoWidgetText.Hijri"
+        android:text="@string/fasomo_widget_placeholder" />
+
+    <TextView
+        android:id="@+id/fasomo_widget_gregorian"
+        style="@style/FasomoWidgetText.Gregorian"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/fasomo_widget_next_fast"
+        style="@style/FasomoWidgetText.NextFast"
+        android:visibility="gone" />
+</LinearLayout>

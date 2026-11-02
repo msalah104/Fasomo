@@ -256,6 +256,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String homeWidgetNextFast(int days, String type) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$type in $days days',
+      one: 'Tomorrow: $type',
+      zero: 'Today: $type',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeWidgetOpenApp => 'Open Fasomo to update';
+
+  @override
   String get hijriMonth1 => 'Muharram';
 
   @override

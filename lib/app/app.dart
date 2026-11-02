@@ -1,7 +1,9 @@
 import 'package:fasomo/app/announcement_topic_sync.dart';
 import 'package:fasomo/app/app_shell.dart';
+import 'package:fasomo/app/home_widget_sync.dart';
 import 'package:fasomo/core/di/injection_container.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
+import 'package:fasomo/core/widget/home_widget_gateway.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
@@ -58,7 +60,7 @@ class FasomoApp extends StatelessWidget {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: AnnouncementTopicSync(
               sync: sl(),
-              child: const _LaunchGate(),
+              child: HomeWidgetSync(sync: sl(), child: const _LaunchGate()),
             ),
           );
         },
@@ -80,6 +82,9 @@ class _LaunchGateState extends State<_LaunchGate> {
 
   bool _splashDone = false;
 
+  /// Taps on the home-screen widget, which bring the shell back to Home.
+  late final Stream<void> _widgetOpened = sl<HomeWidgetGateway>().opened;
+
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
@@ -87,7 +92,7 @@ class _LaunchGateState extends State<_LaunchGate> {
       switchInCurve: Curves.easeOut,
       switchOutCurve: Curves.easeIn,
       child: _splashDone
-          ? const AppShell()
+          ? AppShell(showHomeRequests: _widgetOpened)
           : SplashPage(onFinished: () => setState(() => _splashDone = true)),
     );
   }

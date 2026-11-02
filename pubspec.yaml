@@ -23,6 +23,7 @@ dependencies:
   geolocator: ^14.0.1
   get_it: ^9.3.0
   hijri: ^3.0.1
+  home_widget: ^0.10.0
   intl: ^0.20.2
   share_plus: ^13.3.1
   shared_preferences: ^2.5.6

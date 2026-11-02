@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fasomo_widget_name">التاريخ الهجري والصيام القادم</string>
+    <string name="fasomo_widget_description">التاريخ الهجري لليوم ويوم صيامك القادم.</string>
+    <string name="fasomo_widget_placeholder">افتح فاصومو لترى التاريخ الهجري لليوم</string>
+    <string name="fasomo_widget_preview_hijri">13 جمادى الآخرة 1448 هـ</string>
+    <string name="fasomo_widget_preview_gregorian">الاثنين، 23 نوفمبر</string>
+    <string name="fasomo_widget_preview_next_fast">اليوم: الأيام البيض</string>
+</resources>

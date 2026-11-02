@@ -506,6 +506,18 @@ abstract class AppLocalizations {
   /// **'{day} {month} {year}'**
   String hijriDate(String day, String month, String year);
 
+  /// Home-screen widget line naming the next fasting day and how far away it is.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =0{Today: {type}} =1{Tomorrow: {type}} other{{type} in {days} days}}'**
+  String homeWidgetNextFast(int days, String type);
+
+  /// Home-screen widget text shown when its dates are out of date because the app has not been opened for over a week.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Fasomo to update'**
+  String get homeWidgetOpenApp;
+
   /// No description provided for @hijriMonth1.
   ///
   /// In en, this message translates to:

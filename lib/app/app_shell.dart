@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clock/clock.dart';
 import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
@@ -39,7 +41,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// The bottom-navigation shell. It is the one place that composes features,
 /// so features never import each other.
 class AppShell extends StatefulWidget {
-  const new({super.key});
+  const new({this.showHomeRequests, super.key});
+
+  /// Each event brings the user back to the Home tab, e.g. a tap on the
+  /// home-screen widget while the app is open on another screen.
+  final Stream<void>? showHomeRequests;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -52,9 +58,12 @@ class _AppShellState extends State<AppShell> {
   /// refills the rolling window and repairs anything the OS dropped.
   late final AppLifecycleListener _lifecycle;
 
+  StreamSubscription<void>? _showHomeRequests;
+
   @override
   void initState() {
     super.initState();
+    _showHomeRequests = widget.showHomeRequests?.listen((_) => _showHome());
     _lifecycle = AppLifecycleListener(
       onResume: () {
         context.read<ReminderBloc>().add(const SyncRequested());
@@ -84,8 +93,16 @@ class _AppShellState extends State<AppShell> {
 
   @override
   void dispose() {
+    unawaited(_showHomeRequests?.cancel());
     _lifecycle.dispose();
     super.dispose();
+  }
+
+  /// Closes anything pushed over the shell and selects the Home tab.
+  void _showHome() {
+    if (!mounted) return;
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    setState(() => _selectedIndex = 0);
   }
 
   @override

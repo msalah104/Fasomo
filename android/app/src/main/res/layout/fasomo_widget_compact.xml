@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The home-screen widget at one row (Android 12+): the Gregorian date is
+     left out so the Hijri date and the next fast fit. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fasomo_widget_background"
+    android:clipToOutline="true"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/fasomo_widget_padding_horizontal"
+    android:paddingTop="@dimen/fasomo_widget_padding_vertical_compact"
+    android:paddingEnd="@dimen/fasomo_widget_padding_horizontal"
+    android:paddingBottom="@dimen/fasomo_widget_padding_vertical_compact">
+
+    <TextView
+        android:id="@+id/fasomo_widget_hijri"
+        style="@style/FasomoWidgetText.Hijri"
+        android:maxLines="1"
+        android:text="@string/fasomo_widget_placeholder" />
+
+    <TextView
+        android:id="@+id/fasomo_widget_next_fast"
+        style="@style/FasomoWidgetText.NextFast"
+        android:layout_marginTop="2dp"
+        android:maxLines="1"
+        android:visibility="gone" />
+</LinearLayout>

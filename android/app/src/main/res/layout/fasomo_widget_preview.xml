@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What the widget picker shows (Android 12+): sample text, never real data. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fasomo_widget_background_fasting"
+    android:clipToOutline="true"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/fasomo_widget_padding_horizontal"
+    android:paddingTop="@dimen/fasomo_widget_padding_vertical"
+    android:paddingEnd="@dimen/fasomo_widget_padding_horizontal"
+    android:paddingBottom="@dimen/fasomo_widget_padding_vertical">
+
+    <TextView
+        style="@style/FasomoWidgetText.Hijri"
+        android:text="@string/fasomo_widget_preview_hijri" />
+
+    <TextView
+        style="@style/FasomoWidgetText.Gregorian"
+        android:text="@string/fasomo_widget_preview_gregorian" />
+
+    <TextView
+        style="@style/FasomoWidgetText.NextFast"
+        android:text="@string/fasomo_widget_preview_next_fast" />
+</LinearLayout>
