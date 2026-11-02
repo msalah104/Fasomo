@@ -67,6 +67,11 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - Shown by the system while the app is in the background, and as a local notification on the Announcements channel while it is open.
 - No account: the app only joins a topic. Firebase still issues the device a push token and an installation ID.
 
+### 📱 Home-screen widget
+- Today's Hijri date (with your adjustment), the Gregorian date and your next fasting day ("White Days in 3 days", "Tomorrow: Monday & Thursday", "Today: Day of Arafah"), in the app's language, outlined in gold on fasting days.
+- It moves on at midnight by itself (the app stores the next 7 days), and tapping it opens the app on Home.
+- Android: 2x1, resizable. iOS: small and medium (WidgetKit extension with an App Group; see [`docs/home-widget-ios.md`](docs/home-widget-ios.md) for the Apple Developer account steps).
+
 ### ⚙️ Settings
 - A gear in the top bar, and on Home's sky, opens Settings. Options are grouped under **Appearance** (language, theme) and **Calendar** (Hijri date adjustment). Every choice is saved.
 - **Theme**: follow the phone's light or dark setting, or always use Light or Dark. The app opens straight in the chosen theme, with no flash of the other one.
@@ -197,6 +202,7 @@ lib/
 - **Storage**: shared_preferences
 - **Location**: geolocator (coarse, on request only); sun and moon positions are computed in-house in `lib/core/astronomy/`
 - **Sharing**: share_plus
+- **Home-screen widget**: home_widget (Android `AppWidgetProvider`, iOS WidgetKit)
 - **Fonts**: El Messiri and IBM Plex Sans Arabic, bundled
 - **Localization**: flutter_localizations, intl, gen-l10n (ARB)
 - **Testing**: flutter_test, bloc_test, mocktail
@@ -227,7 +233,6 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 | Priority | Feature | New packages | Backend |
 |---|---|---|---|
 | P1 | [Ramadan mode with prayer times](#ramadan-mode-with-prayer-times-p1) | — (uses `lib/core/astronomy` and `lib/core/location`) | No |
-| P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
 | P2 | [Onboarding](#onboarding-p2) | — | No |
 | P3 | [Backup and restore](#backup-and-restore-p3) | `share_plus`, `file_picker` | No |
 | — | [Needs a backend](#needs-a-backend) | Firebase or Supabase | Yes |
@@ -239,11 +244,6 @@ During Ramadan (and optionally on any fasting day), Home switches to a Ramadan v
 - **What it shows:** a countdown to Ramadan before it starts; during it, today's **suhoor (Fajr)** and **iftar (Maghrib)** times, a countdown to the next one, the day number ("Day 12 of 30"), and a simple daily checklist (fasted, Taraweeh, Quran pages).
 - **Reminders:** new reminder timings relative to prayer times, e.g. "30 minutes before Fajr" for suhoor and "at Maghrib" for iftar, instead of fixed clock times.
 - **How:** the `adhan` package computes prayer times offline from coordinates and a calculation method (Umm al-Qura, Egyptian, MWL, ISNA, …, chosen in settings, with a sensible default per country). Location comes from `geolocator` or a manually picked city, so the app still works with location permission denied. Prayer-time math stays pure and clock-injected; the reminder scheduler gains a "relative to prayer" timing.
-
-### Home-screen widget (P2)
-
-- Shows today's Hijri date and the next fasting day ("White Days in 3 days"); tapping it opens the app on that day.
-- **How:** `home_widget` with a native widget (Android `AppWidgetProvider`, iOS WidgetKit). The app writes a small snapshot whenever data or the date changes, and the widget only reads it.
 
 ### Onboarding (P2)
 
