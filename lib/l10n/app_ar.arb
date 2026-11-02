@@ -165,5 +165,12 @@
   "theme": "السمة",
   "themeSystem": "حسب إعداد النظام",
   "themeLight": "فاتح",
-  "themeDark": "داكن"
+  "themeDark": "داكن",
+  "settingsCalendar": "التقويم",
+  "hijriAdjustment": "تعديل التاريخ الهجري",
+  "hijriAdjustmentExplanation": "قد تبدأ الشهور في بلدك قبل تقويم أم القرى أو بعده بيوم بحسب رؤية الهلال. إن اختلف التاريخ الهجري المحلي فعدّله هنا، وسيتبعه التقويم وأيام الصيام والتذكيرات.",
+  "hijriAdjustmentToday": "اليوم: {date}",
+  "hijriOffsetNone": "دون تعديل",
+  "hijriOffsetAdd": "{days, plural, =1{إضافة يوم واحد} =2{إضافة يومين} few{إضافة {days} أيام} other{إضافة {days} يومًا}}",
+  "hijriOffsetSubtract": "{days, plural, =1{طرح يوم واحد} =2{طرح يومين} few{طرح {days} أيام} other{طرح {days} يومًا}}"
 }

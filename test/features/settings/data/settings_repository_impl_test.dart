@@ -1,3 +1,4 @@
+import 'package:fasomo/core/calendar/hijri_offset.dart';
 import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
@@ -98,6 +99,49 @@ void main() {
       final repository = await repositoryWith({});
       await repository.saveThemeMode(AppThemeMode.light);
       expect(valueOf(repository.getLanguage()), AppLanguage.system);
+    });
+  });
+
+  group('Hijri offset', () {
+    test('is none until one is saved', () async {
+      final repository = await repositoryWith({});
+      expect(valueOf(repository.getHijriOffset()), HijriOffset.none);
+      expect(repository.hijriOffset, HijriOffset.none);
+    });
+
+    test('every offset saves as its days and reads back', () async {
+      final repository = await repositoryWith({});
+      for (final offset in HijriOffset.values) {
+        expect(
+          await repository.saveHijriOffset(offset),
+          isA<Ok<void, StorageFailure>>(),
+        );
+        expect(valueOf(repository.getHijriOffset()), offset);
+        expect(repository.hijriOffset, offset);
+        final prefs = await SharedPreferences.getInstance();
+        expect(prefs.getInt(AppConstants.hijriOffsetKey), offset.days);
+      }
+    });
+
+    test('reads a stored offset synchronously', () async {
+      final repository = await repositoryWith({
+        AppConstants.hijriOffsetKey: -2,
+      });
+      expect(repository.hijriOffset, HijriOffset.minusTwo);
+    });
+
+    test('an out-of-range or mistyped value is a read failure, and the '
+        'converter then applies none', () async {
+      for (final stored in <Object>[3, -5, 'plusOne']) {
+        final repository = await repositoryWith({
+          AppConstants.hijriOffsetKey: stored,
+        });
+        expect(
+          repository.getHijriOffset(),
+          isA<Err<HijriOffset, StorageFailure>>(),
+        );
+        expect(repository.hijriOffset, HijriOffset.none);
+      }
     });
   });
 }

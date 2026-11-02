@@ -1,3 +1,4 @@
+import 'package:fasomo/core/calendar/hijri_offset.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/features/settings/domain/entities/app_language.dart';
@@ -15,4 +16,10 @@ abstract interface class SettingsRepository {
   Result<AppThemeMode, StorageFailure> getThemeMode();
 
   Future<Result<void, StorageFailure>> saveThemeMode(AppThemeMode mode);
+
+  /// The saved Hijri date adjustment, or [HijriOffset.none] when none was
+  /// saved.
+  Result<HijriOffset, StorageFailure> getHijriOffset();
+
+  Future<Result<void, StorageFailure>> saveHijriOffset(HijriOffset offset);
 }

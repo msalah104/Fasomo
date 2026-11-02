@@ -1,5 +1,7 @@
+import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
+import 'package:fasomo/features/settings/presentation/widgets/hijri_adjustment_tile.dart';
 import 'package:fasomo/features/settings/presentation/widgets/language_tile.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_section.dart';
 import 'package:fasomo/features/settings/presentation/widgets/theme_tile.dart';
@@ -31,6 +33,10 @@ class SettingsPage extends StatelessWidget {
               title: localization.settingsAppearance,
               children: const [LanguageTile(), ThemeTile()],
             ),
+            SettingsSection(
+              title: localization.settingsCalendar,
+              children: const [HijriAdjustmentTile()],
+            ),
             ...extraSections,
           ],
         ),
@@ -55,6 +61,11 @@ class _SaveFailureListener extends StatelessWidget {
           listener: (context, _) => _showSaveFailed(context),
         ),
         BlocListener<ThemeBloc, ThemeState>(
+          listenWhen: (previous, current) =>
+              current.failure != null && current != previous,
+          listener: (context, _) => _showSaveFailed(context),
+        ),
+        BlocListener<HijriAdjustmentBloc, HijriAdjustmentState>(
           listenWhen: (previous, current) =>
               current.failure != null && current != previous,
           listener: (context, _) => _showSaveFailed(context),

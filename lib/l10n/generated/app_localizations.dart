@@ -1093,6 +1093,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get themeDark;
+
+  /// Settings section header for Hijri calendar options.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get settingsCalendar;
+
+  /// No description provided for @hijriAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Hijri date adjustment'**
+  String get hijriAdjustment;
+
+  /// No description provided for @hijriAdjustmentExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Moon sighting in your country may start months a day earlier or later than the Umm al-Qura calendar. If your local Hijri date differs, adjust it here: the calendar, fasting days and reminders all follow.'**
+  String get hijriAdjustmentExplanation;
+
+  /// Preview of today's Hijri date with the adjustment applied.
+  ///
+  /// In en, this message translates to:
+  /// **'Today: {date}'**
+  String hijriAdjustmentToday(String date);
+
+  /// No description provided for @hijriOffsetNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No adjustment'**
+  String get hijriOffsetNone;
+
+  /// Screen-reader label for a positive Hijri adjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Add 1 day} other{Add {days} days}}'**
+  String hijriOffsetAdd(int days);
+
+  /// Screen-reader label for a negative Hijri adjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{Subtract 1 day} other{Subtract {days} days}}'**
+  String hijriOffsetSubtract(int days);
 }
 
 class _AppLocalizationsDelegate

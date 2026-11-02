@@ -1,8 +1,11 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:fasomo/core/calendar/hijri_date.dart';
+import 'package:fasomo/core/calendar/hijri_offset.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/features/settings/domain/entities/app_language.dart';
 import 'package:fasomo/features/settings/domain/entities/app_theme_mode.dart';
+import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/settings/presentation/pages/settings_page.dart';
@@ -19,13 +22,19 @@ class MockLanguageBloc extends MockBloc<LanguageEvent, LanguageState>
 class MockThemeBloc extends MockBloc<ThemeEvent, ThemeState>
     implements ThemeBloc;
 
+class MockHijriAdjustmentBloc
+    extends MockBloc<HijriAdjustmentEvent, HijriAdjustmentState>
+    implements HijriAdjustmentBloc;
+
 void main() {
   late MockLanguageBloc languageBloc;
   late MockThemeBloc themeBloc;
+  late MockHijriAdjustmentBloc hijriBloc;
 
   setUpAll(() {
     registerFallbackValue(const LanguageChanged(AppLanguage.system));
     registerFallbackValue(const ThemeModeChanged(AppThemeMode.system));
+    registerFallbackValue(const HijriOffsetChanged(HijriOffset.none));
   });
 
   Future<void> pump(
@@ -38,6 +47,7 @@ void main() {
         providers: [
           BlocProvider<LanguageBloc>.value(value: languageBloc),
           BlocProvider<ThemeBloc>.value(value: themeBloc),
+          BlocProvider<HijriAdjustmentBloc>.value(value: hijriBloc),
         ],
         child: MaterialApp(
           theme: buildAppTheme(Brightness.light),
@@ -60,6 +70,13 @@ void main() {
     when(
       () => themeBloc.state,
     ).thenReturn(const ThemeState(mode: AppThemeMode.system));
+    hijriBloc = MockHijriAdjustmentBloc();
+    when(() => hijriBloc.state).thenReturn(
+      const HijriAdjustmentState(
+        offset: HijriOffset.none,
+        today: HijriDate(1446, 9, 1),
+      ),
+    );
   });
 
   testWidgets('shows the appearance section with the current language', (
@@ -138,6 +155,68 @@ void main() {
     await pump(tester);
 
     expect(find.textContaining('Could not save this setting'), findsOneWidget);
+  });
+
+  group('Hijri date adjustment', () {
+    Finder segment(String label) => find.descendant(
+      of: find.byType(SegmentedButton<HijriOffset>),
+      matching: find.text(label),
+    );
+
+    testWidgets('explains itself and previews today', (tester) async {
+      await pump(tester);
+      await tester.scrollUntilVisible(find.textContaining('Today:'), 100);
+
+      expect(find.text('Calendar'), findsOneWidget);
+      expect(find.text('Hijri date adjustment'), findsOneWidget);
+      expect(find.textContaining('Moon sighting in your country'), findsOne);
+      expect(find.text('Today: 1 Ramadan 1446 AH'), findsOneWidget);
+      expect(segment('0'), findsOneWidget);
+      expect(segment('\u2066+2\u2069'), findsOneWidget);
+      expect(segment('\u2066\u22122\u2069'), findsOneWidget);
+    });
+
+    testWidgets('picking +1 changes the offset', (tester) async {
+      await pump(tester);
+      await tester.scrollUntilVisible(segment('\u2066+1\u2069'), 100);
+
+      await tester.tap(segment('\u2066+1\u2069'));
+      await tester.pump();
+
+      verify(
+        () => hijriBloc.add(const HijriOffsetChanged(HijriOffset.plusOne)),
+      ).called(1);
+    });
+
+    testWidgets('segments read as words to a screen reader', (tester) async {
+      final semantics = tester.ensureSemantics();
+      await pump(tester);
+
+      expect(find.bySemanticsLabel(RegExp('Add 2 days')), findsOneWidget);
+      expect(find.bySemanticsLabel(RegExp('Subtract 1 day')), findsOneWidget);
+      expect(find.bySemanticsLabel(RegExp('No adjustment')), findsOneWidget);
+      semantics.dispose();
+    });
+
+    testWidgets('reports an offset that could not be saved', (tester) async {
+      whenListen(
+        hijriBloc,
+        Stream.value(
+          const HijriAdjustmentState(
+            offset: HijriOffset.none,
+            today: HijriDate(1446, 9, 1),
+            failure: StorageWriteFailed('hijri_offset_days'),
+          ),
+        ),
+        initialState: const HijriAdjustmentState(
+          offset: HijriOffset.none,
+          today: HijriDate(1446, 9, 1),
+        ),
+      );
+      await pump(tester);
+
+      expect(find.textContaining('Could not save this setting'), findsOne);
+    });
   });
 
   testWidgets('shows sections contributed by the app shell', (tester) async {

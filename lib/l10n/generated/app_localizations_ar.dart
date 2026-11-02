@@ -626,4 +626,48 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get themeDark => 'داكن';
+
+  @override
+  String get settingsCalendar => 'التقويم';
+
+  @override
+  String get hijriAdjustment => 'تعديل التاريخ الهجري';
+
+  @override
+  String get hijriAdjustmentExplanation =>
+      'قد تبدأ الشهور في بلدك قبل تقويم أم القرى أو بعده بيوم بحسب رؤية الهلال. إن اختلف التاريخ الهجري المحلي فعدّله هنا، وسيتبعه التقويم وأيام الصيام والتذكيرات.';
+
+  @override
+  String hijriAdjustmentToday(String date) {
+    return 'اليوم: $date';
+  }
+
+  @override
+  String get hijriOffsetNone => 'دون تعديل';
+
+  @override
+  String hijriOffsetAdd(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'إضافة $days يومًا',
+      few: 'إضافة $days أيام',
+      two: 'إضافة يومين',
+      one: 'إضافة يوم واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String hijriOffsetSubtract(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'طرح $days يومًا',
+      few: 'طرح $days أيام',
+      two: 'طرح يومين',
+      one: 'طرح يوم واحد',
+    );
+    return '$_temp0';
+  }
 }

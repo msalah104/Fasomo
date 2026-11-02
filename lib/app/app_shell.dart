@@ -2,10 +2,13 @@ import 'package:clock/clock.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/presentation/localized_notification_copy.dart';
 import 'package:fasomo/features/about/presentation/pages/about_page.dart';
+import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/pages/home_page.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
+import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
 import 'package:fasomo/features/settings/presentation/pages/settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_button.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
@@ -109,6 +112,17 @@ class _AppShellState extends State<AppShell> {
           listener: (context, _) =>
               context.read<ReminderBloc>().add(const SyncRequested()),
         ),
+        // The Hijri adjustment moved every Hijri date in the app: reload
+        // everything built from them and reschedule the reminders.
+        BlocListener<HijriAdjustmentBloc, HijriAdjustmentState>(
+          listenWhen: (previous, current) => previous.offset != current.offset,
+          listener: (context, _) {
+            context.read<HomeBloc>().add(const RefreshHomeData());
+            context.read<CalendarBloc>().add(const LoadCalendar());
+            context.read<TrackerBloc>().add(const RefreshTracker());
+            context.read<ReminderBloc>().add(const SyncRequested());
+          },
+        ),
       ],
       child: Scaffold(
         // Home draws its own sky header in place of the app bar.
@@ -163,6 +177,8 @@ class _AppShellState extends State<AppShell> {
 
 /// Opens the settings page, with the sections other features contribute.
 void _openSettings(BuildContext context) {
+  // "Today" may have moved on since the adjustment preview was computed.
+  context.read<HijriAdjustmentBloc>().add(const HijriPreviewRefreshed());
   Navigator.of(context).push(
     MaterialPageRoute<void>(builder: (_) => const SettingsPage()),
   );

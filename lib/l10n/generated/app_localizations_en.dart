@@ -621,4 +621,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeDark => 'Dark';
+
+  @override
+  String get settingsCalendar => 'Calendar';
+
+  @override
+  String get hijriAdjustment => 'Hijri date adjustment';
+
+  @override
+  String get hijriAdjustmentExplanation =>
+      'Moon sighting in your country may start months a day earlier or later than the Umm al-Qura calendar. If your local Hijri date differs, adjust it here: the calendar, fasting days and reminders all follow.';
+
+  @override
+  String hijriAdjustmentToday(String date) {
+    return 'Today: $date';
+  }
+
+  @override
+  String get hijriOffsetNone => 'No adjustment';
+
+  @override
+  String hijriOffsetAdd(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Add $days days',
+      one: 'Add 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String hijriOffsetSubtract(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Subtract $days days',
+      one: 'Subtract 1 day',
+    );
+    return '$_temp0';
+  }
 }

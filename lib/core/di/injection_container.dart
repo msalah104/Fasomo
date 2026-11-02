@@ -1,6 +1,8 @@
 import 'package:clock/clock.dart';
+import 'package:fasomo/core/calendar/adjusted_hijri_converter.dart';
 import 'package:fasomo/core/calendar/fasting_calendar.dart';
 import 'package:fasomo/core/calendar/hijri_converter.dart';
+import 'package:fasomo/core/calendar/hijri_offset.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
 import 'package:fasomo/core/notifications/sync_notifications.dart';
@@ -28,10 +30,14 @@ import 'package:fasomo/features/reminders/domain/usecases/save_reminder.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:fasomo/features/settings/domain/repositories/settings_repository.dart';
+import 'package:fasomo/features/settings/domain/usecases/get_hijri_offset.dart';
 import 'package:fasomo/features/settings/domain/usecases/get_language.dart';
 import 'package:fasomo/features/settings/domain/usecases/get_theme_mode.dart';
+import 'package:fasomo/features/settings/domain/usecases/get_today_hijri_date.dart';
+import 'package:fasomo/features/settings/domain/usecases/save_hijri_offset.dart';
 import 'package:fasomo/features/settings/domain/usecases/save_language.dart';
 import 'package:fasomo/features/settings/domain/usecases/save_theme_mode.dart';
+import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/tracker/data/datasources/fast_log_local_data_source.dart';
@@ -170,13 +176,30 @@ Future<void> init({PlatformServices? platform}) async {
     )
     ..registerLazySingleton(() => GetThemeMode(sl()))
     ..registerLazySingleton(() => SaveThemeMode(sl()))
-    ..registerLazySingleton<SettingsRepository>(
+    ..registerFactory(
+      () => HijriAdjustmentBloc(
+        getHijriOffset: sl(),
+        saveHijriOffset: sl(),
+        getTodayHijriDate: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => GetHijriOffset(sl()))
+    ..registerLazySingleton(() => SaveHijriOffset(sl()))
+    ..registerLazySingleton(
+      () => GetTodayHijriDate(converter: sl(), clock: sl()),
+    )
+    // One instance is both the settings store and the offset the Hijri
+    // converter reads, so a saved adjustment applies straight away.
+    ..registerLazySingleton(
       () => SettingsRepositoryImpl(sharedPreferences: sl()),
     )
+    ..registerLazySingleton<SettingsRepository>(sl.get<SettingsRepositoryImpl>)
+    ..registerLazySingleton<HijriOffsetSource>(sl.get<SettingsRepositoryImpl>)
     // ============ Core ============
     ..registerLazySingleton<Clock>(() => const Clock())
+    // Every Hijri date in the app goes through the user's adjustment.
     ..registerLazySingleton<HijriConverter>(
-      () => const UmmAlQuraHijriConverter(),
+      () => AdjustedHijriConverter(const UmmAlQuraHijriConverter(), sl()),
     )
     ..registerLazySingleton(() => FastingCalendar(sl()));
 

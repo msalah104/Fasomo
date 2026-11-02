@@ -420,5 +420,40 @@
     "description": "Theme choice that follows the device's light or dark setting."
   },
   "themeLight": "Light",
-  "themeDark": "Dark"
+  "themeDark": "Dark",
+  "settingsCalendar": "Calendar",
+  "@settingsCalendar": {
+    "description": "Settings section header for Hijri calendar options."
+  },
+  "hijriAdjustment": "Hijri date adjustment",
+  "hijriAdjustmentExplanation": "Moon sighting in your country may start months a day earlier or later than the Umm al-Qura calendar. If your local Hijri date differs, adjust it here: the calendar, fasting days and reminders all follow.",
+  "hijriAdjustmentToday": "Today: {date}",
+  "@hijriAdjustmentToday": {
+    "description": "Preview of today's Hijri date with the adjustment applied.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "11 Jumada al-Ula 1448 AH"
+      }
+    }
+  },
+  "hijriOffsetNone": "No adjustment",
+  "hijriOffsetAdd": "{days, plural, =1{Add 1 day} other{Add {days} days}}",
+  "@hijriOffsetAdd": {
+    "description": "Screen-reader label for a positive Hijri adjustment.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "hijriOffsetSubtract": "{days, plural, =1{Subtract 1 day} other{Subtract {days} days}}",
+  "@hijriOffsetSubtract": {
+    "description": "Screen-reader label for a negative Hijri adjustment.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
 }
