@@ -1,0 +1,60 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<!-- Framed Play phone screenshot, 1440x2560 (9:16). Render with ?lang=en|ar&shot=<key>;
+     store/src/make-screenshots.sh renders them all. -->
+<style>
+  @font-face { font-family: Head; font-weight: 700; src: url(../../assets/fonts/el_messiri/ElMessiri-Bold.ttf); }
+  @font-face { font-family: Body; font-weight: 500; src: url(../../assets/fonts/ibm_plex_sans_arabic/IBMPlexSansArabic-Medium.ttf); }
+  html, body { margin: 0; width: 1440px; height: 2560px; overflow: hidden; }
+  body { background: linear-gradient(180deg, #0B1022 0%, #1E2A4A 62%, #2A3866 100%); color: #F6F2E9; position: relative; }
+  .stars { position: absolute; inset: 0; background-image:
+    radial-gradient(2px 2px at 140px 120px, #fff8 50%, transparent 51%),
+    radial-gradient(3px 3px at 420px 260px, #fff9 50%, transparent 51%),
+    radial-gradient(2px 2px at 980px 90px, #fff7 50%, transparent 51%),
+    radial-gradient(3px 3px at 1280px 300px, #fff8 50%, transparent 51%),
+    radial-gradient(2px 2px at 760px 430px, #fff6 50%, transparent 51%),
+    radial-gradient(2px 2px at 1180px 520px, #fff6 50%, transparent 51%); }
+  .caption { position: absolute; top: 130px; left: 100px; right: 100px; text-align: center; }
+  h1, p { text-wrap: balance; }
+  h1 { margin: 0; font: 700 96px/1.15 Head, serif; }
+  h1 b { color: #E6B85C; }
+  p { margin: 30px auto 0; max-width: 1140px; font: 500 46px/1.4 Body, sans-serif; opacity: .88; }
+  .phone { position: absolute; left: 50%; bottom: -60px; transform: translateX(-50%);
+           width: 900px; padding: 22px; border-radius: 96px; background: #0E1426;
+           box-shadow: 0 40px 120px rgba(0,0,0,.45), 0 0 0 3px #26304D; }
+  .phone img { display: block; width: 100%; border-radius: 76px; }
+</style></head>
+<body>
+  <div class="stars"></div>
+  <div class="caption"><h1 id="t"></h1><p id="s"></p></div>
+  <div class="phone"><img id="shot" alt=""></div>
+<script>
+  const captions = {
+    en: {
+      home:      ['Every <b>Sunnah fast</b>, at a glance', 'Today’s Hijri date, your week and the fasting days ahead.'],
+      calendar:  ['A full <b>Hijri calendar</b>', 'White Days, Monday & Thursday, Arafah, Ashura and Ramadan, colour-coded.'],
+      ramadan:   ['<b>Ramadan</b> with its times', 'Suhoor and iftar for your city, a countdown and a daily checklist.'],
+      progress:  ['Keep track of <b>Qada</b>', 'Log make-up fasts and see what’s left before next Ramadan.'],
+      duas:      ['<b>Duas</b> and intentions', 'The intention, the dua at iftar and Laylat al-Qadr, with their sources.'],
+      reminders: ['<b>Reminders</b>, on from day one', 'The evening before or the morning of. Your time, your words.'],
+      dark:      ['Beautiful by <b>day and night</b>', 'A sky that follows the real sun and moon, and a dark theme.'],
+    },
+    ar: {
+      home:      ['أيام <b>صيام السنة</b> في لمحة', 'التاريخ الهجري اليوم، وأسبوعك، وأيام الصيام القادمة.'],
+      calendar:  ['<b>تقويم هجري</b> كامل', 'الأيام البيض والاثنين والخميس وعرفة وعاشوراء ورمضان، لكلٍّ لونه.'],
+      ramadan:   ['<b>رمضان</b> بمواقيته', 'السحور والإفطار لمدينتك، مع عدّ تنازلي وقائمة يومية.'],
+      progress:  ['تابع <b>صيام القضاء</b>', 'سجّل أيام القضاء واعرف ما تبقّى قبل رمضان القادم.'],
+      duas:      ['<b>الأدعية</b> والنية', 'نية الصيام ودعاء الإفطار وليلة القدر، مع مصادرها.'],
+      reminders: ['<b>تذكيرات</b> مفعّلة من أول يوم', 'في الليلة السابقة أو في الصباح، بالوقت والنص الذي تختاره.'],
+      dark:      ['جميل <b>ليلًا ونهارًا</b>', 'سماء تتبع الشمس والقمر الحقيقيين، ومظهر داكن.'],
+    },
+  };
+  const q = new URLSearchParams(location.search);
+  const lang = q.get('lang') || 'en', key = q.get('shot') || 'home';
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.getElementById('t').innerHTML = captions[lang][key][0];
+  document.getElementById('s').textContent = captions[lang][key][1];
+  document.getElementById('shot').src = 'raw/' + lang + '/' + key + '.png';
+</script>
+</body></html>

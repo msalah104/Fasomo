@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8">
+<!-- Play feature graphic, 1024x500. Render with:
+     store/src/render.sh store/src/feature-graphic-ar.html $PWD/store/android/ar/feature-graphic.png 1024 500 -->
+<style>
+  @font-face { font-family: Head; font-weight: 700; src: url(../../assets/fonts/el_messiri/ElMessiri-Bold.ttf); }
+  @font-face { font-family: Body; font-weight: 500; src: url(../../assets/fonts/ibm_plex_sans_arabic/IBMPlexSansArabic-Medium.ttf); }
+  html, body { margin: 0; width: 1024px; height: 500px; overflow: hidden; background: #0B1022; }
+  .sky { position: absolute; left: 0; top: -95px; width: 1024px; }
+  /* Fades the dotted arc where it passes behind the text. */
+  .veil { position: absolute; inset: 0 0 110px 0;
+          background: linear-gradient(270deg, rgba(11,16,34,.92) 0%, rgba(11,16,34,.75) 45%, rgba(11,16,34,0) 66%); }
+  .text { position: absolute; right: 72px; top: 74px; color: #F6F2E9; }
+  .brand { display: flex; align-items: center; gap: 22px; }
+  .brand img { width: 124px; height: 124px; margin: -18px -22px -18px -12px; }
+  h1 { margin: 0; font: 700 84px/1.2 Head, serif; }
+  p { margin: 14px 0 0; font: 500 32px/1.45 Body, sans-serif; color: #E7E0CF; }
+  p b { color: #E6B85C; font-weight: 500; }
+</style></head>
+<body>
+  <img class="sky" src="../../design/art/sky_night.svg" alt="">
+  <div class="veil"></div>
+  <div class="text">
+    <div class="brand"><img src="../../design/art/logo_mark_gold.svg" alt=""><h1>فاصومو</h1></div>
+    <p>لا يفوتك يوم من <b>صيام السنة</b>.<br>تقويم هجري وتذكيرات وقضاء.</p>
+  </div>
+</body></html>
