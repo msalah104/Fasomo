@@ -16,20 +16,23 @@ class SuhoorIftarBloc extends Bloc<SuhoorIftarEvent, SuhoorIftarState> {
   /// Starts from the saved settings, read synchronously; unreadable ones
   /// show the defaults.
   new({
-    required GetSuhoorIftarSettings getSettings,
+    required this.getSettings,
     required this.saveSettings,
-  }) : super(
-         SuhoorIftarState(
-           settings: switch (getSettings(const NoParams())) {
-             Ok(:final value) => value,
-             Err() => SuhoorIftarSettings.defaults,
-           },
-         ),
-       ) {
+  }) : super(SuhoorIftarState(settings: _saved(getSettings))) {
     on<SuhoorIftarSettingsChanged>(_onChanged, transformer: sequential());
+    on<SuhoorIftarReloaded>(
+      (event, emit) => emit(SuhoorIftarState(settings: _saved(getSettings))),
+    );
   }
 
+  final GetSuhoorIftarSettings getSettings;
   final SaveSuhoorIftarSettings saveSettings;
+
+  static SuhoorIftarSettings _saved(GetSuhoorIftarSettings getSettings) =>
+      switch (getSettings(const NoParams())) {
+        Ok(:final value) => value,
+        Err() => SuhoorIftarSettings.defaults,
+      };
 
   Future<void> _onChanged(
     SuhoorIftarSettingsChanged event,
@@ -59,6 +62,11 @@ final class SuhoorIftarSettingsChanged extends SuhoorIftarEvent {
 
   @override
   List<Object> get props => [settings];
+}
+
+/// Reads the saved settings again, e.g. after a restore.
+final class SuhoorIftarReloaded extends SuhoorIftarEvent {
+  const new();
 }
 
 class SuhoorIftarState extends Equatable {

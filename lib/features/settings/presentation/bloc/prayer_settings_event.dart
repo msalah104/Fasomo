@@ -12,6 +12,11 @@ final class PrayerSettingsRefreshed extends PrayerSettingsEvent {
   const new();
 }
 
+/// Reads the saved settings and location again, e.g. after a restore.
+final class PrayerSettingsReloaded extends PrayerSettingsEvent {
+  const new();
+}
+
 /// The user chose [method], or automatic when it is `null`.
 final class PrayerMethodChanged extends PrayerSettingsEvent {
   const new(this.method);

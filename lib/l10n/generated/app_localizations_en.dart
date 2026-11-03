@@ -1525,7 +1525,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingLocationBody =>
-      'Your location draws the real sky on Home, and later sets prayer times. It stays on this device.';
+      'Your location draws the real sky on Home and sets your prayer times. It stays on this device.';
 
   @override
   String onboardingLocationSet(String place) {

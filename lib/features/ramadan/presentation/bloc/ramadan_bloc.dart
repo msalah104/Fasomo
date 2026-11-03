@@ -34,6 +34,9 @@ class RamadanBloc extends Bloc<RamadanEvent, RamadanState> {
     on<RamadanPaused>(_onPaused);
     on<RamadanTicked>((event, emit) => emit(_reload()));
     on<RamadanRefreshed>((event, emit) => emit(_reload()));
+    on<RamadanReloaded>(
+      (event, emit) => emit(_load(getOverview, getChecklist, null)),
+    );
     // Checklist changes are saved in order, so they never overtake.
     on<RamadanChecklistEvent>(_onChecklist, transformer: sequential());
   }

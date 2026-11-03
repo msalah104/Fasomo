@@ -11,4 +11,12 @@ abstract interface class RamadanChecklistRepository {
 
   /// Saves [checklist] for its day, replacing what was there.
   Future<Result<void, StorageFailure>> save(RamadanChecklist checklist);
+
+  /// Every saved day's checklist, in no particular order. Read by backups.
+  Result<List<RamadanChecklist>, StorageFailure> allChecklists();
+
+  /// Replaces every saved checklist with [checklists]. Used by restore.
+  Future<Result<void, StorageFailure>> replaceAll(
+    List<RamadanChecklist> checklists,
+  );
 }

@@ -22,6 +22,7 @@ import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/notifications/notification_reconciler.dart';
 import 'package:fasomo/core/notifications/notification_tone.dart';
 import 'package:fasomo/core/notifications/sync_notifications.dart';
+import 'package:fasomo/core/prayer/prayer_backup_section.dart';
 import 'package:fasomo/core/prayer/prayer_settings_repository.dart';
 import 'package:fasomo/core/prayer/prayer_settings_repository_impl.dart';
 import 'package:fasomo/core/prayer/usecases/get_prayer_settings.dart';
@@ -75,6 +76,7 @@ import 'package:fasomo/features/onboarding/domain/usecases/complete_onboarding.d
 import 'package:fasomo/features/onboarding/domain/usecases/is_onboarding_completed.dart';
 import 'package:fasomo/features/onboarding/domain/usecases/start_onboarding.dart';
 import 'package:fasomo/features/onboarding/presentation/bloc/onboarding_bloc.dart';
+import 'package:fasomo/features/ramadan/data/backup/ramadan_backup_section.dart';
 import 'package:fasomo/features/ramadan/data/repositories/ramadan_checklist_repository_impl.dart';
 import 'package:fasomo/features/ramadan/data/repositories/suhoor_iftar_settings_repository_impl.dart';
 import 'package:fasomo/features/ramadan/domain/repositories/ramadan_checklist_repository.dart';
@@ -328,6 +330,8 @@ Future<void> init({PlatformServices? platform}) async {
           TrackerBackupSection(fastLog: sl(), qadaReminders: sl()),
           CalendarBackupSection(sl()),
           LocationBackupSection(sl()),
+          PrayerBackupSection(sl()),
+          RamadanBackupSection(checklist: sl(), reminders: sl()),
         ],
         snapshots: sl(),
         clock: sl(),

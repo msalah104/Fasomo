@@ -1567,7 +1567,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get onboardingLocationBody =>
-      'يرسم موقعك السماء الحقيقية في الرئيسية، وسيحدد لاحقًا مواقيت الصلاة. ويبقى على هذا الجهاز.';
+      'يرسم موقعك السماء الحقيقية في الرئيسية ويحدد مواقيت الصلاة. ويبقى على هذا الجهاز.';
 
   @override
   String onboardingLocationSet(String place) {

@@ -144,6 +144,25 @@ void main() {
   );
 
   blocTest<PrayerSettingsBloc, PrayerSettingsState>(
+    'a reload reads the saved settings and location, e.g. after a restore',
+    build: build,
+    act: (bloc) {
+      when(() => getSettings(any())).thenReturn(
+        const Ok(PrayerSettings(asrMethod: AsrMethod.hanafi)),
+      );
+      when(() => getLocation(any())).thenReturn(cairo);
+      bloc.add(const PrayerSettingsReloaded());
+    },
+    expect: () => [
+      PrayerSettingsState(
+        settings: const PrayerSettings(asrMethod: AsrMethod.hanafi),
+        location: cairo,
+      ),
+    ],
+    verify: (_) => verifyNever(() => saveSettings(any())),
+  );
+
+  blocTest<PrayerSettingsBloc, PrayerSettingsState>(
     'a refresh picks up a new location and its automatic method',
     build: build,
     act: (bloc) {

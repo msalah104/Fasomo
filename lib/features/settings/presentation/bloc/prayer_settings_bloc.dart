@@ -21,15 +21,12 @@ class PrayerSettingsBloc
     extends Bloc<PrayerSettingsEvent, PrayerSettingsState> {
   /// Starts from the saved settings, read synchronously.
   new({
-    required GetPrayerSettings getPrayerSettings,
+    required this.getPrayerSettings,
     required this.savePrayerSettings,
     required this.getSavedLocation,
   }) : super(
          PrayerSettingsState(
-           settings: switch (getPrayerSettings(const NoParams())) {
-             Ok(:final value) => value,
-             Err() => PrayerSettings.defaults,
-           },
+           settings: _saved(getPrayerSettings),
            location: getSavedLocation(const NoParams()),
          ),
        ) {
@@ -37,6 +34,7 @@ class PrayerSettingsBloc
     on<PrayerSettingsEvent>(_onEvent, transformer: sequential());
   }
 
+  final GetPrayerSettings getPrayerSettings;
   final SavePrayerSettings savePrayerSettings;
   final GetSavedLocation getSavedLocation;
 
@@ -48,6 +46,13 @@ class PrayerSettingsBloc
     switch (event) {
       case PrayerSettingsRefreshed():
         emit(state.copyWith(location: getSavedLocation(const NoParams())));
+      case PrayerSettingsReloaded():
+        emit(
+          PrayerSettingsState(
+            settings: _saved(getPrayerSettings),
+            location: getSavedLocation(const NoParams()),
+          ),
+        );
       case PrayerMethodChanged(:final method):
         await _save(settings.withMethod(method), emit);
       case AsrMethodChanged(:final asrMethod):
@@ -68,6 +73,13 @@ class PrayerSettingsBloc
         );
     }
   }
+
+  /// The saved settings; unreadable ones count as the defaults.
+  static PrayerSettings _saved(GetPrayerSettings getPrayerSettings) =>
+      switch (getPrayerSettings(const NoParams())) {
+        Ok(:final value) => value,
+        Err() => PrayerSettings.defaults,
+      };
 
   Future<void> _save(
     PrayerSettings settings,

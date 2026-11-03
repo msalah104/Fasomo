@@ -270,8 +270,11 @@ void _reloadAfterRestore(BuildContext context) {
   context.read<LanguageBloc>().add(const LanguageReloaded());
   context.read<ThemeBloc>().add(const ThemeReloaded());
   context.read<HijriAdjustmentBloc>().add(const HijriOffsetReloaded());
+  context.read<PrayerSettingsBloc>().add(const PrayerSettingsReloaded());
   context.read<NotificationToneBloc>().add(const NotificationToneReloaded());
+  context.read<SuhoorIftarBloc>().add(const SuhoorIftarReloaded());
   context.read<HomeBloc>().add(const RefreshHomeData());
+  context.read<RamadanBloc>().add(const RamadanReloaded());
   context.read<CalendarBloc>().add(const LoadCalendar());
   context.read<TrackerBloc>().add(const LoadTracker());
   // Reloads the reminders, then syncs the notifications.

@@ -66,6 +66,30 @@ void main() {
     ticker: ticker,
   );
 
+  blocTest<RamadanBloc, RamadanState>(
+    "a reload reads the same day's checklist again, e.g. after a restore",
+    build: build,
+    act: (bloc) {
+      when(() => getChecklist(any())).thenReturn(
+        Ok(RamadanChecklist(date: today, quranPages: 12)),
+      );
+      bloc.add(const RamadanReloaded());
+    },
+    verify: (bloc) => expect(bloc.state.checklist?.quranPages, 12),
+  );
+
+  blocTest<RamadanBloc, RamadanState>(
+    "a refresh keeps the same day's checklist, so it never undoes a save",
+    build: build,
+    act: (bloc) {
+      when(() => getChecklist(any())).thenReturn(
+        Ok(RamadanChecklist(date: today, quranPages: 12)),
+      );
+      bloc.add(const RamadanRefreshed());
+    },
+    verify: (bloc) => expect(bloc.state.checklist?.quranPages, 0),
+  );
+
   test('starts with the overview and today checklist, before any event', () {
     final bloc = build();
     expect(bloc.state.overview, ramadanDay(today));

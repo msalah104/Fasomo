@@ -1360,7 +1360,7 @@
     "description": "Screen-reader hint on the button that opens the time picker for the custom reminder time."
   },
   "onboardingLocationTitle": "Where are you?",
-  "onboardingLocationBody": "Your location draws the real sky on Home, and later sets prayer times. It stays on this device.",
+  "onboardingLocationBody": "Your location draws the real sky on Home and sets your prayer times. It stays on this device.",
   "onboardingLocationSet": "Location set: {place}",
   "@onboardingLocationSet": {
     "description": "First-run flow: confirms the location, e.g. 'Location set: Cairo'.",

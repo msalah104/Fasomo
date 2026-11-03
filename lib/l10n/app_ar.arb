@@ -384,7 +384,7 @@
   "onboardingMorningOf": "صباح يوم الصيام",
   "onboardingPickTime": "تغيير وقت التذكير",
   "onboardingLocationTitle": "أين أنت؟",
-  "onboardingLocationBody": "يرسم موقعك السماء الحقيقية في الرئيسية، وسيحدد لاحقًا مواقيت الصلاة. ويبقى على هذا الجهاز.",
+  "onboardingLocationBody": "يرسم موقعك السماء الحقيقية في الرئيسية ويحدد مواقيت الصلاة. ويبقى على هذا الجهاز.",
   "onboardingLocationSet": "تم تحديد الموقع: {place}",
   "onboardingNotificationsTitle": "لا يفوتك صيام",
   "onboardingNotificationsBody": "يحتاج فاصومو إلى إذن الإشعارات لتصلك التذكيرات قبل كل صيام.",

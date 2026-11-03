@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fasomo/core/backup/backup_values.dart';
 import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/error/result.dart';
@@ -26,16 +27,10 @@ class RamadanChecklistRepositoryImpl implements RamadanChecklistRepository {
     return switch (_readAll()) {
       Ok(value: final all) => switch (all[_isoDate(day)]) {
         null => Ok(RamadanChecklist(date: day)),
-        {'taraweeh': final bool taraweeh, 'quranPages': final int pages}
-            when pages >= 0 && pages <= RamadanChecklist.maxQuranPages =>
-          Ok(
-            RamadanChecklist(
-              date: day,
-              prayedTaraweeh: taraweeh,
-              quranPages: pages,
-            ),
-          ),
-        _ => const Err(StorageReadFailed(storageKey)),
+        final entry => switch (_decodeDay(day, entry)) {
+          final checklist? => Ok(checklist),
+          null => const Err(StorageReadFailed(storageKey)),
+        },
       },
       Err(:final failure) => Err(failure),
     };
@@ -55,11 +50,41 @@ class RamadanChecklistRepositoryImpl implements RamadanChecklistRepository {
     if (checklist.isEmpty) {
       all.remove(key);
     } else {
-      all[key] = {
-        'taraweeh': checklist.prayedTaraweeh,
-        'quranPages': checklist.quranPages,
-      };
+      all[key] = _encodeDay(checklist);
     }
+    return await _write(all);
+  }
+
+  @override
+  Result<List<RamadanChecklist>, StorageFailure> allChecklists() {
+    switch (_readAll()) {
+      case Err(:final failure):
+        return Err(failure);
+      case Ok(value: final all):
+        final checklists = <RamadanChecklist>[];
+        for (final MapEntry(:key, :value) in all.entries) {
+          final checklist = switch (BackupValues.parseDate(key)) {
+            final day? => _decodeDay(day, value),
+            null => null,
+          };
+          if (checklist == null) {
+            return const Err(StorageReadFailed(storageKey));
+          }
+          checklists.add(checklist);
+        }
+        return Ok(checklists);
+    }
+  }
+
+  @override
+  Future<Result<void, StorageFailure>> replaceAll(
+    List<RamadanChecklist> checklists,
+  ) => _write({
+    for (final checklist in checklists)
+      if (!checklist.isEmpty) _isoDate(checklist.date): _encodeDay(checklist),
+  });
+
+  Future<Result<void, StorageFailure>> _write(Map<String, Object?> all) async {
     try {
       final saved = await sharedPreferences.setString(
         storageKey,
@@ -71,6 +96,23 @@ class RamadanChecklistRepositoryImpl implements RamadanChecklistRepository {
       return const Err(StorageWriteFailed(storageKey));
     }
   }
+
+  static Map<String, Object?> _encodeDay(RamadanChecklist checklist) => {
+    'taraweeh': checklist.prayedTaraweeh,
+    'quranPages': checklist.quranPages,
+  };
+
+  static RamadanChecklist? _decodeDay(DateTime day, Object? json) =>
+      switch (json) {
+        {'taraweeh': final bool taraweeh, 'quranPages': final int pages}
+            when pages >= 0 && pages <= RamadanChecklist.maxQuranPages =>
+          RamadanChecklist(
+            date: day,
+            prayedTaraweeh: taraweeh,
+            quranPages: pages,
+          ),
+        _ => null,
+      };
 
   Result<Map<String, Object?>, StorageFailure> _readAll() {
     final raw = sharedPreferences.get(storageKey);

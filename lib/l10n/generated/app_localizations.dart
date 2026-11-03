@@ -2410,7 +2410,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingLocationBody.
   ///
   /// In en, this message translates to:
-  /// **'Your location draws the real sky on Home, and later sets prayer times. It stays on this device.'**
+  /// **'Your location draws the real sky on Home and sets your prayer times. It stays on this device.'**
   String get onboardingLocationBody;
 
   /// First-run flow: confirms the location, e.g. 'Location set: Cairo'.

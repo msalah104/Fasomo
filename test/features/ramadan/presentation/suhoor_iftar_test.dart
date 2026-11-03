@@ -44,6 +44,23 @@ void main() {
     SuhoorIftarBloc build() =>
         SuhoorIftarBloc(getSettings: get, saveSettings: save);
 
+    blocTest<SuhoorIftarBloc, SuhoorIftarState>(
+      'a reload reads the saved settings again, e.g. after a restore',
+      build: build,
+      act: (bloc) {
+        when(() => get(any())).thenReturn(
+          const Ok(SuhoorIftarSettings(iftarMinutesBeforeMaghrib: 5)),
+        );
+        bloc.add(const SuhoorIftarReloaded());
+      },
+      expect: () => [
+        const SuhoorIftarState(
+          settings: SuhoorIftarSettings(iftarMinutesBeforeMaghrib: 5),
+        ),
+      ],
+      verify: (_) => verifyNever(() => save(any())),
+    );
+
     test('starts from the saved settings, or the defaults', () {
       when(() => get(any())).thenReturn(
         const Ok(SuhoorIftarSettings(iftarMinutesBeforeMaghrib: 5)),

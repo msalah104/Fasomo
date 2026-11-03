@@ -28,6 +28,12 @@ final class RamadanRefreshed extends RamadanEvent {
   const new();
 }
 
+/// The stored data was replaced, e.g. by a restore: reads everything again,
+/// today's checklist included.
+final class RamadanReloaded extends RamadanEvent {
+  const new();
+}
+
 /// A change to today's checklist.
 sealed class RamadanChecklistEvent extends RamadanEvent {
   const new();

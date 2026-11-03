@@ -27,7 +27,7 @@ class PrayerSettingsRepositoryImpl implements PrayerSettingsRepository {
     if (raw == null) return const Ok(PrayerSettings.defaults);
     if (raw is! String) return const Err(StorageReadFailed(storageKey));
     try {
-      return switch (_decode(jsonDecode(raw))) {
+      return switch (decode(jsonDecode(raw))) {
         final settings? => Ok(settings),
         null => const Err(StorageReadFailed(storageKey)),
       };
@@ -41,17 +41,7 @@ class PrayerSettingsRepositoryImpl implements PrayerSettingsRepository {
   Future<Result<void, StorageFailure>> saveSettings(
     PrayerSettings settings,
   ) async {
-    final adjustments = {
-      for (final prayer in Prayer.values)
-        if (settings.adjustments[prayer] != 0)
-          prayer.name: settings.adjustments[prayer],
-    };
-    final encoded = jsonEncode({
-      if (settings.method case final method?) 'method': method.name,
-      'asr': settings.asrMethod.name,
-      'highLatitude': settings.highLatitudeRule.name,
-      if (adjustments.isNotEmpty) 'adjust': adjustments,
-    });
+    final encoded = jsonEncode(encode(settings));
     try {
       final saved = await sharedPreferences.setString(storageKey, encoded);
       return saved ? const Ok(null) : const Err(StorageWriteFailed(storageKey));
@@ -61,7 +51,23 @@ class PrayerSettingsRepositoryImpl implements PrayerSettingsRepository {
     }
   }
 
-  static PrayerSettings? _decode(Object? json) {
+  /// [settings] as the JSON object they are stored and backed up as.
+  static Map<String, Object?> encode(PrayerSettings settings) {
+    final adjustments = {
+      for (final prayer in Prayer.values)
+        if (settings.adjustments[prayer] != 0)
+          prayer.name: settings.adjustments[prayer],
+    };
+    return {
+      if (settings.method case final method?) 'method': method.name,
+      'asr': settings.asrMethod.name,
+      'highLatitude': settings.highLatitudeRule.name,
+      if (adjustments.isNotEmpty) 'adjust': adjustments,
+    };
+  }
+
+  /// The settings in [json], or `null` when it is not what [encode] writes.
+  static PrayerSettings? decode(Object? json) {
     if (json is! Map<String, Object?>) return null;
     final method = switch (json['method']) {
       null => null,

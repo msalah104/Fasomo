@@ -6,7 +6,10 @@ import 'package:fasomo/core/di/injection_container.dart' as di;
 import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
 import 'package:fasomo/core/notifications/notification_tone.dart';
+import 'package:fasomo/core/prayer/calculation_method.dart';
+import 'package:fasomo/features/ramadan/presentation/bloc/suhoor_iftar_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/prayer_settings_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/tracker/domain/entities/qada_reminder_settings.dart';
 import 'package:fasomo/features/tracker/presentation/bloc/tracker_bloc.dart';
@@ -43,6 +46,17 @@ String _backupFromAnotherPhone() => BackupEnvelope(
       'missedRamadanDays': <String>[],
       'extraOwed': <Object>[],
       'qadaReminders': QadaReminderSettings.defaults.toJson(),
+    },
+    'prayer': {'asr': 'hanafi', 'highLatitude': 'middleOfTheNight'},
+    'ramadan': {
+      'reminders': {
+        'suhoor': true,
+        'suhoorMinutes': 30,
+        'iftar': true,
+        'iftarMinutes': 5,
+        'otherDays': false,
+      },
+      'checklist': <Object>[],
     },
   },
 ).encode();
@@ -119,6 +133,14 @@ void main() {
       expect(
         context.read<TrackerBloc>().state.isFasted(DateTime(2026, 10, 20)),
         isTrue,
+      );
+      expect(
+        context.read<PrayerSettingsBloc>().state.settings.asrMethod,
+        AsrMethod.hanafi,
+      );
+      expect(
+        context.read<SuhoorIftarBloc>().state.settings.suhoorMinutesBeforeFajr,
+        30,
       );
       expect(find.byType(SnackBar), findsOneWidget);
     },

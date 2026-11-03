@@ -90,7 +90,7 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - **Hijri date adjustment**: if your country starts months by local moon sighting, shift the Hijri date by −2 to +2 days (+1 moves the Hijri date one day forward). A preview shows today's date as it will appear. The calendar, fasting days, progress and reminders all move together right away.
 
 ### 💾 Backup and restore
-- **Export backup** in Settings saves your reminders, settings, location and fasting log (fasted days, make-up fasts, Ramadan days missed, days owed, make-up reminders) to a versioned JSON file through the share sheet; no account needed. The file is not encrypted.
+- **Export backup** in Settings saves your reminders, settings, location, prayer settings, suhoor and iftar reminders, Ramadan checklists and fasting log (fasted days, make-up fasts, Ramadan days missed, days owed, make-up reminders) to a versioned JSON file through the share sheet; no account needed. The file is not encrypted.
 - **Restore from file** on another phone, after a confirmation. It is all or nothing: a file from a newer app version, a damaged file or a checksum mismatch is refused, every part is checked before anything is written, and if any write fails everything is put back. Language, theme and reminders apply at once.
 
 ### 🌐 Language
