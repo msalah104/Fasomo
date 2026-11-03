@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clock/clock.dart';
 import 'package:fasomo/core/calendar/calendar_days.dart';
 import 'package:fasomo/core/calendar/fasting_type.dart';
@@ -6,6 +8,8 @@ import 'package:fasomo/core/di/injection_container.dart';
 import 'package:fasomo/core/error/failures.dart';
 import 'package:fasomo/core/presentation/localized_notification_copy.dart';
 import 'package:fasomo/features/about/presentation/pages/about_page.dart';
+import 'package:fasomo/features/backup/presentation/bloc/backup_bloc.dart';
+import 'package:fasomo/features/backup/presentation/widgets/backup_tiles.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:fasomo/features/duas/domain/usecases/get_fasting_hadith.dart';
@@ -25,7 +29,9 @@ import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/pages/reminder_settings_page.dart';
 import 'package:fasomo/features/reminders/presentation/widgets/notification_tone_tile.dart';
 import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/prayer_settings_bloc.dart';
+import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
 import 'package:fasomo/features/settings/presentation/pages/settings_page.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_button.dart';
 import 'package:fasomo/features/settings/presentation/widgets/settings_section.dart';
@@ -44,7 +50,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 /// The bottom-navigation shell. It is the one place that composes features,
 /// so features never import each other.
 class AppShell extends StatefulWidget {
-  const new({super.key});
+  const new({
+    this.promptForNotifications = true,
+    this.showHomeRequests,
+    super.key,
+  });
+
+  /// Whether to ask for notification permission once the app shows, on the
+  /// first launch only. Off when onboarding has just dealt with it.
+  final bool promptForNotifications;
+
+  /// Each event brings the user back to the Home tab, e.g. a tap on the
+  /// home-screen widget while the app is open on another screen.
+  final Stream<void>? showHomeRequests;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -57,9 +75,12 @@ class _AppShellState extends State<AppShell> {
   /// refills the rolling window and repairs anything the OS dropped.
   late final AppLifecycleListener _lifecycle;
 
+  StreamSubscription<void>? _showHomeRequests;
+
   @override
   void initState() {
     super.initState();
+    _showHomeRequests = widget.showHomeRequests?.listen((_) => _showHome());
     _lifecycle = AppLifecycleListener(
       onResume: () {
         context.read<ReminderBloc>().add(const SyncRequested());
@@ -69,11 +90,13 @@ class _AppShellState extends State<AppShell> {
     );
     // Every reminder starts out on, so permission is asked once the app is
     // showing, on the first launch only.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        context.read<ReminderBloc>().add(const PermissionPromptRequested());
-      }
-    });
+    if (widget.promptForNotifications) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.read<ReminderBloc>().add(const PermissionPromptRequested());
+        }
+      });
+    }
   }
 
   @override
@@ -89,8 +112,16 @@ class _AppShellState extends State<AppShell> {
 
   @override
   void dispose() {
+    unawaited(_showHomeRequests?.cancel());
     _lifecycle.dispose();
     super.dispose();
+  }
+
+  /// Closes anything pushed over the shell and selects the Home tab.
+  void _showHome() {
+    if (!mounted) return;
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    setState(() => _selectedIndex = 0);
   }
 
   @override
@@ -168,6 +199,15 @@ class _AppShellState extends State<AppShell> {
           listener: (context, _) =>
               context.read<ReminderBloc>().add(const SyncRequested()),
         ),
+        // A restore may have replaced any stored data: every bloc reads it
+        // again (language and theme apply at once) and the reminders are
+        // rescheduled from what was restored.
+        BlocListener<BackupBloc, BackupState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status &&
+              current.status == BackupStatus.restored,
+          listener: (context, _) => _reloadAfterRestore(context),
+        ),
       ],
       child: Scaffold(
         // Home draws its own sky header in place of the app bar.
@@ -226,6 +266,18 @@ class _AppShellState extends State<AppShell> {
   }
 }
 
+void _reloadAfterRestore(BuildContext context) {
+  context.read<LanguageBloc>().add(const LanguageReloaded());
+  context.read<ThemeBloc>().add(const ThemeReloaded());
+  context.read<HijriAdjustmentBloc>().add(const HijriOffsetReloaded());
+  context.read<NotificationToneBloc>().add(const NotificationToneReloaded());
+  context.read<HomeBloc>().add(const RefreshHomeData());
+  context.read<CalendarBloc>().add(const LoadCalendar());
+  context.read<TrackerBloc>().add(const LoadTracker());
+  // Reloads the reminders, then syncs the notifications.
+  context.read<ReminderBloc>().add(const LoadReminders());
+}
+
 /// Opens the settings page, with the sections other features contribute.
 void _openSettings(BuildContext context) {
   // "Today" may have moved on since the adjustment preview was computed.
@@ -239,6 +291,10 @@ void _openSettings(BuildContext context) {
           SettingsSection(
             title: AppLocalizations.of(context).settingsNotifications,
             children: const [NotificationToneTile()],
+          ),
+          SettingsSection(
+            title: AppLocalizations.of(context).settingsBackup,
+            children: const [BackupTiles()],
           ),
         ],
       ),

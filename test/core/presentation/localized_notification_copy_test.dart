@@ -1,6 +1,6 @@
 import 'package:fasomo/core/notifications/qada_pace_rate.dart';
 import 'package:fasomo/core/presentation/localized_notification_copy.dart';
-import 'package:fasomo/core/presentation/western_digits.dart';
+import 'package:fasomo/core/presentation/numerals.dart';
 import 'package:fasomo/l10n/generated/app_localizations.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -69,7 +69,7 @@ void main() {
     setUpAll(() async {
       // MaterialApp's localizations load these in the app.
       await initializeDateFormatting();
-      useWesternDigitsInDates();
+      pinWesternDigits();
     });
 
     test('in English', () async {

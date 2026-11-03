@@ -1,9 +1,17 @@
 import 'package:fasomo/app/announcement_topic_sync.dart';
+import 'package:fasomo/app/app_onboarding.dart';
 import 'package:fasomo/app/app_shell.dart';
+import 'package:fasomo/app/home_widget_sync.dart';
+import 'package:fasomo/app/launch_gate.dart';
 import 'package:fasomo/core/di/injection_container.dart';
+import 'package:fasomo/core/error/result.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
+import 'package:fasomo/core/usecases/usecase.dart';
+import 'package:fasomo/core/widget/home_widget_gateway.dart';
+import 'package:fasomo/features/backup/presentation/bloc/backup_bloc.dart';
 import 'package:fasomo/features/calendar/presentation/bloc/calendar_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
+import 'package:fasomo/features/onboarding/domain/usecases/is_onboarding_completed.dart';
 import 'package:fasomo/features/ramadan/presentation/bloc/ramadan_bloc.dart';
 import 'package:fasomo/features/ramadan/presentation/bloc/suhoor_iftar_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
@@ -44,6 +52,7 @@ class FasomoApp extends StatelessWidget {
         BlocProvider(
           create: (_) => sl<TrackerBloc>()..add(const LoadTracker()),
         ),
+        BlocProvider(create: (_) => sl<BackupBloc>()),
       ],
       child: Builder(
         builder: (context) {
@@ -66,7 +75,20 @@ class FasomoApp extends StatelessWidget {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             home: AnnouncementTopicSync(
               sync: sl(),
-              child: const _LaunchGate(),
+              child: HomeWidgetSync(
+                sync: sl(),
+                child: LaunchGate(
+                  isOnboardingCompleted: _isOnboardingCompleted,
+                  splashBuilder: (onFinished) =>
+                      SplashPage(onFinished: onFinished),
+                  onboardingBuilder: (onDone) => AppOnboarding(onDone: onDone),
+                  appBuilder: ({required promptForNotifications}) => AppShell(
+                    promptForNotifications: promptForNotifications,
+                    // Taps on the home-screen widget bring the shell to Home.
+                    showHomeRequests: sl<HomeWidgetGateway>().opened,
+                  ),
+                ),
+              ),
             ),
           );
         },
@@ -75,28 +97,10 @@ class FasomoApp extends StatelessWidget {
   }
 }
 
-/// Plays the splash once per launch, then cross-fades into the [AppShell].
-class _LaunchGate extends StatefulWidget {
-  const new();
-
-  @override
-  State<_LaunchGate> createState() => _LaunchGateState();
-}
-
-class _LaunchGateState extends State<_LaunchGate> {
-  static const _fade = Duration(milliseconds: 600);
-
-  bool _splashDone = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: MediaQuery.disableAnimationsOf(context) ? Duration.zero : _fade,
-      switchInCurve: Curves.easeOut,
-      switchOutCurve: Curves.easeIn,
-      child: _splashDone
-          ? const AppShell()
-          : SplashPage(onFinished: () => setState(() => _splashDone = true)),
-    );
-  }
-}
+/// An unreadable flag counts as done, so a storage fault never traps the
+/// user in onboarding.
+bool _isOnboardingCompleted() =>
+    switch (sl<IsOnboardingCompleted>()(const NoParams())) {
+      Ok(:final value) => value,
+      Err() => true,
+    };

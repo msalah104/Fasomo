@@ -1,10 +1,17 @@
 import 'package:clock/clock.dart';
+import 'package:fasomo/app/reminder_onboarding_handoff.dart';
+import 'package:fasomo/core/backup/backup_file_gateway.dart';
+import 'package:fasomo/core/backup/backup_service.dart';
+import 'package:fasomo/core/backup/backup_snapshot_store.dart';
+import 'package:fasomo/core/backup/preferences_snapshot_store.dart';
 import 'package:fasomo/core/calendar/adjusted_hijri_converter.dart';
 import 'package:fasomo/core/calendar/fasting_calendar.dart';
 import 'package:fasomo/core/calendar/hijri_converter.dart';
 import 'package:fasomo/core/calendar/hijri_offset.dart';
+import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/location/device_location_gateway.dart';
 import 'package:fasomo/core/location/geolocator_location_gateway.dart';
+import 'package:fasomo/core/location/location_backup_section.dart';
 import 'package:fasomo/core/location/location_repository.dart';
 import 'package:fasomo/core/location/location_repository_impl.dart';
 import 'package:fasomo/core/location/usecases/choose_city.dart';
@@ -21,6 +28,8 @@ import 'package:fasomo/core/prayer/usecases/get_prayer_settings.dart';
 import 'package:fasomo/core/prayer/usecases/save_prayer_settings.dart';
 import 'package:fasomo/core/push/push_messaging.dart';
 import 'package:fasomo/core/push/sync_announcement_topic.dart';
+import 'package:fasomo/core/services/backup/platform_backup_file_gateway.dart';
+import 'package:fasomo/core/services/home_widget/home_widget_plugin_gateway.dart';
 import 'package:fasomo/core/services/notifications/fln_notification_gateway.dart';
 import 'package:fasomo/core/services/push/fcm_push_messaging.dart';
 import 'package:fasomo/core/services/share/overlay_widget_image_renderer.dart';
@@ -29,6 +38,12 @@ import 'package:fasomo/core/share/share_service.dart';
 import 'package:fasomo/core/share/share_widget_image.dart';
 import 'package:fasomo/core/share/widget_image_renderer.dart';
 import 'package:fasomo/core/time/minute_ticker.dart';
+import 'package:fasomo/core/widget/home_widget_gateway.dart';
+import 'package:fasomo/core/widget/sync_home_widget.dart';
+import 'package:fasomo/features/backup/domain/usecases/export_backup.dart';
+import 'package:fasomo/features/backup/domain/usecases/restore_backup.dart';
+import 'package:fasomo/features/backup/presentation/bloc/backup_bloc.dart';
+import 'package:fasomo/features/calendar/data/backup/calendar_backup_section.dart';
 import 'package:fasomo/features/calendar/data/datasources/calendar_local_data_source.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_preferences_repository_impl.dart';
 import 'package:fasomo/features/calendar/data/repositories/calendar_repository_impl.dart';
@@ -52,6 +67,14 @@ import 'package:fasomo/features/home/domain/usecases/get_sky_scene.dart';
 import 'package:fasomo/features/home/domain/usecases/get_upcoming_fasting_days.dart';
 import 'package:fasomo/features/home/presentation/bloc/home_bloc.dart';
 import 'package:fasomo/features/home/presentation/bloc/sky_bloc.dart';
+import 'package:fasomo/features/onboarding/data/datasources/onboarding_local_data_source.dart';
+import 'package:fasomo/features/onboarding/data/repositories/onboarding_repository_impl.dart';
+import 'package:fasomo/features/onboarding/domain/onboarding_handoff.dart';
+import 'package:fasomo/features/onboarding/domain/repositories/onboarding_repository.dart';
+import 'package:fasomo/features/onboarding/domain/usecases/complete_onboarding.dart';
+import 'package:fasomo/features/onboarding/domain/usecases/is_onboarding_completed.dart';
+import 'package:fasomo/features/onboarding/domain/usecases/start_onboarding.dart';
+import 'package:fasomo/features/onboarding/presentation/bloc/onboarding_bloc.dart';
 import 'package:fasomo/features/ramadan/data/repositories/ramadan_checklist_repository_impl.dart';
 import 'package:fasomo/features/ramadan/data/repositories/suhoor_iftar_settings_repository_impl.dart';
 import 'package:fasomo/features/ramadan/domain/repositories/ramadan_checklist_repository.dart';
@@ -64,6 +87,7 @@ import 'package:fasomo/features/ramadan/domain/usecases/save_ramadan_checklist.d
 import 'package:fasomo/features/ramadan/domain/usecases/save_suhoor_iftar_settings.dart';
 import 'package:fasomo/features/ramadan/presentation/bloc/ramadan_bloc.dart';
 import 'package:fasomo/features/ramadan/presentation/bloc/suhoor_iftar_bloc.dart';
+import 'package:fasomo/features/reminders/data/backup/reminders_backup_section.dart';
 import 'package:fasomo/features/reminders/data/datasources/reminder_local_data_source.dart';
 import 'package:fasomo/features/reminders/data/repositories/reminder_repository_impl.dart';
 import 'package:fasomo/features/reminders/domain/fasting_reminder_source.dart';
@@ -75,6 +99,7 @@ import 'package:fasomo/features/reminders/domain/usecases/save_notification_tone
 import 'package:fasomo/features/reminders/domain/usecases/save_reminder.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/notification_tone_bloc.dart';
 import 'package:fasomo/features/reminders/presentation/bloc/reminder_bloc.dart';
+import 'package:fasomo/features/settings/data/backup/settings_backup_section.dart';
 import 'package:fasomo/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:fasomo/features/settings/domain/repositories/settings_repository.dart';
 import 'package:fasomo/features/settings/domain/usecases/get_hijri_offset.dart';
@@ -88,6 +113,7 @@ import 'package:fasomo/features/settings/presentation/bloc/hijri_adjustment_bloc
 import 'package:fasomo/features/settings/presentation/bloc/language_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/prayer_settings_bloc.dart';
 import 'package:fasomo/features/settings/presentation/bloc/theme_bloc.dart';
+import 'package:fasomo/features/tracker/data/backup/tracker_backup_section.dart';
 import 'package:fasomo/features/tracker/data/datasources/fast_log_local_data_source.dart';
 import 'package:fasomo/features/tracker/data/datasources/qada_reminder_local_data_source.dart';
 import 'package:fasomo/features/tracker/data/repositories/fast_log_repository_impl.dart';
@@ -112,7 +138,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt sl = GetIt.instance;
 
-/// The services that need a real device: OS notifications and push.
+/// The services that need a real device: OS notifications, push and the
+/// home-screen widget.
 ///
 /// [init] builds the real ones by default; a harness that runs the app
 /// without a device (e.g. the screenshot tool) passes fakes instead.
@@ -122,12 +149,14 @@ final class PlatformServices {
     required this.notificationPermission,
     required this.tonePreview,
     required this.push,
+    required this.homeWidget,
   });
 
   final NotificationGateway notifications;
   final NotificationPermission notificationPermission;
   final NotificationTonePreview tonePreview;
   final PushMessaging push;
+  final HomeWidgetGateway homeWidget;
 }
 
 /// The composition root: the only place concrete implementations are chosen.
@@ -286,6 +315,58 @@ Future<void> init({PlatformServices? platform}) async {
     )
     ..registerLazySingleton<SettingsRepository>(sl.get<SettingsRepositoryImpl>)
     ..registerLazySingleton<HijriOffsetSource>(sl.get<SettingsRepositoryImpl>)
+    // --- Backup ---
+    ..registerFactory(() => BackupBloc(exportBackup: sl(), restoreBackup: sl()))
+    ..registerLazySingleton(() => ExportBackup(service: sl(), files: sl()))
+    ..registerLazySingleton(() => RestoreBackup(service: sl(), files: sl()))
+    // Each feature's part of the backup file. A new section is one line here.
+    ..registerLazySingleton(
+      () => BackupService(
+        sections: [
+          SettingsBackupSection(sl()),
+          RemindersBackupSection(sl()),
+          TrackerBackupSection(fastLog: sl(), qadaReminders: sl()),
+          CalendarBackupSection(sl()),
+          LocationBackupSection(sl()),
+        ],
+        snapshots: sl(),
+        clock: sl(),
+        appVersion: AppConstants.appVersion,
+      ),
+    )
+    ..registerLazySingleton<BackupSnapshotStore>(
+      () => PreferencesSnapshotStore(sl()),
+    )
+    ..registerLazySingleton<BackupFileGateway>(
+      () => const PlatformBackupFileGateway(),
+    )
+    // --- Onboarding ---
+    ..registerFactory(
+      () => OnboardingBloc(
+        startOnboarding: sl(),
+        completeOnboarding: sl(),
+        useDeviceLocation: sl(),
+        chooseCity: sl(),
+        handoff: sl(),
+      ),
+    )
+    ..registerLazySingleton(() => IsOnboardingCompleted(sl()))
+    ..registerLazySingleton(() => StartOnboarding(sl()))
+    ..registerLazySingleton(() => CompleteOnboarding(sl()))
+    // Composed in the app layer from the reminders feature's use cases.
+    ..registerLazySingleton<OnboardingHandoff>(
+      () => ReminderOnboardingHandoff(
+        getReminders: sl(),
+        saveReminder: sl(),
+        promptPermissionOnce: sl(),
+      ),
+    )
+    ..registerLazySingleton<OnboardingRepository>(
+      () => OnboardingRepositoryImpl(localDataSource: sl()),
+    )
+    ..registerLazySingleton<OnboardingLocalDataSource>(
+      () => OnboardingLocalDataSourceImpl(sharedPreferences: sl()),
+    )
     // ============ Core ============
     ..registerLazySingleton<Clock>(() => const Clock())
     // Every Hijri date in the app goes through the user's adjustment.
@@ -409,7 +490,11 @@ Future<void> init({PlatformServices? platform}) async {
       ),
     )
     ..registerLazySingleton<PushMessaging>(() => services.push)
-    ..registerLazySingleton(() => SyncAnnouncementTopic(sl()));
+    ..registerLazySingleton(() => SyncAnnouncementTopic(sl()))
+    ..registerLazySingleton<HomeWidgetGateway>(() => services.homeWidget)
+    ..registerLazySingleton(
+      () => SyncHomeWidget(calendar: sl(), gateway: sl(), clock: sl()),
+    );
 }
 
 Future<PlatformServices> _devicePlatformServices() async {
@@ -418,10 +503,13 @@ Future<PlatformServices> _devicePlatformServices() async {
   // Requires Firebase.initializeApp to have run (see main.dart).
   final push = FcmPushMessaging(presenter: notifications);
   await push.initialize();
+  final homeWidget = HomeWidgetPluginGateway();
+  await homeWidget.initialize();
   return PlatformServices(
     notifications: notifications,
     notificationPermission: notifications,
     tonePreview: notifications,
     push: push,
+    homeWidget: homeWidget,
   );
 }

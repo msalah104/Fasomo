@@ -22,3 +22,9 @@ final class HijriOffsetChanged extends HijriAdjustmentEvent {
 final class HijriPreviewRefreshed extends HijriAdjustmentEvent {
   const new();
 }
+
+/// The saved offset may have changed outside this bloc, e.g. by a restore:
+/// read it again, as the converter already does.
+final class HijriOffsetReloaded extends HijriAdjustmentEvent {
+  const new();
+}

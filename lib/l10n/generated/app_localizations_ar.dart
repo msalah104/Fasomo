@@ -1423,4 +1423,171 @@ class AppLocalizationsAr extends AppLocalizations {
   String suhoorIftarSummaryItem(String meal, String when) {
     return '$meal: $when';
   }
+
+  @override
+  String homeWidgetNextFast(int days, String type) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$type بعد $days يوم',
+      many: '$type بعد $days يوماً',
+      few: '$type بعد $days أيام',
+      two: '$type بعد يومين',
+      one: 'غداً: $type',
+      zero: 'اليوم: $type',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeWidgetOpenApp => 'افتح فاصومو للتحديث';
+
+  @override
+  String get settingsBackup => 'النسخ الاحتياطي';
+
+  @override
+  String get backupExport => 'تصدير نسخة احتياطية';
+
+  @override
+  String get backupExportSubtitle =>
+      'احفظ تذكيراتك وإعداداتك وسجل صيامك في ملف. الملف غير مشفّر.';
+
+  @override
+  String get backupRestore => 'الاستعادة من ملف';
+
+  @override
+  String get backupRestoreSubtitle =>
+      'استرجع نسخة احتياطية، على هاتف جديد مثلًا';
+
+  @override
+  String get backupInProgress => 'جارٍ العمل على النسخة الاحتياطية…';
+
+  @override
+  String get backupRestoreConfirmTitle => 'الاستعادة من نسخة احتياطية؟';
+
+  @override
+  String get backupRestoreConfirmBody =>
+      'ستُستبدل تذكيراتك وإعداداتك وسجل صيامك بما في النسخة الاحتياطية التي تختارها، ويبقى ما لا تتضمنه النسخة كما هو. لا يمكن التراجع عن ذلك.';
+
+  @override
+  String get backupRestoreConfirmAction => 'اختيار ملف';
+
+  @override
+  String get backupExported => 'النسخة الاحتياطية جاهزة';
+
+  @override
+  String get backupRestored => 'تمت استعادة النسخة الاحتياطية';
+
+  @override
+  String get backupRestoredWithSkipped =>
+      'تمت استعادة النسخة الاحتياطية، مع تجاوز أجزاء من إصدار أحدث من فاصومو.';
+
+  @override
+  String get backupErrorNewerVersion =>
+      'أُنشئت هذه النسخة بإصدار أحدث من فاصومو. حدّث التطبيق ثم حاول مرة أخرى.';
+
+  @override
+  String get backupErrorCorrupt =>
+      'هذا الملف ليس نسخة احتياطية من فاصومو، أو أنه تالف. لم يتغيّر شيء.';
+
+  @override
+  String get backupErrorChecksum =>
+      'تغيّرت هذه النسخة أو تلفت بعد إنشائها. لم يتغيّر شيء.';
+
+  @override
+  String get backupErrorRestoreStorage =>
+      'تعذّر حفظ البيانات المستعادة، لذا لم يتغيّر شيء.';
+
+  @override
+  String get backupErrorFile => 'تعذّرت قراءة هذا الملف. لم يتغيّر شيء.';
+
+  @override
+  String get backupErrorExport =>
+      'تعذّر إنشاء النسخة الاحتياطية. حاول مرة أخرى.';
+
+  @override
+  String get onboardingSkip => 'تخطي';
+
+  @override
+  String get onboardingNext => 'التالي';
+
+  @override
+  String get onboardingBack => 'السابق';
+
+  @override
+  String get onboardingLater => 'لاحقًا';
+
+  @override
+  String onboardingStepOf(int current, int total) {
+    return 'الخطوة $current من $total';
+  }
+
+  @override
+  String get onboardingWelcomeTitle => 'أهلًا بك في فاصومو';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'يعرض فاصومو أيام الصيام المستحبة والواجبة في العام الهجري، ويذكّرك قبل كل منها.';
+
+  @override
+  String get onboardingLanguageTitle => 'اختر لغتك';
+
+  @override
+  String get onboardingFastsTitle => 'أيّ أيام الصيام تهمّك؟';
+
+  @override
+  String get onboardingFastsBody =>
+      'سيصلك تذكير قبل كل يوم تختاره، ويمكنك تغيير ذلك في أي وقت من التذكيرات.';
+
+  @override
+  String get onboardingFastsNone =>
+      'لن تُضبط أي تذكيرات. يمكنك تفعيلها لاحقًا من التذكيرات.';
+
+  @override
+  String get onboardingSpecialDays => 'عرفة وعاشوراء وتاسوعاء';
+
+  @override
+  String get onboardingTimeTitle => 'متى نذكّرك؟';
+
+  @override
+  String get onboardingTimeBody =>
+      'ينطبق هذا على كل التذكيرات التي اخترتها، ويمكنك تغيير كل منها لاحقًا.';
+
+  @override
+  String get onboardingEveningBefore => 'مساء اليوم السابق';
+
+  @override
+  String get onboardingMorningOf => 'صباح يوم الصيام';
+
+  @override
+  String get onboardingPickTime => 'تغيير وقت التذكير';
+
+  @override
+  String get onboardingLocationTitle => 'أين أنت؟';
+
+  @override
+  String get onboardingLocationBody =>
+      'يرسم موقعك السماء الحقيقية في الرئيسية، وسيحدد لاحقًا مواقيت الصلاة. ويبقى على هذا الجهاز.';
+
+  @override
+  String onboardingLocationSet(String place) {
+    return 'تم تحديد الموقع: $place';
+  }
+
+  @override
+  String get onboardingNotificationsTitle => 'لا يفوتك صيام';
+
+  @override
+  String get onboardingNotificationsBody =>
+      'يحتاج فاصومو إلى إذن الإشعارات لتصلك التذكيرات قبل كل صيام.';
+
+  @override
+  String get onboardingAllowNotifications => 'السماح بالإشعارات';
+
+  @override
+  String get onboardingNotNow => 'ليس الآن';
+
+  @override
+  String get onboardingSaveFailed =>
+      'تعذّر حفظ اختياراتك. حاول مرة أخرى، أو تخطَّ.';
 }

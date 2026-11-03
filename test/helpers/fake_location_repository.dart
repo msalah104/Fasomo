@@ -23,4 +23,13 @@ class FakeLocationRepository implements LocationRepository {
   @override
   Future<Result<GeoPoint, LocationFailure>> refreshFromDevice() async =>
       Ok(point);
+
+  @override
+  GeoPoint? saved() => point.isApproximate ? null : point;
+
+  @override
+  Future<bool> replaceSaved(GeoPoint? point) async {
+    this.point = point ?? GeoPoint.makkah;
+    return true;
+  }
 }

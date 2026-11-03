@@ -4,6 +4,10 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 
 ## Features
 
+### 👋 First run
+- A short, skippable five-step welcome after the splash: language (switches live), which fasts interest you (sets the reminders), a default reminder time, an optional location for the sky, and notification permission, each with one sentence on why.
+- Pages turn in the reading direction, it respects reduced motion and large text, and it is shown only once. People updating from an earlier version skip it.
+
 ### ✨ Launch
 - **Animated splash**: the sun sets behind the dome, the sky turns through dusk to night and the stars come out. The new moon rises and settles as the dot of the ف logo, the letter draws itself around it, and the app name is typed out. Tap to skip; with reduced motion the finished scene shows briefly instead.
 
@@ -75,10 +79,19 @@ A Flutter app that helps Muslims keep track of the recommended (Sunnah) and obli
 - Shown by the system while the app is in the background, and as a local notification on the Announcements channel while it is open.
 - No account: the app only joins a topic. Firebase still issues the device a push token and an installation ID.
 
+### 📱 Home-screen widget
+- Today's Hijri date (with your adjustment), the Gregorian date and your next fasting day ("White Days in 3 days", "Tomorrow: Monday & Thursday", "Today: Day of Arafah"), in the app's language, outlined in gold on fasting days.
+- It moves on at midnight by itself (the app stores the next 7 days), and tapping it opens the app on Home.
+- Android: 2x1, resizable. iOS: small and medium (WidgetKit extension with an App Group; see [`docs/home-widget-ios.md`](docs/home-widget-ios.md) for the Apple Developer account steps).
+
 ### ⚙️ Settings
 - A gear in the top bar, and on Home's sky, opens Settings. Options are grouped under **Appearance** (language, theme), **Calendar** (Hijri date adjustment) and **Prayer times** (method, Asr, high latitudes, adjustments). Every choice is saved.
 - **Theme**: follow the phone's light or dark setting, or always use Light or Dark. The app opens straight in the chosen theme, with no flash of the other one.
 - **Hijri date adjustment**: if your country starts months by local moon sighting, shift the Hijri date by −2 to +2 days (+1 moves the Hijri date one day forward). A preview shows today's date as it will appear. The calendar, fasting days, progress and reminders all move together right away.
+
+### 💾 Backup and restore
+- **Export backup** in Settings saves your reminders, settings, location and fasting log (fasted days, make-up fasts, Ramadan days missed, days owed, make-up reminders) to a versioned JSON file through the share sheet; no account needed. The file is not encrypted.
+- **Restore from file** on another phone, after a confirmation. It is all or nothing: a file from a newer app version, a damaged file or a checksum mismatch is refused, every part is checked before anything is written, and if any write fails everything is put back. Language, theme and reminders apply at once.
 
 ### 🌐 Language
 - Arabic and English, with full right-to-left layout in Arabic.
@@ -208,7 +221,8 @@ lib/
 - **Push**: firebase_core, firebase_messaging (Firebase Cloud Messaging)
 - **Storage**: shared_preferences
 - **Location**: geolocator (coarse, on request only); sun and moon positions and prayer times are computed in-house in `lib/core/astronomy/` and `lib/core/prayer/`
-- **Sharing**: share_plus
+- **Sharing and files**: share_plus, file_picker, crypto (backup checksum)
+- **Home-screen widget**: home_widget (Android `AppWidgetProvider`, iOS WidgetKit)
 - **Fonts**: El Messiri and IBM Plex Sans Arabic, bundled
 - **Localization**: flutter_localizations, intl, gen-l10n (ARB)
 - **Testing**: flutter_test, bloc_test, mocktail
@@ -238,23 +252,7 @@ Priority: **P1** = next up, **P2** = after that, **P3** = later. Everything is o
 
 | Priority | Feature | New packages | Backend |
 |---|---|---|---|
-| P2 | [Home-screen widget](#home-screen-widget-p2) | `home_widget` | No |
-| P2 | [Onboarding](#onboarding-p2) | — | No |
-| P3 | [Backup and restore](#backup-and-restore-p3) | `share_plus`, `file_picker` | No |
 | — | [Needs a backend](#needs-a-backend) | Firebase or Supabase | Yes |
-
-### Home-screen widget (P2)
-
-- Shows today's Hijri date and the next fasting day ("White Days in 3 days"); tapping it opens the app on that day.
-- **How:** `home_widget` with a native widget (Android `AppWidgetProvider`, iOS WidgetKit). The app writes a small snapshot whenever data or the date changes, and the widget only reads it.
-
-### Onboarding (P2)
-
-A short first-run flow: choose language, choose which fasting types interest you, set a default reminder time, and only then ask for notification permission (and location, if Ramadan mode or the sky header needs it), with a sentence explaining why.
-
-### Backup and restore (P3)
-
-Export reminders, settings and the fasting log to a versioned JSON file and restore it on a new phone. This avoids accounts while still letting users keep their history.
 
 ### Needs a backend
 

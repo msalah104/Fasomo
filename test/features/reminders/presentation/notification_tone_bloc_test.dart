@@ -167,4 +167,15 @@ void main() {
       ),
     ],
   );
+
+  blocTest<NotificationToneBloc, NotificationToneState>(
+    'NotificationToneReloaded reads the saved tone again',
+    build: build,
+    setUp: () => when(
+      () => getTone(any()),
+    ).thenReturn(const Ok(NotificationTone.gentle)),
+    act: (bloc) => bloc.add(const NotificationToneReloaded()),
+    expect: () => [const NotificationToneState(tone: NotificationTone.gentle)],
+    verify: (_) => verifyNever(() => saveTone(any())),
+  );
 }

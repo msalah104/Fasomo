@@ -1229,5 +1229,150 @@
         "example": "45 min before Fajr"
       }
     }
-  }
+  },
+  "homeWidgetNextFast": "{days, plural, =0{Today: {type}} =1{Tomorrow: {type}} other{{type} in {days} days}}",
+  "@homeWidgetNextFast": {
+    "description": "Home-screen widget line naming the next fasting day and how far away it is.",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "type": {
+        "type": "String",
+        "example": "White Days"
+      }
+    }
+  },
+  "homeWidgetOpenApp": "Open Fasomo to update",
+  "@homeWidgetOpenApp": {
+    "description": "Home-screen widget text shown when its dates are out of date because the app has not been opened for over a week."
+  },
+  "settingsBackup": "Backup",
+  "@settingsBackup": {
+    "description": "Title of the settings section for exporting and restoring a backup file."
+  },
+  "backupExport": "Export backup",
+  "@backupExport": {
+    "description": "Settings action that saves reminders, settings and the fasting log to a file and opens the share sheet."
+  },
+  "backupExportSubtitle": "Save your reminders, settings and fasting log to a file. The file is not encrypted.",
+  "@backupExportSubtitle": {
+    "description": "Explains what the export contains, and that the file is plain text."
+  },
+  "backupRestore": "Restore from file",
+  "@backupRestore": {
+    "description": "Settings action that replaces this phone's data with a backup file the user picks."
+  },
+  "backupRestoreSubtitle": "Bring back a backup, for example on a new phone",
+  "@backupRestoreSubtitle": {
+    "description": "Explains when to restore a backup."
+  },
+  "backupInProgress": "Working on the backup…",
+  "@backupInProgress": {
+    "description": "Screen-reader label of the progress indicator while a backup is exported or restored."
+  },
+  "backupRestoreConfirmTitle": "Restore from a backup?",
+  "@backupRestoreConfirmTitle": {
+    "description": "Title of the dialog that confirms a restore before the file is picked."
+  },
+  "backupRestoreConfirmBody": "Your reminders, settings and fasting log will be replaced by the ones in the backup you choose. Anything the backup does not include stays as it is. This cannot be undone.",
+  "@backupRestoreConfirmBody": {
+    "description": "Body of the restore confirmation dialog: names the replace policy."
+  },
+  "backupRestoreConfirmAction": "Choose file",
+  "@backupRestoreConfirmAction": {
+    "description": "Button in the restore confirmation dialog that opens the file picker."
+  },
+  "backupExported": "Backup ready",
+  "@backupExported": {
+    "description": "Shown after the backup file was handed to the share sheet."
+  },
+  "backupRestored": "Backup restored",
+  "@backupRestored": {
+    "description": "Shown after a backup was restored."
+  },
+  "backupRestoredWithSkipped": "Backup restored. Some parts from a newer version of Fasomo were skipped.",
+  "@backupRestoredWithSkipped": {
+    "description": "Shown after a restore that ignored parts of the file this version does not know."
+  },
+  "backupErrorNewerVersion": "This backup was made by a newer version of Fasomo. Update the app, then try again.",
+  "@backupErrorNewerVersion": {
+    "description": "Restore refused: the file's format is newer than this app."
+  },
+  "backupErrorCorrupt": "This file is not a Fasomo backup, or it is damaged. Nothing was changed.",
+  "@backupErrorCorrupt": {
+    "description": "Restore refused: the file could not be read as a backup."
+  },
+  "backupErrorChecksum": "This backup was changed or damaged after it was made. Nothing was changed.",
+  "@backupErrorChecksum": {
+    "description": "Restore refused: the file's checksum does not match its contents."
+  },
+  "backupErrorRestoreStorage": "Could not save the restored data, so nothing was changed.",
+  "@backupErrorRestoreStorage": {
+    "description": "Restore failed while writing and was rolled back."
+  },
+  "backupErrorFile": "Could not read that file. Nothing was changed.",
+  "@backupErrorFile": {
+    "description": "Restore failed: the picked file could not be opened."
+  },
+  "backupErrorExport": "Could not create the backup. Please try again.",
+  "@backupErrorExport": {
+    "description": "Export failed: the data could not be read or the file could not be written or shared."
+  },
+  "onboardingSkip": "Skip",
+  "@onboardingSkip": {
+    "description": "First-run flow: ends the flow now and keeps the defaults for the rest."
+  },
+  "onboardingNext": "Next",
+  "onboardingBack": "Back",
+  "onboardingLater": "Later",
+  "@onboardingLater": {
+    "description": "First-run flow: moves on from the location step without setting a location."
+  },
+  "onboardingStepOf": "Step {current} of {total}",
+  "@onboardingStepOf": {
+    "description": "First-run flow progress, under the step dots.",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingWelcomeTitle": "Welcome to Fasomo",
+  "onboardingWelcomeBody": "Fasomo shows the recommended and obligatory fasts of the Hijri year and reminds you before each one.",
+  "onboardingLanguageTitle": "Choose your language",
+  "onboardingFastsTitle": "Which fasts interest you?",
+  "onboardingFastsBody": "You'll get a reminder before each one you choose. You can change this any time in Reminders.",
+  "onboardingFastsNone": "No reminders will be set. You can turn them on later in Reminders.",
+  "onboardingSpecialDays": "Arafah, Ashura and Tasua",
+  "@onboardingSpecialDays": {
+    "description": "First-run flow: one choice that covers the three special fasting days."
+  },
+  "onboardingTimeTitle": "When should we remind you?",
+  "onboardingTimeBody": "This applies to every reminder you chose. You can change each one later.",
+  "onboardingEveningBefore": "Evening before",
+  "onboardingMorningOf": "Morning of the fast",
+  "onboardingPickTime": "Change the reminder time",
+  "@onboardingPickTime": {
+    "description": "Screen-reader hint on the button that opens the time picker for the custom reminder time."
+  },
+  "onboardingLocationTitle": "Where are you?",
+  "onboardingLocationBody": "Your location draws the real sky on Home, and later sets prayer times. It stays on this device.",
+  "onboardingLocationSet": "Location set: {place}",
+  "@onboardingLocationSet": {
+    "description": "First-run flow: confirms the location, e.g. 'Location set: Cairo'.",
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingNotificationsTitle": "Never miss a fast",
+  "onboardingNotificationsBody": "Fasomo needs permission to show notifications, so your reminders can reach you before each fast.",
+  "onboardingAllowNotifications": "Allow notifications",
+  "onboardingNotNow": "Not now",
+  "onboardingSaveFailed": "Couldn't save your choices. Try again, or skip."
 }

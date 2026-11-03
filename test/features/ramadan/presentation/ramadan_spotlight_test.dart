@@ -5,7 +5,7 @@ import 'package:fasomo/core/location/city_catalog.dart';
 import 'package:fasomo/core/location/geo_point.dart';
 import 'package:fasomo/core/prayer/calculation_method.dart';
 import 'package:fasomo/core/prayer/prayer_times.dart';
-import 'package:fasomo/core/presentation/western_digits.dart';
+import 'package:fasomo/core/presentation/numerals.dart';
 import 'package:fasomo/core/theme/app_theme.dart';
 import 'package:fasomo/features/ramadan/domain/entities/ramadan_checklist.dart';
 import 'package:fasomo/features/ramadan/domain/entities/ramadan_overview.dart';
@@ -57,7 +57,7 @@ void main() {
   late _MockRamadanBloc bloc;
 
   setUpAll(() {
-    useWesternDigitsInDates();
+    pinWesternDigits();
     registerFallbackValue(const RamadanRefreshed());
   });
 

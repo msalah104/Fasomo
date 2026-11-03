@@ -29,3 +29,9 @@ final class NotificationTonePreviewRequested extends NotificationToneEvent {
   @override
   List<Object> get props => [tone, title, body];
 }
+
+/// The saved tone may have changed outside this bloc, e.g. by a restore:
+/// read it again.
+final class NotificationToneReloaded extends NotificationToneEvent {
+  const new();
+}

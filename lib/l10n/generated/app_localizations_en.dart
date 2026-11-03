@@ -1383,4 +1383,169 @@ class AppLocalizationsEn extends AppLocalizations {
   String suhoorIftarSummaryItem(String meal, String when) {
     return '$meal: $when';
   }
+
+  @override
+  String homeWidgetNextFast(int days, String type) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$type in $days days',
+      one: 'Tomorrow: $type',
+      zero: 'Today: $type',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeWidgetOpenApp => 'Open Fasomo to update';
+
+  @override
+  String get settingsBackup => 'Backup';
+
+  @override
+  String get backupExport => 'Export backup';
+
+  @override
+  String get backupExportSubtitle =>
+      'Save your reminders, settings and fasting log to a file. The file is not encrypted.';
+
+  @override
+  String get backupRestore => 'Restore from file';
+
+  @override
+  String get backupRestoreSubtitle =>
+      'Bring back a backup, for example on a new phone';
+
+  @override
+  String get backupInProgress => 'Working on the backup…';
+
+  @override
+  String get backupRestoreConfirmTitle => 'Restore from a backup?';
+
+  @override
+  String get backupRestoreConfirmBody =>
+      'Your reminders, settings and fasting log will be replaced by the ones in the backup you choose. Anything the backup does not include stays as it is. This cannot be undone.';
+
+  @override
+  String get backupRestoreConfirmAction => 'Choose file';
+
+  @override
+  String get backupExported => 'Backup ready';
+
+  @override
+  String get backupRestored => 'Backup restored';
+
+  @override
+  String get backupRestoredWithSkipped =>
+      'Backup restored. Some parts from a newer version of Fasomo were skipped.';
+
+  @override
+  String get backupErrorNewerVersion =>
+      'This backup was made by a newer version of Fasomo. Update the app, then try again.';
+
+  @override
+  String get backupErrorCorrupt =>
+      'This file is not a Fasomo backup, or it is damaged. Nothing was changed.';
+
+  @override
+  String get backupErrorChecksum =>
+      'This backup was changed or damaged after it was made. Nothing was changed.';
+
+  @override
+  String get backupErrorRestoreStorage =>
+      'Could not save the restored data, so nothing was changed.';
+
+  @override
+  String get backupErrorFile =>
+      'Could not read that file. Nothing was changed.';
+
+  @override
+  String get backupErrorExport =>
+      'Could not create the backup. Please try again.';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingBack => 'Back';
+
+  @override
+  String get onboardingLater => 'Later';
+
+  @override
+  String onboardingStepOf(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get onboardingWelcomeTitle => 'Welcome to Fasomo';
+
+  @override
+  String get onboardingWelcomeBody =>
+      'Fasomo shows the recommended and obligatory fasts of the Hijri year and reminds you before each one.';
+
+  @override
+  String get onboardingLanguageTitle => 'Choose your language';
+
+  @override
+  String get onboardingFastsTitle => 'Which fasts interest you?';
+
+  @override
+  String get onboardingFastsBody =>
+      'You\'ll get a reminder before each one you choose. You can change this any time in Reminders.';
+
+  @override
+  String get onboardingFastsNone =>
+      'No reminders will be set. You can turn them on later in Reminders.';
+
+  @override
+  String get onboardingSpecialDays => 'Arafah, Ashura and Tasua';
+
+  @override
+  String get onboardingTimeTitle => 'When should we remind you?';
+
+  @override
+  String get onboardingTimeBody =>
+      'This applies to every reminder you chose. You can change each one later.';
+
+  @override
+  String get onboardingEveningBefore => 'Evening before';
+
+  @override
+  String get onboardingMorningOf => 'Morning of the fast';
+
+  @override
+  String get onboardingPickTime => 'Change the reminder time';
+
+  @override
+  String get onboardingLocationTitle => 'Where are you?';
+
+  @override
+  String get onboardingLocationBody =>
+      'Your location draws the real sky on Home, and later sets prayer times. It stays on this device.';
+
+  @override
+  String onboardingLocationSet(String place) {
+    return 'Location set: $place';
+  }
+
+  @override
+  String get onboardingNotificationsTitle => 'Never miss a fast';
+
+  @override
+  String get onboardingNotificationsBody =>
+      'Fasomo needs permission to show notifications, so your reminders can reach you before each fast.';
+
+  @override
+  String get onboardingAllowNotifications => 'Allow notifications';
+
+  @override
+  String get onboardingNotNow => 'Not now';
+
+  @override
+  String get onboardingSaveFailed =>
+      'Couldn\'t save your choices. Try again, or skip.';
 }

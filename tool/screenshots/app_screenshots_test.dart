@@ -7,6 +7,8 @@
 //
 // Each case boots the app through the real composition root with fake OS
 // notifications and push, opens one tab, and saves `<name>-<locale>-<theme>.png`.
+// The `onboarding-*` cases boot a first run instead, and step through the
+// first-run flow.
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -17,7 +19,8 @@ import 'package:fasomo/core/constants/app_constants.dart';
 import 'package:fasomo/core/di/injection_container.dart' as di;
 import 'package:fasomo/core/location/location_repository_impl.dart';
 import 'package:fasomo/core/notifications/notification_gateway.dart';
-import 'package:fasomo/core/presentation/western_digits.dart';
+import 'package:fasomo/core/presentation/numerals.dart';
+import 'package:fasomo/features/onboarding/data/datasources/onboarding_local_data_source.dart';
 import 'package:fasomo/features/ramadan/data/repositories/ramadan_checklist_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -25,6 +28,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../test/helpers/fake_home_widget_gateway.dart';
 import '../../test/helpers/fake_notification_gateway.dart';
 import '../../test/helpers/fake_push_messaging.dart';
 
@@ -106,6 +110,17 @@ final _datedPreferences = <String, Object>{
   AppConstants.fastLogKey: ['2027-02-08', '2027-02-09', '2027-02-18'],
 };
 
+const _next = ('Next', 'التالي');
+
+/// The first-run flow, one capture per step.
+const _onboardingScreens = <String, List<Object>>{
+  'onboarding-welcome': [],
+  'onboarding-fasts': [_next],
+  'onboarding-time': [_next, _next],
+  'onboarding-location': [_next, _next, _next],
+  'onboarding-notifications': [_next, _next, _next, ('Later', 'لاحقًا')],
+};
+
 Finder _finderFor(Object tap, String language) => switch (tap) {
   final IconData icon => find.byIcon(icon),
   (final String en, final String ar) => find.text(language == 'ar' ? ar : en),
@@ -180,6 +195,7 @@ Future<void> _bootApp(
   required String language,
   required Brightness brightness,
   DateTime? now,
+  bool onboarded = true,
 }) async {
   tester.view
     ..physicalSize = _screen * _pixelRatio
@@ -197,6 +213,7 @@ Future<void> _bootApp(
     AppConstants.fastLogKey: ['2026-10-22', '2026-10-26', '2026-10-29'],
     AppConstants.extraOwedKey: ['1447:6'],
     if (now != null) ..._datedPreferences,
+    OnboardingLocalDataSourceImpl.completedKey: onboarded,
   });
   await di.sl.reset();
   final notifications = FakeNotificationGateway();
@@ -207,6 +224,7 @@ Future<void> _bootApp(
         notificationPermission: _GrantedPermission(),
         tonePreview: notifications,
         push: FakePushMessaging(),
+        homeWidget: FakeHomeWidgetGateway(),
       ),
     ),
   );
@@ -264,20 +282,29 @@ Future<void> _visit(
 
 void main() {
   setUpAll(() async {
-    // As main() does.
-    useWesternDigitsInDates();
+    pinWesternDigits();
     await _loadFonts();
   });
 
   for (final language in ['en', 'ar']) {
     for (final brightness in Brightness.values) {
-      for (final MapEntry(key: screen, value: taps) in _screens.entries) {
-        final name = '$screen-$language-${brightness.name}';
-        testWidgets(name, (tester) async {
-          await _bootApp(tester, language: language, brightness: brightness);
-          await _visit(tester, taps, language);
-          await _capture(tester, name);
-        });
+      for (final (screens, onboarded) in [
+        (_screens, true),
+        (_onboardingScreens, false),
+      ]) {
+        for (final MapEntry(key: screen, value: taps) in screens.entries) {
+          final name = '$screen-$language-${brightness.name}';
+          testWidgets(name, (tester) async {
+            await _bootApp(
+              tester,
+              language: language,
+              brightness: brightness,
+              onboarded: onboarded,
+            );
+            await _visit(tester, taps, language);
+            await _capture(tester, name);
+          });
+        }
       }
       for (final MapEntry(key: screen, value: (now, taps))
           in _datedScreens.entries) {

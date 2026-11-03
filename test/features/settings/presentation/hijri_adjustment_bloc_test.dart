@@ -157,4 +157,20 @@ void main() {
       ),
     ],
   );
+
+  test('HijriOffsetReloaded reads the saved offset again', () async {
+    final bloc = build();
+    settings.stored = HijriOffset.minusOne;
+    bloc.add(const HijriOffsetReloaded());
+    await expectLater(
+      bloc.stream,
+      emits(
+        const HijriAdjustmentState(
+          offset: HijriOffset.minusOne,
+          today: HijriDate(1446, 8, 29),
+        ),
+      ),
+    );
+    await bloc.close();
+  });
 }

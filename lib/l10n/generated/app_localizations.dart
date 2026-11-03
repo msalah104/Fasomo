@@ -2178,6 +2178,276 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{meal}: {when}'**
   String suhoorIftarSummaryItem(String meal, String when);
+
+  /// Home-screen widget line naming the next fasting day and how far away it is.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =0{Today: {type}} =1{Tomorrow: {type}} other{{type} in {days} days}}'**
+  String homeWidgetNextFast(int days, String type);
+
+  /// Home-screen widget text shown when its dates are out of date because the app has not been opened for over a week.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Fasomo to update'**
+  String get homeWidgetOpenApp;
+
+  /// Title of the settings section for exporting and restoring a backup file.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup'**
+  String get settingsBackup;
+
+  /// Settings action that saves reminders, settings and the fasting log to a file and opens the share sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Export backup'**
+  String get backupExport;
+
+  /// Explains what the export contains, and that the file is plain text.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your reminders, settings and fasting log to a file. The file is not encrypted.'**
+  String get backupExportSubtitle;
+
+  /// Settings action that replaces this phone's data with a backup file the user picks.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from file'**
+  String get backupRestore;
+
+  /// Explains when to restore a backup.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring back a backup, for example on a new phone'**
+  String get backupRestoreSubtitle;
+
+  /// Screen-reader label of the progress indicator while a backup is exported or restored.
+  ///
+  /// In en, this message translates to:
+  /// **'Working on the backup…'**
+  String get backupInProgress;
+
+  /// Title of the dialog that confirms a restore before the file is picked.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from a backup?'**
+  String get backupRestoreConfirmTitle;
+
+  /// Body of the restore confirmation dialog: names the replace policy.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reminders, settings and fasting log will be replaced by the ones in the backup you choose. Anything the backup does not include stays as it is. This cannot be undone.'**
+  String get backupRestoreConfirmBody;
+
+  /// Button in the restore confirmation dialog that opens the file picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose file'**
+  String get backupRestoreConfirmAction;
+
+  /// Shown after the backup file was handed to the share sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup ready'**
+  String get backupExported;
+
+  /// Shown after a backup was restored.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored'**
+  String get backupRestored;
+
+  /// Shown after a restore that ignored parts of the file this version does not know.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored. Some parts from a newer version of Fasomo were skipped.'**
+  String get backupRestoredWithSkipped;
+
+  /// Restore refused: the file's format is newer than this app.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup was made by a newer version of Fasomo. Update the app, then try again.'**
+  String get backupErrorNewerVersion;
+
+  /// Restore refused: the file could not be read as a backup.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is not a Fasomo backup, or it is damaged. Nothing was changed.'**
+  String get backupErrorCorrupt;
+
+  /// Restore refused: the file's checksum does not match its contents.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup was changed or damaged after it was made. Nothing was changed.'**
+  String get backupErrorChecksum;
+
+  /// Restore failed while writing and was rolled back.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the restored data, so nothing was changed.'**
+  String get backupErrorRestoreStorage;
+
+  /// Restore failed: the picked file could not be opened.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not read that file. Nothing was changed.'**
+  String get backupErrorFile;
+
+  /// Export failed: the data could not be read or the file could not be written or shared.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create the backup. Please try again.'**
+  String get backupErrorExport;
+
+  /// First-run flow: ends the flow now and keeps the defaults for the rest.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @onboardingBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get onboardingBack;
+
+  /// First-run flow: moves on from the location step without setting a location.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get onboardingLater;
+
+  /// First-run flow progress, under the step dots.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String onboardingStepOf(int current, int total);
+
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Fasomo'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasomo shows the recommended and obligatory fasts of the Hijri year and reminds you before each one.'**
+  String get onboardingWelcomeBody;
+
+  /// No description provided for @onboardingLanguageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your language'**
+  String get onboardingLanguageTitle;
+
+  /// No description provided for @onboardingFastsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Which fasts interest you?'**
+  String get onboardingFastsTitle;
+
+  /// No description provided for @onboardingFastsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll get a reminder before each one you choose. You can change this any time in Reminders.'**
+  String get onboardingFastsBody;
+
+  /// No description provided for @onboardingFastsNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminders will be set. You can turn them on later in Reminders.'**
+  String get onboardingFastsNone;
+
+  /// First-run flow: one choice that covers the three special fasting days.
+  ///
+  /// In en, this message translates to:
+  /// **'Arafah, Ashura and Tasua'**
+  String get onboardingSpecialDays;
+
+  /// No description provided for @onboardingTimeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When should we remind you?'**
+  String get onboardingTimeTitle;
+
+  /// No description provided for @onboardingTimeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This applies to every reminder you chose. You can change each one later.'**
+  String get onboardingTimeBody;
+
+  /// No description provided for @onboardingEveningBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening before'**
+  String get onboardingEveningBefore;
+
+  /// No description provided for @onboardingMorningOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning of the fast'**
+  String get onboardingMorningOf;
+
+  /// Screen-reader hint on the button that opens the time picker for the custom reminder time.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the reminder time'**
+  String get onboardingPickTime;
+
+  /// No description provided for @onboardingLocationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where are you?'**
+  String get onboardingLocationTitle;
+
+  /// No description provided for @onboardingLocationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your location draws the real sky on Home, and later sets prayer times. It stays on this device.'**
+  String get onboardingLocationBody;
+
+  /// First-run flow: confirms the location, e.g. 'Location set: Cairo'.
+  ///
+  /// In en, this message translates to:
+  /// **'Location set: {place}'**
+  String onboardingLocationSet(String place);
+
+  /// No description provided for @onboardingNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Never miss a fast'**
+  String get onboardingNotificationsTitle;
+
+  /// No description provided for @onboardingNotificationsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Fasomo needs permission to show notifications, so your reminders can reach you before each fast.'**
+  String get onboardingNotificationsBody;
+
+  /// No description provided for @onboardingAllowNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications'**
+  String get onboardingAllowNotifications;
+
+  /// No description provided for @onboardingNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get onboardingNotNow;
+
+  /// No description provided for @onboardingSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save your choices. Try again, or skip.'**
+  String get onboardingSaveFailed;
 }
 
 class _AppLocalizationsDelegate
