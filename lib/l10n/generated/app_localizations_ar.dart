@@ -364,9 +364,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get website => 'الموقع';
 
   @override
-  String get sourceCode => 'الشيفرة المصدرية';
-
-  @override
   String get credits => 'شكر وتقدير';
 
   @override

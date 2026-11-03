@@ -167,7 +167,6 @@ class _ContactCard extends StatelessWidget {
           for (final (icon, label, value) in [
             (Icons.email, localization.email, AppConstants.supportEmail),
             (Icons.language, localization.website, AppConstants.website),
-            (Icons.code, localization.sourceCode, AppConstants.sourceCode),
           ])
             ListTile(
               leading: Icon(icon, color: iconColor),

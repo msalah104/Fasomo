@@ -365,9 +365,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get website => 'Website';
 
   @override
-  String get sourceCode => 'Source code';
-
-  @override
   String get credits => 'Credits';
 
   @override

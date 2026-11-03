@@ -273,8 +273,8 @@ No license has been chosen yet.
 
 ## Contact
 
-- **Email**: support@fasomo.app
-- **Website**: www.fasomo.app
+- **Email**: support@fasomo.site
+- **Website**: fasomo.site
 - **GitHub**: github.com/msalah104/Fasomo
 
 ---

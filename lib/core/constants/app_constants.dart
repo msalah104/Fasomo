@@ -34,7 +34,6 @@ class AppConstants {
       'News such as the confirmed start of Ramadan or Eid';
 
   // Contact
-  static const String supportEmail = 'support@fasomo.app';
-  static const String website = 'www.fasomo.app';
-  static const String sourceCode = 'github.com/msalah104/Fasomo';
+  static const String supportEmail = 'support@fasomo.site';
+  static const String website = 'fasomo.site';
 }

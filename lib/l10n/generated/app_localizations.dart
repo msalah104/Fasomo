@@ -704,12 +704,6 @@ abstract class AppLocalizations {
   /// **'Website'**
   String get website;
 
-  /// No description provided for @sourceCode.
-  ///
-  /// In en, this message translates to:
-  /// **'Source code'**
-  String get sourceCode;
-
   /// No description provided for @credits.
   ///
   /// In en, this message translates to:
