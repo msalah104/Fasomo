@@ -87,7 +87,7 @@ Your fasting log, reminders and settings are stored on your phone. There's no ac
 Questions or suggestions: support@fasomo.site
 ```
 
-## Release notes for 1.0.0 [500]
+## Release notes for 1.0.1 [500]
 
 ```text
 The first release of Fasomo:

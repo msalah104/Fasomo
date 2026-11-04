@@ -86,7 +86,7 @@ Add this in Play Console under Grow users → Store presence → Store listings 
 للأسئلة والاقتراحات: support@fasomo.site
 ```
 
-## Release notes for 1.0.0 [500]
+## Release notes for 1.0.1 [500]
 
 ```text
 الإصدار الأول من فاصومو:
